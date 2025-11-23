@@ -1,0 +1,106 @@
+[gd_scene load_steps=3 format=3 uid="uid://cddhjyyc73ibm"]
+
+[ext_resource type="LabelSettings" uid="uid://dmjnjk0lynewr" path="res://themes/labels/title.tres" id="1_l6cm7"]
+[ext_resource type="LabelSettings" uid="uid://dcdm78ayupuj3" path="res://themes/labels/subtitle.tres" id="2_ekxnf"]
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.1764706, 0.1764706, 0.1764706, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -251.5
+offset_top = -177.5
+offset_right = 251.5
+offset_bottom = 177.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_bottom = -18
+
+[node name="Title" type="Label" parent="VBoxContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "{SCRIBE}"
+label_settings = ExtResource("1_l6cm7")
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="VBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Dungeons & Dragons Remote Table Top"
+label_settings = ExtResource("2_ekxnf")
+horizontal_alignment = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_top = 15
+
+[node name="GridContainer" type="GridContainer" parent="VBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+columns = 2
+
+[node name="Button" type="Button" parent="VBoxContainer/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_type_variation = &"MainMenuButton"
+text = "Multiplayer"
+
+[node name="Button2" type="Button" parent="VBoxContainer/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_type_variation = &"MainMenuButton"
+text = "View Characters"
+
+[node name="Button3" type="Button" parent="VBoxContainer/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_type_variation = &"MainMenuButton"
+text = "Settings"
+
+[node name="Button4" type="Button" parent="VBoxContainer/MarginContainer/GridContainer"]
+custom_minimum_size = Vector2(200, 150)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+mouse_default_cursor_shape = 2
+theme_type_variation = &"MainMenuButton"
+text = "Exit Game"

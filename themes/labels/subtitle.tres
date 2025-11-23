@@ -1,0 +1,6 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://dcdm78ayupuj3"]
+
+[ext_resource type="FontFile" uid="uid://btiroqy7ntv4i" path="res://themes/fonts/inconsolatas/Inconsolata-VariableFont_wdth,wght.ttf" id="1_vyo10"]
+
+[resource]
+font = ExtResource("1_vyo10")
