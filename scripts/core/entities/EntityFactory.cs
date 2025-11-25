@@ -1,7 +1,7 @@
 using Godot;
 using System;
 using Scribe.Scripts.Core.Components;
-using Scribe.Scripts.Core.Interfaces;
+using Scribe.Scripts.Data.ComponentData;
 using Scribe.Scripts.Data;
 using Scribe.Scripts.Data.EntityDataTypes;
 
@@ -43,6 +43,9 @@ public static class EntityFactory
     
     private static void BuildCharacter(Entity entity, CharacterData data)
     {
+        // Characters are player-controlled by default
+        entity.Controller = ControllerType.Player;
+        
         if (data.HealthData != null)
         {
             var healthComponent = new HealthComponent();
@@ -56,10 +59,27 @@ public static class EntityFactory
             attackComponent.Initialize(data.MeleeAttackData);
             entity.AddComponent(attackComponent);
         }
+        
+        if (data.MovementData != null)
+        {
+            var movementComponent = new MovementComponent();
+            movementComponent.Initialize(data.MovementData);
+            entity.AddComponent(movementComponent);
+        }
+        else
+        {
+            // Default movement if not specified
+            var movementComponent = new MovementComponent();
+            movementComponent.Initialize(new MovementComponentData());
+            entity.AddComponent(movementComponent);
+        }
     }
     
     private static void BuildMonster(Entity entity, MonsterData data)
     {
+        // Monsters are AI-controlled by default
+        entity.Controller = ControllerType.AI;
+        
         if (data.HealthData != null)
         {
             var healthComponent = new HealthComponent();
@@ -80,17 +100,19 @@ public static class EntityFactory
             aiComponent.Initialize(data.AIData);
             entity.AddComponent(aiComponent);
         }
-    }
-    
-    public static Entity CreateFromPath(string resourcePath)
-    {
-        var data = GD.Load<EntityData>(resourcePath);
-        if (data == null)
-        {
-            GD.PrintErr($"Failed to load entity data from: {resourcePath}");
-            return null;
-        }
         
-        return CreateEntity(data);
+        if (data.MovementData != null)
+        {
+            var movementComponent = new MovementComponent();
+            movementComponent.Initialize(data.MovementData);
+            entity.AddComponent(movementComponent);
+        }
+        else
+        {
+            // Default movement if not specified
+            var movementComponent = new MovementComponent();
+            movementComponent.Initialize(new MovementComponentData());
+            entity.AddComponent(movementComponent);
+        }
     }
 }

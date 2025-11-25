@@ -1,6 +1,6 @@
 [gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://dmjnjk0lynewr"]
 
-[ext_resource type="FontFile" uid="uid://bsrqytwyfjii1" path="res://themes/fonts/jacquard24/Jacquard24-Regular.ttf" id="1_6h3cj"]
+[ext_resource type="FontFile" uid="uid://bsrqytwyfjii1" path="res://themes/fonts/jacquard24/jacquard24_regular.ttf" id="1_6h3cj"]
 
 [resource]
 font = ExtResource("1_6h3cj")

@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="CharacterData" load_steps=6 format=3 uid="uid://di1s1pcolp231"]
+[gd_resource type="Resource" script_class="CharacterData" load_steps=8 format=3 uid="uid://di1s1pcolp231"]
 
 [ext_resource type="Script" uid="uid://rafgoo10wir3" path="res://scripts/data/component_data/HealthComponentData.cs" id="1_4peab"]
 [ext_resource type="Script" uid="uid://dthy0jxsn1nci" path="res://scripts/data/CharacterData.cs" id="1_f08fp"]
 [ext_resource type="Script" uid="uid://dmgcm4vi3hnm2" path="res://scripts/data/component_data/MeleeAttackComponentData.cs" id="2_7k206"]
+[ext_resource type="Script" uid="uid://brg2uof26q6rm" path="res://scripts/data/component_data/MovementComponentData.cs" id="3_7k206"]
 
 [sub_resource type="Resource" id="Resource_oqoio"]
 script = ExtResource("1_4peab")
@@ -19,10 +20,15 @@ DamageType = 2
 AttackName = "Longsword"
 metadata/_custom_type_script = "uid://dmgcm4vi3hnm2"
 
+[sub_resource type="Resource" id="Resource_sny7q"]
+script = ExtResource("3_7k206")
+metadata/_custom_type_script = "uid://brg2uof26q6rm"
+
 [resource]
 script = ExtResource("1_f08fp")
 HealthData = SubResource("Resource_oqoio")
 MeleeAttackData = SubResource("Resource_otv10")
+MovementData = SubResource("Resource_sny7q")
 EntityName = "Fighter"
 ImplementedInterfaces = Array[int]([0, 1])
 metadata/_custom_type_script = "uid://dthy0jxsn1nci"

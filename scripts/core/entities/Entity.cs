@@ -7,15 +7,17 @@ using Scribe.Scripts.AI;
 
 namespace Scribe.Scripts.Core.Entities;
 
-public partial class Entity : RefCounted, IDamageable, IMeleeAttacker
+public partial class Entity : RefCounted, IDamageable, IMeleeAttacker, IMovable
 {
     private readonly List<Component> _components = new();
     private readonly Dictionary<Type, Component> _componentsByType = new();
     
     public string Name { get; set; }
     public Vector2I GridPosition { get; set; }
+    public ControllerType Controller { get; set; } = ControllerType.AI;
+    public string OwnerPlayerId { get; set; }  // For future multiplayer
     
-    public bool IsAI => GetComponent<AIComponent>() != null;
+    public bool IsAI => Controller == ControllerType.AI && GetComponent<AIComponent>() != null;
     
     public void AddComponent(Component component)
     {
@@ -95,6 +97,31 @@ public partial class Entity : RefCounted, IDamageable, IMeleeAttacker
     {
         return GetComponent<MeleeAttackComponent>()?.MeleeAttack(target) 
             ?? new AttackResult(false, 0, 0);
+    }
+    
+    #endregion
+    
+    #region IMovable Implementation
+    
+    public int WalkSpeed => GetComponent<MovementComponent>()?.WalkSpeed ?? 30;
+    public int FlySpeed => GetComponent<MovementComponent>()?.FlySpeed ?? 0;
+    public int SwimSpeed => GetComponent<MovementComponent>()?.SwimSpeed ?? 0;
+    public int ClimbSpeed => GetComponent<MovementComponent>()?.ClimbSpeed ?? 0;
+    public int MovementRemaining => GetComponent<MovementComponent>()?.MovementRemaining ?? 0;
+    
+    public void ResetMovement()
+    {
+        GetComponent<MovementComponent>()?.ResetMovement();
+    }
+    
+    public bool CanAffordMove(int cost)
+    {
+        return GetComponent<MovementComponent>()?.CanAffordMove(cost) ?? false;
+    }
+    
+    public void SpendMovement(int cost)
+    {
+        GetComponent<MovementComponent>()?.SpendMovement(cost);
     }
     
     #endregion

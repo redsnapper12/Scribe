@@ -18,7 +18,7 @@ public enum TerrainType
 /// </summary>
 public partial class GridManager : Node2D
 {
-    public const int CELL_SIZE = 32;
+    public const int CELL_SIZE = 64;
     public const int FEET_PER_CELL = 5;
 
     [ExportCategory("Grid Configuration")]
@@ -208,7 +208,6 @@ public partial class GridManager : Node2D
         if (tileData == null)
             return false;
 
-        // Check custom data property "blocks_sight" (default false)
         var blocksData = tileData.GetCustomData("blocks_sight");
         if (blocksData.VariantType == Variant.Type.Nil)
             return false;
@@ -275,16 +274,21 @@ public partial class GridManager : Node2D
         var openSet = new List<Vector2I> { start };
         var cameFrom = new Dictionary<Vector2I, Vector2I>();
         var gScore = new Dictionary<Vector2I, int> { [start] = 0 };
-        var fScore = new Dictionary<Vector2I, int> { [start] = GetDistanceInCells(start, goal) };
+        var fScore = new Dictionary<Vector2I, float> { [start] = GetDistanceInCells(start, goal) };
+
+        // Pre-calculate the direction vector for cross-product tiebreaker
+        float dx = goal.X - start.X;
+        float dy = goal.Y - start.Y;
 
         while (openSet.Count > 0)
         {
             // Find node with lowest fScore
             var current = openSet[0];
-            int lowestF = fScore.GetValueOrDefault(current, int.MaxValue);
+            float lowestF = fScore.GetValueOrDefault(current, float.MaxValue);
+
             foreach (var node in openSet)
             {
-                int nodeF = fScore.GetValueOrDefault(node, int.MaxValue);
+                float nodeF = fScore.GetValueOrDefault(node, float.MaxValue);
                 if (nodeF < lowestF)
                 {
                     current = node;
@@ -315,7 +319,17 @@ public partial class GridManager : Node2D
                 {
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = tentativeGScore;
-                    fScore[neighbor] = tentativeGScore + GetDistanceInCells(neighbor, goal);
+                    
+                    // Calculate heuristic with cross-product tiebreaker
+                    float h = GetDistanceInCells(neighbor, goal);
+                    
+                    // Cross-product tiebreaker: penalize deviation from direct line
+                    float dx2 = neighbor.X - goal.X;
+                    float dy2 = neighbor.Y - goal.Y;
+                    float cross = Mathf.Abs(dx * dy2 - dy * dx2);
+                    h += cross * 0.001f;  // Small penalty for deviation
+                    
+                    fScore[neighbor] = tentativeGScore + h;
 
                     if (!openSet.Contains(neighbor))
                     {
@@ -325,7 +339,7 @@ public partial class GridManager : Node2D
             }
         }
 
-        return null; // No path found
+        return null;
     }
 
     private List<Vector2I> ReconstructPath(Dictionary<Vector2I, Vector2I> cameFrom, Vector2I current)

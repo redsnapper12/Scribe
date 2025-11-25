@@ -1,0 +1,10 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://cywf1n3055jv2"]
+
+[ext_resource type="FontFile" uid="uid://btiroqy7ntv4i" path="res://themes/fonts/inconsolatas/inconsolata_variablefont.ttf" id="1_v6nm2"]
+
+[resource]
+base_font = ExtResource("1_v6nm2")
+variation_opentype = {
+2003072104: 100,
+2003265652: 800
+}

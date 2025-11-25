@@ -9,6 +9,7 @@ public partial class MonsterData : EntityData
     [ExportGroup("Combat Components")]
     [Export] public HealthComponentData HealthData { get; set; }
     [Export] public MeleeAttackComponentData MeleeAttackData { get; set; }
+    [Export] public MovementComponentData MovementData { get; set; }
     [Export] public AIComponentData AIData { get; set; }
     
     [ExportGroup("Monster Info")]

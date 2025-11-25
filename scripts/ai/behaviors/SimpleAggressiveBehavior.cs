@@ -8,46 +8,116 @@ namespace Scribe.Scripts.AI.Behaviors;
 
 public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
 {
-    private int _movementCells = 6;  // Default 30ft = 6 cells
-    
     public void Initialize(Dictionary parameters)
     {
-        if (parameters.ContainsKey("movement_speed"))
-        {
-            // Convert feet to cells
-            int feet = parameters["movement_speed"].AsInt32();
-            _movementCells = feet / GridManager.FEET_PER_CELL;
-        }
-    }
     
+    }
+
     public void Execute(Entity self, BattleContext context)
     {
         var target = context.FindNearestEnemy(self);
-        
+
         if (target == null)
             return;
-        
+
+        // If in melee range, attack
         if (context.IsInMeleeRange(self, target))
         {
-            if (self is IMeleeAttacker attacker && target is IDamageable damageable)
-            {
-                var result = attacker.MeleeAttack(damageable);
-                
-                GD.Print($"{self.Name} attacks {target.Name}!");
-                if (result.Hit)
-                {
-                    GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.CriticalHit ? " (CRITICAL!)" : "")}");
-                }
-                else
-                {
-                    GD.Print($"  Miss! Rolled {result.AttackRoll}");
-                }
-            }
+            PerformAttack(self, target);
         }
         else
         {
-            context.MoveToward(self, target.GridPosition, _movementCells);
-            GD.Print($"{self.Name} moves toward {target.Name}");
+            // Find an adjacent cell to the target, not the target's cell itself
+            var destination = FindAdjacentCell(self, target, context);
+
+            if (destination.HasValue)
+            {
+                var request = new MovementRequest(destination.Value, ControllerType.AI);
+                var result = MovementService.RequestMove(self, request);
+
+                if (result.Success && result.MovementSpent > 0)
+                {
+                    GD.Print($"{self.Name} moves toward {target.Name}");
+
+                    // After moving, check if now in range to attack
+                    if (context.IsInMeleeRange(self, target))
+                    {
+                        PerformAttack(self, target);
+                    }
+                }
+            }
+        }
+    }
+    
+    private Vector2I? FindAdjacentCell(Entity self, Entity target, BattleContext context)
+    {
+        Vector2I targetPos = target.GridPosition;
+        Vector2I selfPos = self.GridPosition;
+        Vector2I? bestCell = null;
+        int shortestPathLength = int.MaxValue;
+        float bestDirectionScore = float.MaxValue;
+        
+        for (int dx = -1; dx <= 1; dx++)
+        {
+            for (int dy = -1; dy <= 1; dy++)
+            {
+                if (dx == 0 && dy == 0)
+                    continue;
+                
+                Vector2I candidate = new Vector2I(targetPos.X + dx, targetPos.Y + dy);
+                
+                if (!context.GridManager.IsValidGridPosition(candidate))
+                    continue;
+                if (!context.GridManager.IsWalkable(candidate))
+                    continue;
+                if (GameManager.Instance.IsCellOccupied(candidate, self))
+                    continue;
+                
+                var path = context.GridManager.FindPath(
+                    selfPos, 
+                    candidate, 
+                    pos => GameManager.Instance.IsCellOccupied(pos, self)
+                );
+                
+                if (path != null && path.Count > 0)
+                {
+                    // Calculate how well this candidate aligns with our approach direction
+                    // Lower score = better (candidate is in the direction we're coming from)
+                    float directionScore = Mathf.Sqrt(
+                        Mathf.Pow(candidate.X - selfPos.X, 2) + 
+                        Mathf.Pow(candidate.Y - selfPos.Y, 2)
+                    );
+                    
+                    // Prefer shorter paths, then prefer cells closer to our current position
+                    if (path.Count < shortestPathLength || 
+                        (path.Count == shortestPathLength && directionScore < bestDirectionScore))
+                    {
+                        shortestPathLength = path.Count;
+                        bestDirectionScore = directionScore;
+                        bestCell = candidate;
+                    }
+                }
+            }
+        }
+        
+        return bestCell;
+    }
+
+    private void PerformAttack(Entity self, Entity target)
+    {
+        if (self is IMeleeAttacker attacker && target is IDamageable damageable)
+        {
+            var result = attacker.MeleeAttack(damageable);
+            
+            GD.Print($"{self.Name} attacks {target.Name}!");
+            if (result.Hit)
+            {
+                GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.CriticalHit ? " (CRITICAL!)" : "")}");
+            }
+            else
+            {
+                GD.Print($"  Miss! Rolled {result.AttackRoll}");
+            }
         }
     }
 }

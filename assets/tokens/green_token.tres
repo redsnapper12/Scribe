@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://qc6wji07rflj"]
+
+[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="1_tqsmy"]
+
+[resource]
+atlas = ExtResource("1_tqsmy")
+region = Rect2(384, 512, 64, 64)

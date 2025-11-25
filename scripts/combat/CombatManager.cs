@@ -5,6 +5,7 @@ using Scribe.Scripts.Core;
 using Scribe.Scripts.Core.Entities;
 using Scribe.Scripts.Core.Interfaces;
 using Scribe.Scripts.AI;
+using Scribe.Scripts.Data.EntityDataTypes;
 
 namespace Scribe.Scripts.Combat;
 
@@ -18,11 +19,12 @@ public partial class CombatManager : Node
     private bool _setupComplete = false;
     
     [Export] public TileMapLayer BattleGrid { get; set; }
-    [Export] public GridManager GridManager { get; set; } // Add GridManager export
+    [Export] public GridManager GridManager { get; set; }
+    [Export] public GameManager GameManager { get; set; }
     [Export] public EntityNode PlayerEntityNode { get; set; }
     [Export] public EntityNode GoblinEntityNode { get; set; }
-    [Export] public string PlayerDataPath { get; set; } = "res://resources/entities/characters/fighter_character.tres";
-    [Export] public string GoblinDataPath { get; set; } = "res://resources/entities/monsters/goblin_monster.tres";
+    [Export] public CharacterData PlayerData { get; set; }
+    [Export] public MonsterData GoblinData { get; set; }
     
     [Signal]
     public delegate void CombatStartedEventHandler();
@@ -77,18 +79,6 @@ public partial class CombatManager : Node
             valid = false;
         }
         
-        if (string.IsNullOrEmpty(PlayerDataPath))
-        {
-            GD.PrintErr("CombatManager: PlayerDataPath is empty!");
-            valid = false;
-        }
-        
-        if (string.IsNullOrEmpty(GoblinDataPath))
-        {
-            GD.PrintErr("CombatManager: GoblinDataPath is empty!");
-            valid = false;
-        }
-        
         if (GridManager == null)
         {
             GD.PrintErr("CombatManager: GridManager is not assigned!");
@@ -100,24 +90,15 @@ public partial class CombatManager : Node
     
     private void SetupCombat()
     {
-        var player = EntityFactory.CreateFromPath(PlayerDataPath);
-        var goblin = EntityFactory.CreateFromPath(GoblinDataPath);
-        
-        if (player == null)
-        {
-            GD.PrintErr($"Failed to create player from: {PlayerDataPath}");
-            return;
-        }
-        
-        if (goblin == null)
-        {
-            GD.PrintErr($"Failed to create goblin from: {GoblinDataPath}");
-            return;
-        }
+        var player = EntityFactory.CreateEntity(PlayerData);
+        var goblin = EntityFactory.CreateEntity(GoblinData);
         
         player.GridPosition = new Vector2I(3, 3);
-        goblin.GridPosition = new Vector2I(9, 3);
+        goblin.GridPosition = new Vector2I(25, 10);
         
+        GameManager?.RegisterEntity(player);
+        GameManager?.RegisterEntity(goblin);
+
         PlayerEntityNode.Entity = player;
         GoblinEntityNode.Entity = goblin;
         
@@ -148,6 +129,9 @@ public partial class CombatManager : Node
             return;
         }
         
+        // Notify GameManager we're in combat
+        GameManager?.EnterCombat(this);
+        
         RollInitiative();
         
         _currentTurnIndex = 0;
@@ -164,6 +148,9 @@ public partial class CombatManager : Node
     {
         _combatActive = false;
         _initiativeRolls.Clear();
+         
+        GameManager?.ExitCombat();
+        
         EmitSignal(SignalName.CombatEnded);
         GD.Print("=== COMBAT END ===");
     }
@@ -229,12 +216,14 @@ public partial class CombatManager : Node
     private void ProcessAITurn(Entity entity)
     {
         GD.Print($"=== {entity.Name}'s Turn ===");
+        entity.ResetMovement();
         entity.Act(_battleContext);
     }
     
     private void ProcessPlayerTurn(Entity entity)
     {
         GD.Print($"=== {entity.Name}'s Turn ===");
+        entity.ResetMovement();
         EmitSignal(SignalName.PlayerTurnStarted);
     }
     

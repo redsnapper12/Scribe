@@ -1,6 +1,6 @@
-[gd_resource type="Theme" load_steps=3 format=3 uid="uid://d42gumxvbrem"]
+[gd_resource type="Theme" load_steps=4 format=3 uid="uid://d42gumxvbrem"]
 
-[ext_resource type="FontFile" uid="uid://btiroqy7ntv4i" path="res://themes/fonts/inconsolatas/Inconsolata-VariableFont_wdth,wght.ttf" id="1_2g1ym"]
+[ext_resource type="FontFile" uid="uid://btiroqy7ntv4i" path="res://themes/fonts/inconsolatas/inconsolata_variablefont.ttf" id="1_2g1ym"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2g1ym"]
 bg_color = Color(0.12941177, 0.12941177, 0.12941177, 1)
@@ -12,9 +12,12 @@ border_color = Color(0.103743516, 0.10374353, 0.103743516, 1)
 shadow_size = 2
 shadow_offset = Vector2(0, 1)
 
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_gnsgt"]
+
 [resource]
 default_font = ExtResource("1_2g1ym")
 Button/fonts/font = ExtResource("1_2g1ym")
 MainMenuButton/base_type = &"Button"
 MainMenuButton/font_sizes/font_size = 24
 MainMenuButton/styles/normal = SubResource("StyleBoxFlat_2g1ym")
+PanelContainer/styles/panel = SubResource("StyleBoxTexture_gnsgt")

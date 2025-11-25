@@ -9,6 +9,7 @@ public partial class CharacterData : EntityData
     [ExportGroup("Combat Components")]
     [Export] public HealthComponentData HealthData { get; set; }
     [Export] public MeleeAttackComponentData MeleeAttackData { get; set; }
+    [Export] public MovementComponentData MovementData { get; set; }
     
     [ExportGroup("Character Info")]
     [Export] public CharacterClass Class { get; set; }
