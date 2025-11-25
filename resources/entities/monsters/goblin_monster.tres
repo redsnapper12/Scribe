@@ -1,0 +1,36 @@
+[gd_resource type="Resource" script_class="MonsterData" load_steps=8 format=3 uid="uid://cv1jarukgwwu6"]
+
+[ext_resource type="Script" uid="uid://dwfj4uegmbn87" path="res://scripts/data/MonsterData.cs" id="1_1xvby"]
+[ext_resource type="Script" uid="uid://bv7vkcmilm1nm" path="res://scripts/data/component_data/AIComponentData.cs" id="1_lw02n"]
+[ext_resource type="Script" uid="uid://rafgoo10wir3" path="res://scripts/data/component_data/HealthComponentData.cs" id="2_emig4"]
+[ext_resource type="Script" uid="uid://dmgcm4vi3hnm2" path="res://scripts/data/component_data/MeleeAttackComponentData.cs" id="3_60xcs"]
+
+[sub_resource type="Resource" id="Resource_qpt00"]
+script = ExtResource("1_lw02n")
+metadata/_custom_type_script = "uid://bv7vkcmilm1nm"
+
+[sub_resource type="Resource" id="Resource_lvuuq"]
+script = ExtResource("2_emig4")
+MaxHP = 7
+ArmorClass = 15
+metadata/_custom_type_script = "uid://rafgoo10wir3"
+
+[sub_resource type="Resource" id="Resource_mpexx"]
+script = ExtResource("3_60xcs")
+AttackBonus = 4
+DamageBonus = 2
+DamageType = 2
+AttackName = "Scimitar"
+metadata/_custom_type_script = "uid://dmgcm4vi3hnm2"
+
+[resource]
+script = ExtResource("1_1xvby")
+HealthData = SubResource("Resource_lvuuq")
+MeleeAttackData = SubResource("Resource_mpexx")
+AIData = SubResource("Resource_qpt00")
+ChallengeRating = 0.25
+Size = 1
+EntityName = "Goblin"
+Type = 1
+ImplementedInterfaces = Array[int]([0, 1, 2])
+metadata/_custom_type_script = "uid://dwfj4uegmbn87"

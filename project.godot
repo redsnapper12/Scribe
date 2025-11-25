@@ -12,12 +12,22 @@ config_version=5
 
 config/name="Scribe"
 run/main_scene="uid://cddhjyyc73ibm"
-config/features=PackedStringArray("4.5", "Forward Plus")
+config/features=PackedStringArray("4.5", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
 [dotnet]
 
 project/assembly_name="Scribe"
+
+[file_customization]
+
+folder_colors={
+"res://assets/": "purple",
+"res://resources/": "orange",
+"res://scenes/": "blue",
+"res://scripts/": "green",
+"res://themes/": "pink"
+}
 
 [gui]
 

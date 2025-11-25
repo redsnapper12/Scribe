@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://duks3shw550ua"]
+
+[ext_resource type="Texture2D" uid="uid://2os66vq85781" path="res://assets/tiles/test_atlas.png" id="1_1n3n2"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_j8ivh"]
+texture = ExtResource("1_1n3n2")
+texture_region_size = Vector2i(32, 32)
+0:0/0 = 0
+0:0/0/custom_data_0 = true
+1:0/0 = 0
+1:0/0/custom_data_1 = true
+
+[sub_resource type="TileSet" id="TileSet_nd71p"]
+tile_size = Vector2i(32, 32)
+custom_data_layer_0/name = "walkable"
+custom_data_layer_0/type = 1
+custom_data_layer_1/name = "blocks_sight"
+custom_data_layer_1/type = 1
+sources/0 = SubResource("TileSetAtlasSource_j8ivh")
+
+[node name="BattleGrid" type="TileMapLayer"]
+tile_set = SubResource("TileSet_nd71p")
