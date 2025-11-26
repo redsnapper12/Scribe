@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://daatjylad8ont"]
+
+[ext_resource type="Script" uid="uid://cw5k6sarmm88c" path="res://scripts/combat/BattleGridView.cs" id="1_0y047"]
+[ext_resource type="PackedScene" uid="uid://ch7a7lqukxvcx" path="res://scenes/combat/grid_manager.tscn" id="3_umyki"]
+[ext_resource type="Script" uid="uid://cpspdraldmpbs" path="res://scripts/combat/GridInteraction.cs" id="4_d7o82"]
+[ext_resource type="Script" uid="uid://b8lt2qhqunswo" path="res://scripts/ui/MovementOverlay.cs" id="5_5d2bs"]
+
+[node name="BattleGridView" type="Node2D" node_paths=PackedStringArray("GridManager", "EntityContainer", "MovementOverlay", "GridInteraction", "Camera")]
+script = ExtResource("1_0y047")
+GridManager = NodePath("GridManager")
+EntityContainer = NodePath("EntityContainer")
+MovementOverlay = NodePath("OverlayContainer/MovementOverlay")
+GridInteraction = NodePath("GridInteraction")
+Camera = NodePath("Camera2D")
+
+[node name="GridManager" parent="." instance=ExtResource("3_umyki")]
+GridHeight = 25
+LineWidth = 2.0
+
+[node name="GridInteraction" type="Node2D" parent="."]
+script = ExtResource("4_d7o82")
+
+[node name="EntityContainer" type="Node2D" parent="."]
+
+[node name="OverlayContainer" type="Node2D" parent="."]
+
+[node name="MovementOverlay" type="Node2D" parent="OverlayContainer"]
+z_index = 1
+script = ExtResource("5_5d2bs")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0

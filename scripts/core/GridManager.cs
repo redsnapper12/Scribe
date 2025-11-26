@@ -30,8 +30,7 @@ public partial class GridManager : Node2D
     [Export] public float LineWidth { get; set; } = 1.0f;
     [Export] public bool DrawGrid { get; set; } = true;
 
-    [ExportCategory("Tile Map")]
-    [Export] public TileMapLayer WalkableLayer { get; set; }
+    public TileMapLayer WalkableLayer { get; set; }
 
     public override void _Ready()
     {

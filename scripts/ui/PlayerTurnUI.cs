@@ -1,19 +1,24 @@
 using Godot;
+using Scribe.Scripts.Core;
 using Scribe.Scripts.Core.Entities;
 using Scribe.Scripts.Combat;
-using System.Collections.Generic;
 
 namespace Scribe.Scripts.UI;
 
 public partial class PlayerTurnUI : Control
 {
     [Export] public CombatManager CombatManager { get; set; }
+    [Export] public BattleGridView BattleGridView { get; set; }
+    
+    [ExportGroup("UI Elements")]
     [Export] public Label TurnLabel { get; set; }
+    [Export] public Label MovementLabel { get; set; }
     [Export] public Button AttackButton { get; set; }
     [Export] public Button EndTurnButton { get; set; }
     [Export] public VBoxContainer TargetContainer { get; set; }
     
     private bool _selectingTarget = false;
+    private Entity _currentEntity;
     
     public override void _Ready()
     {
@@ -29,6 +34,11 @@ public partial class PlayerTurnUI : Control
         {
             CombatManager.TurnChanged += OnTurnChanged;
         }
+        
+        if (BattleGridView != null)
+        {
+            BattleGridView.MovementCompleted += OnMovementCompleted;
+        }
     }
     
     private void OnTurnChanged(Entity entity)
@@ -36,6 +46,9 @@ public partial class PlayerTurnUI : Control
         if (entity.IsAI)
         {
             Visible = false;
+            BattleGridView?.HideMovementRange();
+            BattleGridView?.DisableInteraction();
+            _currentEntity = null;
         }
         else
         {
@@ -45,15 +58,39 @@ public partial class PlayerTurnUI : Control
     
     private void ShowPlayerTurn(Entity player)
     {
+        _currentEntity = player;
         Visible = true;
         
         if (TurnLabel != null)
             TurnLabel.Text = $"{player.Name}'s Turn";
         
+        UpdateMovementLabel();
+        
         _selectingTarget = false;
         
         if (TargetContainer != null)
             TargetContainer.Visible = false;
+        
+        // Enable movement on the grid
+        if (BattleGridView != null)
+        {
+            BattleGridView.SelectEntity(player);
+            BattleGridView.ShowMovementRange(player);
+            BattleGridView.EnableInteraction();
+        }
+    }
+    
+    private void UpdateMovementLabel()
+    {
+        if (MovementLabel != null && _currentEntity != null)
+        {
+            MovementLabel.Text = $"Movement: {_currentEntity.MovementRemaining}/{_currentEntity.WalkSpeed} ft";
+        }
+    }
+    
+    private void OnMovementCompleted(int movementRemaining)
+    {
+        UpdateMovementLabel();
     }
     
     private void OnAttackPressed()
@@ -64,6 +101,8 @@ public partial class PlayerTurnUI : Control
     
     private void OnEndTurnPressed()
     {
+        BattleGridView?.HideMovementRange();
+        BattleGridView?.DisableInteraction();
         CombatManager?.PlayerEndTurn();
     }
     
@@ -108,5 +147,8 @@ public partial class PlayerTurnUI : Control
             TargetContainer.Visible = false;
         
         _selectingTarget = false;
+        
+        // Update movement display after attack (in case we add attack-of-opportunity movement cost later)
+        UpdateMovementLabel();
     }
 }

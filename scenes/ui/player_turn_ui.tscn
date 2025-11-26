@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dbfysmfot8hum" path="res://scripts/ui/PlayerTurnUI.cs" id="1_35moi"]
 
-[node name="PlayerTurnUI" type="Control" node_paths=PackedStringArray("TurnLabel", "AttackButton", "EndTurnButton", "TargetContainer")]
+[node name="PlayerTurnUI" type="Control" node_paths=PackedStringArray("TurnLabel", "MovementLabel", "AttackButton", "EndTurnButton", "TargetContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,6 +13,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_35moi")
 TurnLabel = NodePath("Panel/MarginContainer/VBoxContainer/TurnLabel")
+MovementLabel = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/MovementLabel")
 AttackButton = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/AttackButton")
 EndTurnButton = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/EndTurnButton")
 TargetContainer = NodePath("Panel/MarginContainer/VBoxContainer/TargetContainer")
@@ -47,6 +48,10 @@ text = "Attack"
 [node name="EndTurnButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ActionButtons"]
 layout_mode = 2
 text = "End Turn"
+
+[node name="MovementLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ActionButtons"]
+layout_mode = 2
+size_flags_horizontal = 2
 
 [node name="TargetContainer" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
 visible = false

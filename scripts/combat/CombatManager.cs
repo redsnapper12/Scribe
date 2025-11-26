@@ -18,13 +18,14 @@ public partial class CombatManager : Node
     private BattleContext _battleContext;
     private bool _setupComplete = false;
     
-    [Export] public TileMapLayer BattleGrid { get; set; }
-    [Export] public GridManager GridManager { get; set; }
+    [Export] public BattleGridView BattleGridView { get; set; }
     [Export] public GameManager GameManager { get; set; }
-    [Export] public EntityNode PlayerEntityNode { get; set; }
-    [Export] public EntityNode GoblinEntityNode { get; set; }
     [Export] public CharacterData PlayerData { get; set; }
     [Export] public MonsterData GoblinData { get; set; }
+    
+    // Convenience properties to access through BattleGridView
+    private GridManager GridManager => BattleGridView?.GridManager;
+    private TileMapLayer BattleGrid => BattleGridView?.TileMap;
     
     [Signal]
     public delegate void CombatStartedEventHandler();
@@ -40,17 +41,17 @@ public partial class CombatManager : Node
     
     public override void _Ready()
     {
-        _battleContext = new BattleContext
-        {
-            BattleGrid = BattleGrid,
-            GridManager = GridManager // Pass GridManager to BattleContext
-        };
-        
         if (!ValidateSetup())
         {
             GD.PrintErr("CombatManager: Failed validation");
             return;
         }
+        
+        _battleContext = new BattleContext
+        {
+            BattleGrid = BattleGrid,
+            GridManager = GridManager
+        };
     }
     
     public override void _Process(double delta)
@@ -67,23 +68,18 @@ public partial class CombatManager : Node
     {
         bool valid = true;
         
-        if (PlayerEntityNode == null)
+        if (BattleGridView == null)
         {
-            GD.PrintErr("CombatManager: PlayerEntityNode is not assigned!");
+            GD.PrintErr("CombatManager: BattleGridView is not assigned!");
             valid = false;
         }
         
-        if (GoblinEntityNode == null)
+        if (GameManager == null)
         {
-            GD.PrintErr("CombatManager: GoblinEntityNode is not assigned!");
+            GD.PrintErr("CombatManager: GameManager is not assigned!");
             valid = false;
         }
-        
-        if (GridManager == null)
-        {
-            GD.PrintErr("CombatManager: GridManager is not assigned!");
-            valid = false;
-        }
+    
         
         return valid;
     }
@@ -94,17 +90,33 @@ public partial class CombatManager : Node
         var goblin = EntityFactory.CreateEntity(GoblinData);
         
         player.GridPosition = new Vector2I(3, 3);
-        goblin.GridPosition = new Vector2I(25, 10);
+        goblin.GridPosition = new Vector2I(9, 3);
         
+        // Register entities with GameManager
         GameManager?.RegisterEntity(player);
         GameManager?.RegisterEntity(goblin);
-
-        PlayerEntityNode.Entity = player;
-        GoblinEntityNode.Entity = goblin;
+        
+        // Create EntityNodes and add to BattleGridView
+        var playerNode = CreateEntityNode(player);
+        var goblinNode = CreateEntityNode(goblin);
+        
+        if (BattleGridView?.EntityContainer != null)
+        {
+            BattleGridView.EntityContainer.AddChild(playerNode);
+            BattleGridView.EntityContainer.AddChild(goblinNode);
+        }
         
         _combatants = new List<Entity> { player, goblin };
         
         CallDeferred(nameof(StartCombatDeferred));
+    }
+    
+    private EntityNode CreateEntityNode(Entity entity)
+    {
+        var scene = GD.Load<PackedScene>("res://scenes/entities/entity_node.tscn");
+        var node = scene.Instantiate<EntityNode>();
+        node.Entity = entity;
+        return node;
     }
     
     private void StartCombatDeferred()
@@ -148,7 +160,8 @@ public partial class CombatManager : Node
     {
         _combatActive = false;
         _initiativeRolls.Clear();
-         
+        
+        // Notify GameManager combat ended
         GameManager?.ExitCombat();
         
         EmitSignal(SignalName.CombatEnded);
@@ -282,7 +295,6 @@ public partial class CombatManager : Node
         }
         
         // Sort by initiative (highest first), with random tiebreaker for now
-        // TODO: Use DEX modifier as tiebreaker when ability scores are wired up
         _combatants = _combatants
             .OrderByDescending(e => _initiativeRolls[e])
             .ThenByDescending(_ => random.Next())

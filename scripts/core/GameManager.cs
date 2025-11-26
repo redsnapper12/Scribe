@@ -11,7 +11,7 @@ public partial class GameManager : Node
 {
     public static GameManager Instance { get; private set; }
     
-    [Export] public GridManager GridManager { get; set; }
+    [Export] public BattleGridView BattleGridView { get; set; }
     
     public MovementMode CurrentMovementMode { get; private set; } = MovementMode.Exploration;
     public bool IsInCombat => CurrentMovementMode == MovementMode.Combat;
@@ -28,6 +28,8 @@ public partial class GameManager : Node
     public delegate void CombatEndedEventHandler();
 
     public List<Entity> AllEntities { get; } = new();
+
+    private GridManager GridManager => BattleGridView?.GridManager;
     
     public void RegisterEntity(Entity entity)
     {

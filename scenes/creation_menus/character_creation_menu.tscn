@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bk8a8jc1q34dd"]
+[gd_scene load_steps=4 format=3 uid="uid://2sg2g2v6ppja"]
 
-[ext_resource type="LabelSettings" uid="uid://dcdm78ayupuj3" path="res://themes/labels/subtitle.tres" id="1_qu8lt"]
-[ext_resource type="FontVariation" uid="uid://cywf1n3055jv2" path="res://themes/fonts/inconsolatas/inconsolatas_bold.tres" id="2_cr4mv"]
+[ext_resource type="LabelSettings" uid="uid://dcdm78ayupuj3" path="res://themes/labels/subtitle.tres" id="1_vmocd"]
+[ext_resource type="FontVariation" uid="uid://cywf1n3055jv2" path="res://themes/fonts/inconsolatas/inconsolatas_bold.tres" id="2_md6ak"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_qd54o"]
-font = ExtResource("2_cr4mv")
+font = ExtResource("2_md6ak")
 font_size = 18
 
 [node name="CharacterCreationWizard" type="Control"]
@@ -49,7 +49,7 @@ theme_override_constants/margin_bottom = 10
 layout_mode = 2
 size_flags_horizontal = 0
 text = "Create New Character"
-label_settings = ExtResource("1_qu8lt")
+label_settings = ExtResource("1_vmocd")
 
 [node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/TopRow/VBoxContainer"]
 layout_mode = 2
