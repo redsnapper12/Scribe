@@ -10,15 +10,16 @@ public partial class BattleGridView : Node2D
     #region Exports
 
     [ExportGroup("External References")]
-    [Export] public TileMapLayer TileMap { get; set; }
-    
+    [Export] public TileMapLayer GroundLayer { get; set; }
+    [Export] public TileMapLayer OverlayLayer { get; set; }
+
     [ExportGroup("Child References")]
     [Export] public GridManager GridManager { get; set; }
     [Export] public Node2D EntityContainer { get; set; }
     [Export] public MovementOverlay MovementOverlay { get; set; }
     [Export] public GridInteraction GridInteraction { get; set; }
     [Export] public Camera2D Camera { get; set; }
-    
+
     #endregion
     
     #region Signals
@@ -48,10 +49,12 @@ public partial class BattleGridView : Node2D
     #endregion
     
     public override void _Ready()
-    {   
-        if (GridManager != null && TileMap != null)
+    {
+        if (GridManager != null)
         {
-            GridManager.WalkableLayer = TileMap;
+            // Assign layers to GridManager
+            GridManager.GroundLayer = GroundLayer;
+            GridManager.OverlayLayer = OverlayLayer;
         }
 
         if (GridInteraction != null)

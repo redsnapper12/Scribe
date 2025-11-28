@@ -25,7 +25,7 @@ public partial class CombatManager : Node
     
     // Convenience properties to access through BattleGridView
     private GridManager GridManager => BattleGridView?.GridManager;
-    private TileMapLayer BattleGrid => BattleGridView?.TileMap;
+    private TileMapLayer BattleGrid => BattleGridView?.GroundLayer;
     
     [Signal]
     public delegate void CombatStartedEventHandler();

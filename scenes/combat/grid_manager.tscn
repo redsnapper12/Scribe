@@ -2,7 +2,8 @@
 
 [ext_resource type="Script" uid="uid://7vdd5f6pssxv" path="res://scripts/core/GridManager.cs" id="1_e0g48"]
 
-[node name="GridManager" type="Node2D" node_paths=PackedStringArray("WalkableLayer")]
+[node name="GridManager" type="Node2D" node_paths=PackedStringArray("GroundLayer", "OverlayLayer")]
 script = ExtResource("1_e0g48")
 GridWidth = 35
-WalkableLayer = NodePath("")
+GroundLayer = NodePath("")
+OverlayLayer = NodePath("")

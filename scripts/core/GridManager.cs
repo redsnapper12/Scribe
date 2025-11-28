@@ -12,6 +12,14 @@ public enum TerrainType
     Climbing
 }
 
+public enum Direction
+{
+    North = 0,  // -Y
+    East = 1,   // +X
+    South = 2,  // +Y
+    West = 3    // -X
+}
+
 /// <summary>
 /// Manages grid visualization and provides static utility methods for grid/world conversions.
 /// Each cell represents 5 feet in D&D 5e.
@@ -30,7 +38,16 @@ public partial class GridManager : Node2D
     [Export] public float LineWidth { get; set; } = 1.0f;
     [Export] public bool DrawGrid { get; set; } = true;
 
-    public TileMapLayer WalkableLayer { get; set; }
+    public TileMapLayer GroundLayer { get; set; }    // Base terrain (floors, grass, etc.)
+    public TileMapLayer OverlayLayer { get; set; }   // Objects on ground (walls, furniture, etc.)
+
+    private static readonly Vector2I[] DirectionVectors = new[]
+    {
+        new Vector2I(0, -1),  // North
+        new Vector2I(1, 0),   // East
+        new Vector2I(0, 1),   // South
+        new Vector2I(-1, 0)   // West
+    };
 
     public override void _Ready()
     {
@@ -121,6 +138,141 @@ public partial class GridManager : Node2D
 
     #endregion
 
+    #region Wall Blocking Utilities
+
+    /// <summary>
+    /// Rotates a 4-bit wall bitmask clockwise based on tile rotation.
+    /// Used to handle Godot's tile rotation which doesn't affect custom data.
+    /// </summary>
+    /// <param name="mask">4-bit bitmask (0-15) where bit 0=North, 1=East, 2=South, 3=West</param>
+    /// <param name="rotation">Rotation steps (0-3): 0=0°, 1=90°CW, 2=180°, 3=270°CW</param>
+    /// <returns>Rotated bitmask</returns>
+    private static int RotateBitmask(int mask, int rotation)
+    {
+        if (mask == 0 || rotation == 0)
+            return mask;
+
+        // Rotate bits clockwise by rotation steps
+        // Example: North wall (0001) rotated 90° CW → East wall (0010)
+        rotation = rotation % 4;  // Ensure rotation is 0-3
+
+        int rotated = 0;
+        for (int i = 0; i < 4; i++)
+        {
+            if ((mask & (1 << i)) != 0)
+            {
+                int newPos = (i + rotation) % 4;
+                rotated |= (1 << newPos);
+            }
+        }
+
+        return rotated;
+    }
+
+    /// <summary>
+    /// Gets the cardinal direction from a movement delta vector.
+    /// Returns null if the delta is not a cardinal direction.
+    /// </summary>
+    private Direction? GetCardinalDirection(Vector2I delta)
+    {
+        if (delta == new Vector2I(0, -1)) return Direction.North;
+        if (delta == new Vector2I(1, 0)) return Direction.East;
+        if (delta == new Vector2I(0, 1)) return Direction.South;
+        if (delta == new Vector2I(-1, 0)) return Direction.West;
+        return null;
+    }
+
+    /// <summary>
+    /// Checks if a cell has a wall that blocks movement in the specified direction.
+    /// In Godot 4, the wall_bitmask needs to be set per rotation in the TileSet editor.
+    /// </summary>
+    /// <param name="cell">Grid position to check</param>
+    /// <param name="direction">Direction to check for blocking</param>
+    /// <returns>True if the cell has a wall blocking that direction</returns>
+    private bool CellBlocksDirection(Vector2I cell, Direction direction)
+    {
+        if (OverlayLayer == null || !IsValidGridPosition(cell)) return false;
+
+        var tileData = OverlayLayer.GetCellTileData(cell);
+        if (tileData == null) return false;
+
+        var wallBitmaskData = tileData.GetCustomData("wall_bitmask");
+        if (wallBitmaskData.VariantType == Variant.Type.Nil) return false;
+
+        int wallBitmask = wallBitmaskData.AsInt32();
+        if (wallBitmask == 0) return false;
+
+        bool blocks = (wallBitmask & (1 << (int)direction)) != 0;
+        return blocks;
+    }
+
+    /// <summary>
+    /// Checks if movement from one cell to another is blocked by walls.
+    /// Checks both source and destination cells for blocking walls.
+    /// </summary>
+    /// <param name="from">Source cell</param>
+    /// <param name="to">Destination cell</param>
+    /// <returns>True if movement is blocked</returns>
+    public bool IsMovementBlocked(Vector2I from, Vector2I to)
+    {
+        // Check if either cell is unwalkable
+        if (!IsWalkable(from) || !IsWalkable(to))
+            return true;
+
+        // Calculate movement direction
+        Vector2I delta = to - from;
+
+        Direction? moveDirection = GetCardinalDirection(delta);
+        if (moveDirection.HasValue)
+        {
+            // Block if the shared edge is blocked by either cell.
+            // e.g. moving East from 'from' to 'to' is blocked if:
+            //    - the source cell has an East wall, OR
+            //    - the destination cell has a West wall
+            if (CellBlocksDirection(from, moveDirection.Value))
+                return true;
+
+            Direction oppositeDir = (Direction)(((int)moveDirection.Value + 2) % 4);
+            if (CellBlocksDirection(to, oppositeDir))
+                return true;
+
+            return false;
+        }
+
+        // Handle diagonal movement (NE/SE/SW/NW)
+        if (Mathf.Abs(delta.X) == 1 && Mathf.Abs(delta.Y) == 1)
+        {
+            return IsDiagonalBlocked(from, to, delta);
+        }
+
+        // Not a valid adjacent move
+        return true;
+    }
+
+    /// <summary>
+    /// Checks if diagonal movement is blocked.
+    /// Changed: diagonal movement is now blocked if either adjacent cardinal move is blocked.
+    /// Rationale: prevents corner-cutting across a single edge wall (matches single-sided wall blocking).
+    /// Example: moving NE is blocked if moving N is blocked OR moving E is blocked.
+    /// </summary>
+    private bool IsDiagonalBlocked(Vector2I from, Vector2I to, Vector2I delta)
+    {
+        // Adjacent cardinal positions for the diagonal
+        Vector2I cardinal1 = from + new Vector2I(delta.X, 0);  // horizontal neighbor (from -> from.x+dx, from.y)
+        Vector2I cardinal2 = from + new Vector2I(0, delta.Y);  // vertical neighbor (from -> from.x, from.y+dy)
+
+        // Check if moving to each cardinal would be blocked.
+        // Note: IsMovementBlocked for a cardinal uses CellBlocksDirection checks and walkability.
+        bool blocked1 = IsMovementBlocked(from, cardinal1);
+        bool blocked2 = IsMovementBlocked(from, cardinal2);
+
+        // Diagonal is blocked if either adjacent cardinal is blocked.
+        // This prevents cutting across a single wall edge.
+        return blocked1 || blocked2;
+    }
+
+    #endregion
+
     #region Instance Grid Utilities
 
     /// <summary>
@@ -160,81 +312,101 @@ public partial class GridManager : Node2D
     #region Tile Map Utilities
 
     /// <summary>
-    /// Checks if a grid cell is walkable (not blocked by terrain).
-    /// Returns true if walkable, false if blocked.
-    /// Uses TileData custom property "walkable" (defaults to true if no tile exists).
+    /// Checks if a grid cell is walkable (can be occupied).
+    /// Checks both ground and overlay layers.
+    /// Ground layer determines base walkability, overlay layer can restrict it.
+    /// Does NOT check directional walls - use IsMovementBlocked() for that.
     /// </summary>
     public bool IsWalkable(Vector2I gridPosition)
     {
-        if (WalkableLayer == null)
-        {
-            GD.PushWarning("WalkableLayer not assigned to GridManager");
-            return true; // Default to walkable if no layer assigned
-        }
-
         if (!IsValidGridPosition(gridPosition))
             return false;
 
-        var tileData = WalkableLayer.GetCellTileData(gridPosition);
+        // Check ground layer first
+        if (GroundLayer != null)
+        {
+            var groundTileData = GroundLayer.GetCellTileData(gridPosition);
+            if (groundTileData != null)
+            {
+                var groundWalkable = groundTileData.GetCustomData("walkable");
+                // If ground is explicitly unwalkable, cell is unwalkable
+                if (groundWalkable.VariantType != Variant.Type.Nil && !groundWalkable.AsBool())
+                    return false;
+            }
+        }
 
-        // If no tile exists, it's walkable
-        if (tileData == null)
-            return true;
+        // Check overlay layer (can only restrict, not enable)
+        if (OverlayLayer != null)
+        {
+            var overlayTileData = OverlayLayer.GetCellTileData(gridPosition);
+            if (overlayTileData != null)
+            {
+                var overlayWalkable = overlayTileData.GetCustomData("walkable");
+                // If overlay is explicitly unwalkable, cell is unwalkable
+                if (overlayWalkable.VariantType != Variant.Type.Nil && !overlayWalkable.AsBool())
+                    return false;
+            }
+        }
 
-        // Check custom data property "walkable" (default true)
-        var walkableData = tileData.GetCustomData("walkable");
-        if (walkableData.VariantType == Variant.Type.Nil)
-            return true;
-
-        return walkableData.AsBool();
+        // If we reach here, cell is walkable
+        return true;
     }
 
     /// <summary>
     /// Checks if a tile blocks line of sight.
+    /// Checks both ground and overlay layers.
     /// Uses TileData custom property "blocks_sight" (defaults to false).
     /// </summary>
     public bool BlocksSight(Vector2I gridPosition)
     {
-        if (WalkableLayer == null)
-            return false;
-
         if (!IsValidGridPosition(gridPosition))
             return false;
 
-        var tileData = WalkableLayer.GetCellTileData(gridPosition);
+        // Check ground layer
+        if (GroundLayer != null)
+        {
+            var groundTileData = GroundLayer.GetCellTileData(gridPosition);
+            if (groundTileData != null)
+            {
+                var blocksData = groundTileData.GetCustomData("blocks_sight");
+                if (blocksData.VariantType != Variant.Type.Nil && blocksData.AsBool())
+                    return true;
+            }
+        }
 
-        // If no tile exists, doesn't block sight
-        if (tileData == null)
-            return false;
+        // Check overlay layer
+        if (OverlayLayer != null)
+        {
+            var overlayTileData = OverlayLayer.GetCellTileData(gridPosition);
+            if (overlayTileData != null)
+            {
+                var blocksData = overlayTileData.GetCustomData("blocks_sight");
+                if (blocksData.VariantType != Variant.Type.Nil && blocksData.AsBool())
+                    return true;
+            }
+        }
 
-        var blocksData = tileData.GetCustomData("blocks_sight");
-        if (blocksData.VariantType == Variant.Type.Nil)
-            return false;
-
-        return blocksData.AsBool();
+        return false;
     }
 
     /// <summary>
-    /// Gets the terrain type of a grid cell.
+    /// Gets the terrain type of a grid cell from the ground layer.
     /// Uses TileData custom property "terrain_type" (defaults to Normal).
     /// </summary>
     public TerrainType GetTerrainType(Vector2I gridPosition)
     {
-        if (WalkableLayer == null)
+        if (GroundLayer == null || !IsValidGridPosition(gridPosition))
             return TerrainType.Normal;
 
-        if (!IsValidGridPosition(gridPosition))
-            return TerrainType.Normal;
+        var tileData = GroundLayer.GetCellTileData(gridPosition);
 
-        var tileData = WalkableLayer.GetCellTileData(gridPosition);
-        
         if (tileData == null)
             return TerrainType.Normal;
-        
+
         var terrainData = tileData.GetCustomData("terrain_type");
         if (terrainData.VariantType == Variant.Type.Nil)
             return TerrainType.Normal;
-        
+
         // Terrain type stored as int in tile data
         return (TerrainType)terrainData.AsInt32();
     }
@@ -365,10 +537,14 @@ public partial class GridManager : Node2D
                     continue;
 
                 var neighbor = new Vector2I(cell.X + dx, cell.Y + dy);
-                if (IsValidGridPosition(neighbor))
-                {
-                    neighbors.Add(neighbor);
-                }
+                if (!IsValidGridPosition(neighbor))
+                    continue;
+
+                // Check if movement is blocked by walls
+                if (IsMovementBlocked(cell, neighbor))
+                    continue;
+
+                neighbors.Add(neighbor);
             }
         }
 
