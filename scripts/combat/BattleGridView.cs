@@ -1,5 +1,4 @@
 using Godot;
-using System.Collections.Generic;
 using Scribe.Scripts.Core.Entities;
 using Scribe.Scripts.UI;
 

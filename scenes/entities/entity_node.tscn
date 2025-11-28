@@ -11,7 +11,7 @@ outline_size = 2
 outline_color = Color(0.034598753, 0.19363219, 0.13672972, 1)
 
 [node name="EntityNode" type="Node2D"]
-z_index = 1
+z_index = 2
 script = ExtResource("1_el4x3")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

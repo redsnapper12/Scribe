@@ -41,14 +41,6 @@ public partial class GridManager : Node2D
     public TileMapLayer GroundLayer { get; set; }    // Base terrain (floors, grass, etc.)
     public TileMapLayer OverlayLayer { get; set; }   // Objects on ground (walls, furniture, etc.)
 
-    private static readonly Vector2I[] DirectionVectors = new[]
-    {
-        new Vector2I(0, -1),  // North
-        new Vector2I(1, 0),   // East
-        new Vector2I(0, 1),   // South
-        new Vector2I(-1, 0)   // West
-    };
-
     public override void _Ready()
     {
         // Draw grid once on ready for static performance
@@ -141,35 +133,6 @@ public partial class GridManager : Node2D
     #region Wall Blocking Utilities
 
     /// <summary>
-    /// Rotates a 4-bit wall bitmask clockwise based on tile rotation.
-    /// Used to handle Godot's tile rotation which doesn't affect custom data.
-    /// </summary>
-    /// <param name="mask">4-bit bitmask (0-15) where bit 0=North, 1=East, 2=South, 3=West</param>
-    /// <param name="rotation">Rotation steps (0-3): 0=0°, 1=90°CW, 2=180°, 3=270°CW</param>
-    /// <returns>Rotated bitmask</returns>
-    private static int RotateBitmask(int mask, int rotation)
-    {
-        if (mask == 0 || rotation == 0)
-            return mask;
-
-        // Rotate bits clockwise by rotation steps
-        // Example: North wall (0001) rotated 90° CW → East wall (0010)
-        rotation = rotation % 4;  // Ensure rotation is 0-3
-
-        int rotated = 0;
-        for (int i = 0; i < 4; i++)
-        {
-            if ((mask & (1 << i)) != 0)
-            {
-                int newPos = (i + rotation) % 4;
-                rotated |= (1 << newPos);
-            }
-        }
-
-        return rotated;
-    }
-
-    /// <summary>
     /// Gets the cardinal direction from a movement delta vector.
     /// Returns null if the delta is not a cardinal direction.
     /// </summary>
@@ -257,18 +220,22 @@ public partial class GridManager : Node2D
     /// </summary>
     private bool IsDiagonalBlocked(Vector2I from, Vector2I to, Vector2I delta)
     {
-        // Adjacent cardinal positions for the diagonal
-        Vector2I cardinal1 = from + new Vector2I(delta.X, 0);  // horizontal neighbor (from -> from.x+dx, from.y)
-        Vector2I cardinal2 = from + new Vector2I(0, delta.Y);  // vertical neighbor (from -> from.x, from.y+dy)
+        // Cardinal neighbors
+        Vector2I c1 = from + new Vector2I(delta.X, 0);  // west/east
+        Vector2I c2 = from + new Vector2I(0, delta.Y);  // north/south
 
-        // Check if moving to each cardinal would be blocked.
-        // Note: IsMovementBlocked for a cardinal uses CellBlocksDirection checks and walkability.
-        bool blocked1 = IsMovementBlocked(from, cardinal1);
-        bool blocked2 = IsMovementBlocked(from, cardinal2);
+        // If either cardinal move is blocked then diagonal blocked
+        if (IsMovementBlocked(from, c1)) return true;
+        if (IsMovementBlocked(from, c2)) return true;
 
-        // Diagonal is blocked if either adjacent cardinal is blocked.
-        // This prevents cutting across a single wall edge.
-        return blocked1 || blocked2;
+        // 2. destination might block entering from either cardinal direction
+        Direction enterDir1 = GetCardinalDirection(new Vector2I(-delta.X, 0)).Value;  
+        Direction enterDir2 = GetCardinalDirection(new Vector2I(0, -delta.Y)).Value;
+
+        if (CellBlocksDirection(to, enterDir1)) return true;
+        if (CellBlocksDirection(to, enterDir2)) return true;
+
+        return false;
     }
 
     #endregion

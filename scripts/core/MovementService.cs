@@ -289,6 +289,9 @@ public static class MovementService
                     if (!_gridManager.IsWalkable(neighbor))
                         continue;
                     
+                    if(_gridManager.IsMovementBlocked(current, neighbor))
+                        continue;
+
                     int cellCost = _gridManager.GetCellMovementCost(neighbor);
                     int newCost = costSoFar + cellCost;
                     
