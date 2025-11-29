@@ -10,7 +10,7 @@ Data-driven entity construction from .tres files
 Phase 2: Movement & Positioning COMPLETE
 Phase 2A: Grid-Based Movement COMPLETE
 
-Grid visualization (32x32 pixels = 5 feet)
+Grid visualization (64x64 pixels = 5 feet)
 Coordinate conversion and cell highlighting
 Consolidated pathfinding (GridManager for terrain, BattleContext for entities)
 Clean separation between static grid utilities and dynamic combat pathfinding
@@ -38,7 +38,7 @@ D&D 5e melee attack implementation
 
 Phase 3B: Wall-Aware Attack System COMPLETE
 Wall blocking for melee attacks:
-  - CanAttackAcross() validates attack path through walls
+  - CanAttackAcross() validates the attack path through walls
   - CanMeleeAttack() comprehensive attack validation
   - AI pathfinding respects attack viability
   - Player UI filters unreachable targets
