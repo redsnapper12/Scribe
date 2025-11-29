@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://r46u2dho8c0v"]
+
+[ext_resource type="Script" uid="uid://bvns12pkr0lad" path="res://scripts/items/ItemNode.cs" id="1_a2low"]
+[ext_resource type="FontFile" uid="uid://btiroqy7ntv4i" path="res://themes/fonts/inconsolatas/inconsolata_variablefont.ttf" id="2_87hdu"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_t7dto"]
+font = ExtResource("2_87hdu")
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
+
+[node name="ItemNode" type="Node2D" node_paths=PackedStringArray("_sprite", "_nameLabel")]
+script = ExtResource("1_a2low")
+_sprite = NodePath("Sprite2D")
+_nameLabel = NodePath("NameLabel")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="NameLabel" type="Label" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -18.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_vertical = 8
+label_settings = SubResource("LabelSettings_t7dto")

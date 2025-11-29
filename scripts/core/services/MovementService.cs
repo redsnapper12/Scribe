@@ -251,7 +251,6 @@ public static class MovementService
         if (movement == null || !_initialized)
             return reachable;
         
-        int maxCells = movement.MovementRemaining / GridManager.FEET_PER_CELL;
         var start = entity.GridPosition;
         
         // Simple flood fill up to max range

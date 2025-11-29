@@ -109,33 +109,40 @@ public partial class PlayerTurnUI : Control
     private void ShowTargetSelection()
     {
         if (TargetContainer == null) return;
-        
+
         foreach (var child in TargetContainer.GetChildren())
         {
             child.QueueFree();
         }
-        
+
         var currentEntity = CombatManager?.GetCurrentTurnEntity();
         if (currentEntity == null) return;
-        
+
         var allCombatants = CombatManager.GetAllCombatants();
-        
+
+        // Access BattleContext to check attack validity (range + wall blocking)
+        var battleContext = CombatManager?.BattleContext;
+
         foreach (var entity in allCombatants)
         {
             if (entity != currentEntity && entity.IsAlive)
             {
+                // Only show targets that can be attacked (range + no wall blocking)
+                if (battleContext != null && !battleContext.CanMeleeAttack(currentEntity, entity))
+                    continue;
+
                 var targetButton = new Button
                 {
                     Text = $"{entity.Name} (HP: {entity.CurrentHP}/{entity.MaxHP})"
                 };
-                
+
                 var capturedEntity = entity;
                 targetButton.Pressed += () => OnTargetSelected(capturedEntity);
-                
+
                 TargetContainer.AddChild(targetButton);
             }
         }
-        
+
         TargetContainer.Visible = true;
     }
     

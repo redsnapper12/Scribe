@@ -54,11 +54,29 @@ public partial class BattleContext : RefCounted
     {
         return GridManager.GetDistanceInFeet(a.GridPosition, b.GridPosition);
     }
-    
-    public bool IsInMeleeRange(Entity attacker, Entity target)
+
+    /// <summary>
+    /// Comprehensive validation for melee attacks.
+    /// Checks range, wall blocking, and target validity.
+    /// This is the single source of truth for "can this entity melee attack that entity?"
+    /// </summary>
+    /// <param name="attacker">The attacking entity</param>
+    /// <param name="target">The target entity</param>
+    /// <returns>True if the attacker can legally melee attack the target</returns>
+    public bool CanMeleeAttack(Entity attacker, Entity target)
     {
-        int distance = GridManager.GetDistanceInFeet(attacker.GridPosition, target.GridPosition);
-        return distance <= attacker.MeleeRange;
+        if (attacker == null || target == null || !target.IsAlive)
+            return false;
+
+        // Range check (must be adjacent for melee)
+        if (!IsInMeleeRange(attacker, target))
+            return false;
+
+        // Wall blocking check - if walls block movement between cells, they block attacks too
+        if (GridManager != null && !GridManager.CanAttackAcross(attacker.GridPosition, target.GridPosition))
+            return false;
+
+        return true;
     }
     
     /// <summary>
@@ -104,7 +122,6 @@ public partial class BattleContext : RefCounted
     
     public Vector2I FindRetreatPosition(Entity self, Entity threat, int desiredDistanceFeet)
     {
-        // Simple retreat: move away from threat
         Vector2I selfPos = self.GridPosition;
         Vector2I threatPos = threat.GridPosition;
         
@@ -126,14 +143,18 @@ public partial class BattleContext : RefCounted
     {
         return !IsLineBlocked(observer.GridPosition, target.GridPosition);
     }
+
+    private bool IsInMeleeRange(Entity attacker, Entity target)
+    {
+        int distance = GridManager.GetDistanceInFeet(attacker.GridPosition, target.GridPosition);
+        return distance <= attacker.MeleeRange;
+    }
     
     private bool IsPositionBlocked(Vector2I gridPos, Entity movingEntity)
     {
-        // Check terrain blocking using GridManager
         if (GridManager != null && !GridManager.IsWalkable(gridPos))
             return true;
-        
-        // Check entity blocking
+
         foreach (var entity in AllEntities)
         {
             if (entity == movingEntity || !entity.IsAlive)

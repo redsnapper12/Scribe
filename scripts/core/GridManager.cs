@@ -1,6 +1,8 @@
 using Godot;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Scribe.Scripts.Items;
 
 namespace Scribe.Scripts.Core;
 
@@ -41,8 +43,16 @@ public partial class GridManager : Node2D
     public TileMapLayer GroundLayer { get; set; }    // Base terrain (floors, grass, etc.)
     public TileMapLayer OverlayLayer { get; set; }   // Objects on ground (walls, furniture, etc.)
 
+    // Ground item management
+    private readonly Dictionary<Vector2I, List<ItemNode>> _groundItems = new();
+    private Node3D _itemContainer;
+
     public override void _Ready()
     {
+        // Create container for item nodes
+        _itemContainer = new Node3D { Name = "ItemContainer" };
+        AddChild(_itemContainer);
+
         // Draw grid once on ready for static performance
         QueueRedraw();
     }
@@ -126,6 +136,25 @@ public partial class GridManager : Node2D
         int dx = Mathf.Abs(to.X - from.X);
         int dy = Mathf.Abs(to.Y - from.Y);
         return Mathf.Max(dx, dy); // Chebyshev distance
+    }
+
+    #endregion
+
+    #region Attack Validation
+
+    /// <summary>
+    /// Checks if a melee attack can be made from one cell to an adjacent cell.
+    /// Uses the same logic as IsMovementBlocked() - if movement is blocked by walls, attacks are also blocked.
+    /// </summary>
+    /// <param name="attackerPos">Attacker's grid position</param>
+    /// <param name="targetPos">Target's grid position</param>
+    /// <returns>True if attack is not blocked by walls</returns>
+    public bool CanAttackAcross(Vector2I attackerPos, Vector2I targetPos)
+    {
+        // If movement is blocked by walls, attack is also blocked
+        // Rationale: If you can't physically reach through a wall to move,
+        // you can't reach through it to swing a sword
+        return !IsMovementBlocked(attackerPos, targetPos);
     }
 
     #endregion
@@ -516,6 +545,111 @@ public partial class GridManager : Node2D
         }
 
         return neighbors;
+    }
+
+    #endregion
+
+    #region Ground Item Management
+
+    /// <summary>
+    /// Places an item on the ground at the specified grid position.
+    /// </summary>
+    public ItemNode PlaceItem(Item item, Vector2I position)
+    {
+        if (item == null || !IsValidGridPosition(position))
+        {
+            GD.PrintErr($"PlaceItem: Invalid item or position {position}");
+            return null;
+        }
+        // Create ItemNode
+        var itemNodeScene = GD.Load<PackedScene>("res://scenes/items/item_node.tscn");
+        var itemNode = itemNodeScene.Instantiate<ItemNode>();
+        _itemContainer.AddChild(itemNode);
+        itemNode.Initialize(item, position);
+
+        // Track in ground items dictionary
+        if (!_groundItems.ContainsKey(position))
+        {
+            _groundItems[position] = new List<ItemNode>();
+        }
+        _groundItems[position].Add(itemNode);
+
+        GD.Print($"Placed {item.DisplayName} at {position}");
+        return itemNode;
+    }
+
+    /// <summary>
+    /// Removes an item node from the ground.
+    /// </summary>
+    public void RemoveItem(ItemNode itemNode)
+    {
+        if (itemNode == null)
+            return;
+
+        var position = itemNode.GridPosition;
+        if (_groundItems.TryGetValue(position, out var items))
+        {
+            items.Remove(itemNode);
+            if (items.Count == 0)
+            {
+                _groundItems.Remove(position);
+            }
+        }
+
+        itemNode.QueueFree();
+        GD.Print($"Removed {itemNode.Item.DisplayName} from {position}");
+    }
+
+    /// <summary>
+    /// Gets all items at a specific grid position.
+    /// </summary>
+    public List<ItemNode> GetItemsAtPosition(Vector2I position)
+    {
+        if (_groundItems.TryGetValue(position, out var items))
+        {
+            return new List<ItemNode>(items);
+        }
+        return new List<ItemNode>();
+    }
+
+    /// <summary>
+    /// Gets the nearest item to a grid position within a maximum distance.
+    /// </summary>
+    public ItemNode GetNearestItem(Vector2I position, int maxDistance = 1)
+    {
+        ItemNode nearest = null;
+        int minDistance = int.MaxValue;
+
+        foreach (var kvp in _groundItems)
+        {
+            int distance = GetDistanceInCells(position, kvp.Key);
+            if (distance <= maxDistance && distance < minDistance)
+            {
+                minDistance = distance;
+                if (kvp.Value.Count > 0)
+                {
+                    nearest = kvp.Value[0];
+                }
+            }
+        }
+
+        return nearest;
+    }
+
+    /// <summary>
+    /// Checks if there are any items at the specified position.
+    /// </summary>
+    public bool HasItemsAt(Vector2I position)
+    {
+        return _groundItems.TryGetValue(position, out var items) && items.Count > 0;
+    }
+
+    /// <summary>
+    /// Gets all ground items in the grid.
+    /// </summary>
+    public IEnumerable<ItemNode> GetAllGroundItems()
+    {
+        return _groundItems.Values.SelectMany(list => list);
     }
 
     #endregion

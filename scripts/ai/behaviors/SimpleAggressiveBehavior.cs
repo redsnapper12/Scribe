@@ -20,14 +20,12 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
         if (target == null)
             return;
 
-        // If in melee range, attack
-        if (context.IsInMeleeRange(self, target))
+        if (context.CanMeleeAttack(self, target))
         {
             PerformAttack(self, target);
         }
         else
         {
-            // Find an adjacent cell to the target, not the target's cell itself
             var destination = FindAdjacentCell(self, target, context);
 
             if (destination.HasValue)
@@ -39,8 +37,7 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
                 {
                     GD.Print($"{self.Name} moves toward {target.Name}");
 
-                    // After moving, check if now in range to attack
-                    if (context.IsInMeleeRange(self, target))
+                    if (context.CanMeleeAttack(self, target))
                     {
                         PerformAttack(self, target);
                     }
@@ -72,7 +69,12 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
                     continue;
                 if (GameManager.Instance.IsCellOccupied(candidate, self))
                     continue;
-                
+
+                // Check if we can actually attack the target from this position
+                // No point moving here if walls block the attack
+                if (!context.GridManager.CanAttackAcross(candidate, targetPos))
+                    continue;
+
                 var path = context.GridManager.FindPath(
                     selfPos, 
                     candidate, 

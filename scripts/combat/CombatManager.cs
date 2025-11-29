@@ -17,6 +17,8 @@ public partial class CombatManager : Node
     private bool _combatActive = false;
     private BattleContext _battleContext;
     private bool _setupComplete = false;
+
+    public BattleContext BattleContext => _battleContext;
     
     [Export] public BattleGridView BattleGridView { get; set; }
     [Export] public GameManager GameManager { get; set; }
@@ -314,6 +316,12 @@ public partial class CombatManager : Node
     {
         var player = GetCurrentTurnEntity();
         if (player == null) return;
+
+        if (!_battleContext.CanMeleeAttack(player, target))
+        {
+            GD.PrintErr($"Invalid attack: {player.Name} cannot attack {target.Name} (out of range or blocked by walls)");
+            return;
+        }
 
         var result = player.MeleeAttack(target);
 

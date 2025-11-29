@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=9 format=3 uid="uid://2mpcrpblc0jf"]
+
+[ext_resource type="Script" uid="uid://dohqty7r15idd" path="res://scripts/data/component_data/items/ItemComponentData.cs" id="1_8hixe"]
+[ext_resource type="Script" uid="uid://c8gahe7vxjbup" path="res://scripts/data/component_data/items/UsableComponentData.cs" id="2"]
+[ext_resource type="Script" uid="uid://b15b03j0xap76" path="res://scripts/data/component_data/items/ValuableComponentData.cs" id="3"]
+[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="4_v6ba7"]
+[ext_resource type="Script" uid="uid://bgfhn4syul0ew" path="res://scripts/data/ItemData.cs" id="5_v6ba7"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("2")
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("3")
+GoldValue = 50
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_16bev"]
+atlas = ExtResource("4_v6ba7")
+region = Rect2(64, 512, 64, 64)
+
+[resource]
+script = ExtResource("5_v6ba7")
+ItemId = "health_potion"
+DisplayName = "Potion of Healing"
+Description = "A red liquid that restores health when consumed"
+Icon = SubResource("AtlasTexture_16bev")
+IsStackable = true
+MaxStackSize = 20
+Weight = 0.5
+ComponentData = Array[ExtResource("1_8hixe")]([SubResource("1"), SubResource("2")])

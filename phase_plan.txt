@@ -1,0 +1,120 @@
+Phase 1: Core Combat Foundation COMPLETE
+
+Basic entity system with component architecture
+Turn-based combat mechanics with initiative
+Simple Fighter vs Goblin vertical slice
+Basic AI behavior (movement, targeting, attacks)
+Victory conditions and entity lifecycle management
+Data-driven entity construction from .tres files
+
+Phase 2: Movement & Positioning COMPLETE
+Phase 2A: Grid-Based Movement COMPLETE
+
+Grid visualization (32x32 pixels = 5 feet)
+Coordinate conversion and cell highlighting
+Consolidated pathfinding (GridManager for terrain, BattleContext for entities)
+Clean separation between static grid utilities and dynamic combat pathfinding
+
+Phase 2B: Movement Component COMPLETE
+
+MovementComponent architecture supporting both AI and player control
+Manual player movement with click-to-move
+Movement budget system (speed tracking)
+Integration with existing AI pathfinding
+Half-tile wall movement system implemented:
+  - Directional wall blocking using bitmask (North/East/South/West)
+  - Single-sided walls block bidirectionally
+  - Diagonal movement respects wall edges
+  - Integrated with pathfinding and reachable cell calculation
+
+Phase 3: Attack Resolution IN PROGRESS
+
+Phase 3A: Basic Attack Mechanics COMPLETE
+Attack rolls with modifiers
+Armor Class (AC) calculations
+Damage rolls with resistance/vulnerability
+Critical hits (natural 20s)
+D&D 5e melee attack implementation
+
+Phase 3B: Wall-Aware Attack System COMPLETE
+Wall blocking for melee attacks:
+  - CanAttackAcross() validates attack path through walls
+  - CanMeleeAttack() comprehensive attack validation
+  - AI pathfinding respects attack viability
+  - Player UI filters unreachable targets
+  - Server-side attack validation in CombatManager
+Integration complete across GridManager, BattleContext, AI, Combat, and UI layers
+
+Phase 3C: Advanced Attack Features (Not Started)
+Attack of Opportunity mechanics
+Reach weapons (10-foot melee range)
+Ranged attacks with line of sight
+Cover mechanics (half/three-quarters)
+
+Phase 4: Basic Class Features
+
+Fighter: Action Surge, Second Wind
+Simple spellcasting framework (Magic Missile as prototype)
+Resource tracking (spell slots, class features)
+Action economy (Action, Bonus Action, Reaction)
+
+Phase 5: Conditions & Effects
+
+Status conditions (Prone, Grappled, Restrained, etc.)
+Advantage/Disadvantage system
+Temporary effects and duration tracking
+Condition interaction with combat mechanics
+
+Phase 6: Full D&D 5e Rules
+
+Complete spell system
+All core classes with features
+Multiclassing support
+Feats and ability score improvements
+Complete ruleset implementation
+
+Phase 7: Character Creation
+
+Race/class selection UI
+Ability score assignment
+Background and equipment selection
+Spell/feature selection for casters
+Character sheet UI
+
+Phase 8: Character Progression
+
+Experience points and leveling
+Feature unlocks at appropriate levels
+Spell progression
+Hit point increases
+Saving throw proficiency tracking
+
+Phase 9: DM Tools
+
+Encounter builder
+Monster manual integration
+Campaign management
+Custom content creation tools
+Session state management
+
+Phase 10: Networking Foundation
+
+Host-client architecture
+State synchronization
+Player authentication
+Session persistence
+
+Phase 11: Multiplayer Integration
+
+Remote player connections
+Synchronized combat state
+Chat and dice roll sharing
+DM controls for remote sessions
+
+Phase 12: Polish & Release
+
+UI/UX refinement
+Performance optimization
+Documentation completion
+Community modding support
+Open-source release preparation

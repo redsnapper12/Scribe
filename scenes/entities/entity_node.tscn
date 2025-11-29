@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://diwawyuq8xx4v"]
 
-[ext_resource type="Script" uid="uid://dnxlt8hlwfxxa" path="res://scripts/core/entities/EntityNode.cs" id="1_el4x3"]
+[ext_resource type="Script" uid="uid://dnxlt8hlwfxxa" path="res://scripts/entities/EntityNode.cs" id="1_el4x3"]
 [ext_resource type="Texture2D" uid="uid://qc6wji07rflj" path="res://assets/tokens/green_token.tres" id="2_el4x3"]
 [ext_resource type="FontVariation" uid="uid://cywf1n3055jv2" path="res://themes/fonts/inconsolatas/inconsolatas_bold.tres" id="3_c4xi8"]
 
@@ -41,3 +41,4 @@ offset_bottom = 38.0
 grow_horizontal = 2
 grow_vertical = 0
 label_settings = SubResource("LabelSettings_el4x3")
+horizontal_alignment = 1
