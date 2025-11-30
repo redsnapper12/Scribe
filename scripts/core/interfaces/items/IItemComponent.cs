@@ -1,10 +1,9 @@
-namespace Scribe.Scripts.Items;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
-/// Base interface for all item components.
-/// Item components define specific behaviors and properties of items.
+/// Marker interface for all item components.
+/// Components that can be attached to items must implement this interface.
 /// </summary>
 public interface IItemComponent
 {
-
 }

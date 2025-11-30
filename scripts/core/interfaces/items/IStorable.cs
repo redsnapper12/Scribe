@@ -1,11 +1,11 @@
 using Godot;
 
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Required interface for all items. Defines inventory and storage properties.
 /// </summary>
-public interface IStorable : IItemComponent
+public interface IStorable
 {
     /// <summary>
     /// Whether this item can stack with identical items.

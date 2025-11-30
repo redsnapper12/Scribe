@@ -1,8 +1,10 @@
 using Godot;
-using Scribe.Scripts.Core.Entities;
+using Scribe.Scripts.Core;
+using Scribe.Scripts.Core.Services;
+using Scribe.Scripts.Entities;
 using Scribe.Scripts.UI;
 
-namespace Scribe.Scripts.Core;
+namespace Scribe.Scripts.Combat;
 
 public partial class BattleGridView : Node2D
 {

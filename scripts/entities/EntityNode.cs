@@ -1,9 +1,10 @@
 using Godot;
-using Scribe.Scripts.Core.Entities;
-using Scribe.Scripts.Core.Components;
+using Scribe.Scripts.Core;
+using Scribe.Scripts.Data.ComponentData;
 using Scribe.Scripts.Core.Interfaces;
+using Scribe.Scripts.Core.Interfaces.Entities;
 
-namespace Scribe.Scripts.Core;
+namespace Scribe.Scripts.Entities;
 
 public partial class EntityNode : Node2D
 {
@@ -66,7 +67,12 @@ public partial class EntityNode : Node2D
     {
         if (_nameLabel != null && _entity != null)
         {
-            _nameLabel.Text = _entity.Name;
+            _nameLabel.Text = _entity.EntityName;
+        }
+
+        if (_sprite != null && _entity != null)
+        {
+            _sprite.Texture = _entity.Icon;
         }
         
         UpdateHealthBar();

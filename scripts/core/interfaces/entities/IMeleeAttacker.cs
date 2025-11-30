@@ -9,7 +9,7 @@ public interface IMeleeAttacker
     DamageType DamageType { get; }
     int MeleeRange { get; }
     string AttackName { get; }
-    
+
     AttackResult MeleeAttack(IDamageable target);
 }
 

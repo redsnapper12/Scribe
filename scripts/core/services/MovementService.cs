@@ -1,10 +1,10 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using Scribe.Scripts.Core.Components;
-using Scribe.Scripts.Core.Entities;
+using Scribe.Scripts.Data.ComponentData;
+using Scribe.Scripts.Entities;
 
-namespace Scribe.Scripts.Core;
+namespace Scribe.Scripts.Core.Services;
 
 #region Enums and Types
 
@@ -167,7 +167,7 @@ public static class MovementService
         
         var path = new List<Vector2I> { from, target };
         
-        GD.Print($"[Reposition] {entity.Name} moved from {from} to {target}");
+        GD.Print($"[Reposition] {entity.EntityName} moved from {from} to {target}");
         
         return MovementResult.Succeeded(path, 0, entity.MovementRemaining);
     }
@@ -200,7 +200,7 @@ public static class MovementService
         if (totalCost > 0)
         {
             movement.NotifyMoved(from, finalPosition, totalCost);
-            GD.Print($"[Combat Move] {entity.Name}: {from} -> {finalPosition} (cost: {totalCost}ft, remaining: {movement.MovementRemaining}ft)");
+            GD.Print($"[Combat Move] {entity.EntityName}: {from} -> {finalPosition} (cost: {totalCost}ft, remaining: {movement.MovementRemaining}ft)");
         }
         
         // Consider it success even if partial movement
@@ -216,7 +216,7 @@ public static class MovementService
         entity.GridPosition = to;
         
         movement.NotifyMoved(from, to, 0);
-        GD.Print($"[Exploration Move] {entity.Name}: {from} -> {to}");
+        GD.Print($"[Exploration Move] {entity.EntityName}: {from} -> {to}");
         
         return MovementResult.Succeeded(path, 0, movement.MovementRemaining);
     }

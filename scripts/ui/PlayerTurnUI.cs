@@ -1,7 +1,7 @@
 using Godot;
-using Scribe.Scripts.Core;
-using Scribe.Scripts.Core.Entities;
 using Scribe.Scripts.Combat;
+using Scribe.Scripts.Core;
+using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.UI;
 
@@ -62,7 +62,7 @@ public partial class PlayerTurnUI : Control
         Visible = true;
         
         if (TurnLabel != null)
-            TurnLabel.Text = $"{player.Name}'s Turn";
+            TurnLabel.Text = $"{player.EntityName}'s Turn";
         
         UpdateMovementLabel();
         
@@ -133,7 +133,7 @@ public partial class PlayerTurnUI : Control
 
                 var targetButton = new Button
                 {
-                    Text = $"{entity.Name} (HP: {entity.CurrentHP}/{entity.MaxHP})"
+                    Text = $"{entity.EntityName} (HP: {entity.CurrentHP}/{entity.MaxHP})"
                 };
 
                 var capturedEntity = entity;

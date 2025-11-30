@@ -1,11 +1,11 @@
 using Godot;
 using System.Collections.Generic;
 using System.Linq;
-using Scribe.Scripts.Core;
-using Scribe.Scripts.Core.Entities;
-using Scribe.Scripts.Core.Interfaces;
 using Scribe.Scripts.AI;
-using Scribe.Scripts.Data.EntityDataTypes;
+using Scribe.Scripts.Core;
+using Scribe.Scripts.Core.Interfaces;
+using Scribe.Scripts.Data;
+using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.Combat;
 
@@ -22,8 +22,8 @@ public partial class CombatManager : Node
     
     [Export] public BattleGridView BattleGridView { get; set; }
     [Export] public GameManager GameManager { get; set; }
-    [Export] public CharacterData PlayerData { get; set; }
-    [Export] public MonsterData GoblinData { get; set; }
+    [Export] public EntityData PlayerData { get; set; }
+    [Export] public EntityData GoblinData { get; set; }
     
     // Convenience properties to access through BattleGridView
     private GridManager GridManager => BattleGridView?.GridManager;
@@ -88,11 +88,8 @@ public partial class CombatManager : Node
     
     private void SetupCombat()
     {
-        var player = EntityFactory.CreateEntity(PlayerData);
-        var goblin = EntityFactory.CreateEntity(GoblinData);
-        
-        player.GridPosition = new Vector2I(3, 3);
-        goblin.GridPosition = new Vector2I(9, 3);
+        var player = PlayerData.CreateEntity(new Vector2I(3, 3));
+        var goblin = GoblinData.CreateEntity(new Vector2I(9, 3));
         
         // Register entities with GameManager
         GameManager?.RegisterEntity(player);
@@ -181,7 +178,7 @@ public partial class CombatManager : Node
         var player = GetCurrentTurnEntity();
         if (player != null)
         {
-            GD.Print($"{player.Name} ends their turn");
+            GD.Print($"{player.EntityName} ends their turn");
         }
         
         AdvanceTurn();
@@ -230,14 +227,14 @@ public partial class CombatManager : Node
     
     private void ProcessAITurn(Entity entity)
     {
-        GD.Print($"=== {entity.Name}'s Turn ===");
+        GD.Print($"=== {entity.EntityName}'s Turn ===");
         entity.ResetMovement();
         entity.Act(_battleContext);
     }
     
     private void ProcessPlayerTurn(Entity entity)
     {
-        GD.Print($"=== {entity.Name}'s Turn ===");
+        GD.Print($"=== {entity.EntityName}'s Turn ===");
         entity.ResetMovement();
         EmitSignal(SignalName.PlayerTurnStarted);
     }
@@ -258,7 +255,7 @@ public partial class CombatManager : Node
         
         foreach (var dead in deadEntities)
         {
-            GD.Print($"{dead.Name} has been defeated!");
+            GD.Print($"{dead.EntityName} has been defeated!");
             _combatants.Remove(dead);
             
             if (_currentTurnIndex >= _combatants.Count)
@@ -276,7 +273,7 @@ public partial class CombatManager : Node
         {
             if (livingCombatants.Count == 1)
             {
-                GD.Print($"{livingCombatants[0].Name} is victorious!");
+                GD.Print($"{livingCombatants[0].EntityName} is victorious!");
             }
             return true;
         }
@@ -293,7 +290,7 @@ public partial class CombatManager : Node
         {
             int roll = random.Next(1, 21);
             _initiativeRolls[combatant] = roll;
-            GD.Print($"{combatant.Name} rolled {roll} for initiative");
+            GD.Print($"{combatant.EntityName} rolled {roll} for initiative");
         }
         
         // Sort by initiative (highest first), with random tiebreaker for now
@@ -308,7 +305,7 @@ public partial class CombatManager : Node
         GD.Print("Initiative Order:");
         for (int i = 0; i < _combatants.Count; i++)
         {
-            GD.Print($"  {i + 1}. {_combatants[i].Name}");
+            GD.Print($"  {i + 1}. {_combatants[i].EntityName}");
         }
     }
 
@@ -319,13 +316,13 @@ public partial class CombatManager : Node
 
         if (!_battleContext.CanMeleeAttack(player, target))
         {
-            GD.PrintErr($"Invalid attack: {player.Name} cannot attack {target.Name} (out of range or blocked by walls)");
+            GD.PrintErr($"Invalid attack: {player.EntityName} cannot attack {target.EntityName} (out of range or blocked by walls)");
             return;
         }
 
         var result = player.MeleeAttack(target);
 
-        GD.Print($"{player.Name} attacks {target.Name}!");
+        GD.Print($"{player.EntityName} attacks {target.EntityName}!");
         if (result.Hit)
         {
             GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.CriticalHit ? " (CRITICAL!)" : "")}");

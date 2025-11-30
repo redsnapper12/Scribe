@@ -1,6 +1,6 @@
 using Godot;
 using Scribe.Scripts.Core;
-using Scribe.Scripts.Core.Entities;
+using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.Items;
 

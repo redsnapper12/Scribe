@@ -1,17 +1,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Scribe.Scripts.Core.Components;
-using Scribe.Scripts.Items.Components;
+using Scribe.Scripts.Core.Interfaces.Entities;
+using Scribe.Scripts.Core.Interfaces.Items;
+using Scribe.Scripts.Data.ComponentData;
+using Scribe.Scripts.Entities;
+using Scribe.Scripts.Items;
 
-namespace Scribe.Scripts.Items;
+namespace Scribe.Scripts.Core.Components;
 
 /// <summary>
 /// Entity component that manages an entity's inventory and equipped items.
 /// Similar to HealthComponent, MovementComponent pattern.
 /// </summary>
-public partial class InventoryComponent : Component
+public partial class InventoryComponent : RefCounted, IEntityComponent
 {
+    private Entity _entity;
+
+    public void SetEntity(Entity entity)
+    {
+        _entity = entity;
+    }
     private readonly List<ItemStack> _items = new();
     private readonly Dictionary<EquipSlot, Item> _equippedItems = new();
 
@@ -138,7 +147,7 @@ public partial class InventoryComponent : Component
         if (item == null)
             return false;
 
-        var equippable = item.GetComponent<IEquippable>();
+        var equippable = item.GetComponent<EquippableComponent>();
         if (equippable == null)
         {
             GD.Print($"{item.DisplayName} is not equippable");
@@ -147,7 +156,7 @@ public partial class InventoryComponent : Component
 
         if (!equippable.CanEquip(_entity))
         {
-            GD.Print($"{_entity.Name} cannot equip {item.DisplayName}");
+            GD.Print($"{_entity.EntityName} cannot equip {item.DisplayName}");
             return false;
         }
 
@@ -163,7 +172,7 @@ public partial class InventoryComponent : Component
         _equippedItems[slot] = item;
         equippable.OnEquip(_entity);
 
-        GD.Print($"{_entity.Name} equipped {item.DisplayName} in {slot} slot");
+        GD.Print($"{_entity.EntityName} equipped {item.DisplayName} in {slot} slot");
         return true;
     }
 
@@ -176,12 +185,12 @@ public partial class InventoryComponent : Component
         if (!_equippedItems.TryGetValue(slot, out var item))
             return null;
 
-        var equippable = item.GetComponent<IEquippable>();
+        var equippable = item.GetComponent<EquippableComponent>();
         equippable?.OnUnequip(_entity);
 
         _equippedItems.Remove(slot);
 
-        GD.Print($"{_entity.Name} unequipped {item.DisplayName} from {slot} slot");
+        GD.Print($"{_entity.EntityName} unequipped {item.DisplayName} from {slot} slot");
         return item;
     }
 
@@ -211,19 +220,6 @@ public partial class InventoryComponent : Component
     }
 
     #endregion
-
-    public override void Initialize()
-    {
-        base.Initialize();
-        CurrentWeight = 0;
-    }
-
-    public override void Cleanup()
-    {
-        base.Cleanup();
-        _items.Clear();
-        _equippedItems.Clear();
-    }
 }
 
 /// <summary>

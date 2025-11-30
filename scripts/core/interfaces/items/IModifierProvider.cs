@@ -1,12 +1,12 @@
-using Scribe.Scripts.Core.Entities;
+using Scribe.Scripts.Entities;
 
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Optional component for items that provide stat modifiers when equipped.
 /// This is a future integration point for the modifier/buff system.
 /// </summary>
-public interface IModifierProvider : IItemComponent
+public interface IModifierProvider
 {
     /// <summary>
     /// Applies modifiers to the entity wearing this item.

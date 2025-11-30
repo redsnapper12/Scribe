@@ -1,9 +1,9 @@
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Optional component for items with monetary value.
 /// </summary>
-public interface IValuable : IItemComponent
+public interface IValuable
 {
     /// <summary>
     /// Gold piece value of this item.

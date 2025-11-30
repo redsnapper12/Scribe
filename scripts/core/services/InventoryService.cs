@@ -3,14 +3,17 @@ using System.Linq;
 using Godot;
 using Scribe.Scripts.AI;
 using Scribe.Scripts.Core;
-using Scribe.Scripts.Core.Entities;
-using Scribe.Scripts.Items.Components;
+using Scribe.Scripts.Core.Components;
+using Scribe.Scripts.Core.Interfaces.Items;
+using Scribe.Scripts.Data.ComponentData;
+using Scribe.Scripts.Entities;
+using Scribe.Scripts.Items;
 
-namespace Scribe.Scripts.Items;
+namespace Scribe.Scripts.Core.Services;
 
 /// <summary>
 /// Service layer for inventory operations.
-/// Provides a clean interaction layer for inventory management, similar to MovementService.
+/// Provides a clean interaction layer for inventory management.
 /// </summary>
 public partial class InventoryService : Node
 {
@@ -44,19 +47,19 @@ public partial class InventoryService : Node
         var item = fromInventory.GetItem(itemId);
         if (item == null)
         {
-            GD.Print($"TransferItem: {from.Name} does not have {itemId}");
+            GD.Print($"TransferItem: {from.EntityName} does not have {itemId}");
             return false;
         }
 
         if (!fromInventory.HasItem(itemId, quantity))
         {
-            GD.Print($"TransferItem: {from.Name} does not have enough {item.DisplayName}");
+            GD.Print($"TransferItem: {from.EntityName} does not have enough {item.DisplayName}");
             return false;
         }
 
         if (!CanCarryItem(to, item, quantity))
         {
-            GD.Print($"TransferItem: {to.Name} cannot carry {quantity}x {item.DisplayName}");
+            GD.Print($"TransferItem: {to.EntityName} cannot carry {quantity}x {item.DisplayName}");
             return false;
         }
 
@@ -72,7 +75,7 @@ public partial class InventoryService : Node
             return false;
         }
 
-        GD.Print($"{from.Name} transferred {quantity}x {item.DisplayName} to {to.Name}");
+        GD.Print($"{from.EntityName} transferred {quantity}x {item.DisplayName} to {to.EntityName}");
         return true;
     }
 
@@ -88,14 +91,14 @@ public partial class InventoryService : Node
         var inventory = entity.GetComponent<InventoryComponent>();
         if (inventory == null)
         {
-            GD.PrintErr($"PickupItem: {entity.Name} has no InventoryComponent");
+            GD.PrintErr($"PickupItem: {entity.EntityName} has no InventoryComponent");
             return false;
         }
 
         var item = itemNode.Item;
         if (!CanCarryItem(entity, item, 1))
         {
-            GD.Print($"{entity.Name} cannot carry {item.DisplayName}");
+            GD.Print($"{entity.EntityName} cannot carry {item.DisplayName}");
             return false;
         }
 
@@ -112,7 +115,7 @@ public partial class InventoryService : Node
             _gridManager.RemoveItem(itemNode);
         }
 
-        GD.Print($"{entity.Name} picked up {item.DisplayName}");
+        GD.Print($"{entity.EntityName} picked up {item.DisplayName}");
         return true;
     }
 
@@ -128,20 +131,20 @@ public partial class InventoryService : Node
         var inventory = entity.GetComponent<InventoryComponent>();
         if (inventory == null)
         {
-            GD.PrintErr($"DropItem: {entity.Name} has no InventoryComponent");
+            GD.PrintErr($"DropItem: {entity.EntityName} has no InventoryComponent");
             return false;
         }
 
         var item = inventory.GetItem(itemId);
         if (item == null)
         {
-            GD.Print($"DropItem: {entity.Name} does not have {itemId}");
+            GD.Print($"DropItem: {entity.EntityName} does not have {itemId}");
             return false;
         }
 
         if (!inventory.HasItem(itemId, quantity))
         {
-            GD.Print($"DropItem: {entity.Name} does not have enough {item.DisplayName}");
+            GD.Print($"DropItem: {entity.EntityName} does not have enough {item.DisplayName}");
             return false;
         }
 
@@ -165,7 +168,7 @@ public partial class InventoryService : Node
             _gridManager.PlaceItem(item, targetPosition);
         }
 
-        GD.Print($"{entity.Name} dropped {quantity}x {item.DisplayName} at {targetPosition}");
+        GD.Print($"{entity.EntityName} dropped {quantity}x {item.DisplayName} at {targetPosition}");
         return true;
     }
 
@@ -184,14 +187,14 @@ public partial class InventoryService : Node
         var inventory = entity.GetComponent<InventoryComponent>();
         if (inventory == null)
         {
-            GD.PrintErr($"EquipItem: {entity.Name} has no InventoryComponent");
+            GD.PrintErr($"EquipItem: {entity.EntityName} has no InventoryComponent");
             return false;
         }
 
         var item = inventory.GetItem(itemId);
         if (item == null)
         {
-            GD.Print($"EquipItem: {entity.Name} does not have {itemId}");
+            GD.Print($"EquipItem: {entity.EntityName} does not have {itemId}");
             return false;
         }
 
@@ -209,7 +212,7 @@ public partial class InventoryService : Node
         var inventory = entity.GetComponent<InventoryComponent>();
         if (inventory == null)
         {
-            GD.PrintErr($"UnequipItem: {entity.Name} has no InventoryComponent");
+            GD.PrintErr($"UnequipItem: {entity.EntityName} has no InventoryComponent");
             return false;
         }
 
@@ -228,11 +231,11 @@ public partial class InventoryService : Node
         var inventory = entity.GetComponent<InventoryComponent>();
         if (inventory == null)
         {
-            GD.PrintErr($"SwapEquipment: {entity.Name} has no InventoryComponent");
+            GD.PrintErr($"SwapEquipment: {entity.EntityName} has no InventoryComponent");
             return false;
         }
 
-        var equippable = newItem.GetComponent<IEquippable>();
+        var equippable = newItem.GetComponent<EquippableComponent>();
         if (equippable == null)
         {
             GD.Print($"SwapEquipment: {newItem.DisplayName} is not equippable");
@@ -265,18 +268,18 @@ public partial class InventoryService : Node
         var inventory = user.GetComponent<InventoryComponent>();
         if (inventory == null)
         {
-            GD.PrintErr($"UseItem: {user.Name} has no InventoryComponent");
+            GD.PrintErr($"UseItem: {user.EntityName} has no InventoryComponent");
             return false;
         }
 
         var item = inventory.GetItem(itemId);
         if (item == null)
         {
-            GD.Print($"UseItem: {user.Name} does not have {itemId}");
+            GD.Print($"UseItem: {user.EntityName} does not have {itemId}");
             return false;
         }
 
-        var usable = item.GetComponent<IUsable>();
+        var usable = item.GetComponent<UsableComponent>();
         if (usable == null)
         {
             GD.Print($"UseItem: {item.DisplayName} is not usable");
@@ -285,7 +288,7 @@ public partial class InventoryService : Node
 
         if (!usable.CanUse(user))
         {
-            GD.Print($"UseItem: {user.Name} cannot use {item.DisplayName} right now");
+            GD.Print($"UseItem: {user.EntityName} cannot use {item.DisplayName} right now");
             return false;
         }
 
@@ -297,7 +300,7 @@ public partial class InventoryService : Node
         if (usable.ConsumedOnUse)
         {
             inventory.RemoveItem(itemId, 1);
-            GD.Print($"{user.Name} consumed {item.DisplayName}");
+            GD.Print($"{user.EntityName} consumed {item.DisplayName}");
         }
 
         return true;
@@ -317,7 +320,7 @@ public partial class InventoryService : Node
             return new List<Item>();
 
         return inventory.GetAllItems()
-            .Where(stack => stack.Item.HasComponent<IEquippable>())
+            .Where(stack => stack.Item.HasComponent<EquippableComponent>())
             .Select(stack => stack.Item)
             .ToList();
     }
@@ -332,7 +335,7 @@ public partial class InventoryService : Node
             return new List<Item>();
 
         return inventory.GetAllItems()
-            .Where(stack => stack.Item.HasComponent<IUsable>())
+            .Where(stack => stack.Item.HasComponent<UsableComponent>())
             .Select(stack => stack.Item)
             .ToList();
     }

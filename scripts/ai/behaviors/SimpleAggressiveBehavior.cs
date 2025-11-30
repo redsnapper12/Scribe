@@ -1,8 +1,9 @@
 using Godot;
 using Godot.Collections;
 using Scribe.Scripts.Core;
-using Scribe.Scripts.Core.Entities;
 using Scribe.Scripts.Core.Interfaces;
+using Scribe.Scripts.Core.Services;
+using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.AI.Behaviors;
 
@@ -35,7 +36,7 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
 
                 if (result.Success && result.MovementSpent > 0)
                 {
-                    GD.Print($"{self.Name} moves toward {target.Name}");
+                    GD.Print($"{self.EntityName} moves toward {target.EntityName}");
 
                     if (context.CanMeleeAttack(self, target))
                     {
@@ -111,7 +112,7 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
         {
             var result = attacker.MeleeAttack(damageable);
             
-            GD.Print($"{self.Name} attacks {target.Name}!");
+            GD.Print($"{self.EntityName} attacks {target.EntityName}!");
             if (result.Hit)
             {
                 GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.CriticalHit ? " (CRITICAL!)" : "")}");

@@ -1,9 +1,9 @@
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Optional component for items that provide armor.
 /// </summary>
-public interface IArmor : IItemComponent
+public interface IArmor
 {
     /// <summary>
     /// Armor class bonus provided by this armor.

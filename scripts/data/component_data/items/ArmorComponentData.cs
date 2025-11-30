@@ -1,7 +1,7 @@
 using Godot;
-using Scribe.Scripts.Items.Components;
+using Scribe.Scripts.Core.Interfaces.Items;
 
-namespace Scribe.Scripts.Items.Data;
+namespace Scribe.Scripts.Data.ComponentData;
 
 /// <summary>
 /// Resource data for armor item components.
@@ -29,7 +29,7 @@ public partial class ArmorComponentData : ItemComponentData
 /// <summary>
 /// Implementation of IArmor component.
 /// </summary>
-public class ArmorComponent : IArmor
+public partial class ArmorComponent : RefCounted, IItemComponent, IArmor
 {
     public int ArmorClassBonus { get; set; }
     public ArmorType ArmorType { get; set; }

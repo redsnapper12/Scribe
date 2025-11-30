@@ -6,7 +6,7 @@ public interface IDamageable
     int MaxHP { get; }
     int ArmorClass { get; }
     bool IsAlive { get; }
-    
+
     void TakeDamage(int amount, DamageType damageType = DamageType.Bludgeoning);
     void Heal(int amount);
 }

@@ -1,9 +1,9 @@
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Optional component for items related to quests.
 /// </summary>
-public interface IQuestItem : IItemComponent
+public interface IQuestItem
 {
     /// <summary>
     /// Quest ID this item is associated with.

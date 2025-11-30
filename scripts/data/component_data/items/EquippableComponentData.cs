@@ -1,8 +1,8 @@
 using Godot;
-using Scribe.Scripts.Core.Entities;
-using Scribe.Scripts.Items.Components;
+using Scribe.Scripts.Core.Interfaces.Items;
+using Scribe.Scripts.Entities;
 
-namespace Scribe.Scripts.Items.Data;
+namespace Scribe.Scripts.Data.ComponentData;
 
 /// <summary>
 /// Resource data for equippable item components.
@@ -24,7 +24,7 @@ public partial class EquippableComponentData : ItemComponentData
 /// <summary>
 /// Implementation of IEquippable component.
 /// </summary>
-public class EquippableComponent : IEquippable
+public partial class EquippableComponent : RefCounted, IItemComponent, IEquippable
 {
     public EquipSlot Slot { get; set; }
 

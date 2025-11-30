@@ -1,10 +1,10 @@
 using Godot;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Scribe.Scripts.Core.Entities;
-using Scribe.Scripts.Core.Interfaces;
 using Scribe.Scripts.Core;
-using System;
+using Scribe.Scripts.Core.Interfaces;
+using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.AI;
 

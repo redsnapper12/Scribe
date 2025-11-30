@@ -1,11 +1,11 @@
-using Scribe.Scripts.Core.Entities;
+using Scribe.Scripts.Entities;
 
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Optional component for items that can be equipped by entities.
 /// </summary>
-public interface IEquippable : IItemComponent
+public interface IEquippable
 {
     /// <summary>
     /// The equipment slot this item occupies.

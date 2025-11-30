@@ -45,10 +45,29 @@ Wall blocking for melee attacks:
   - Server-side attack validation in CombatManager
 Integration complete across GridManager, BattleContext, AI, Combat, and UI layers
 
-Phase 3C: Advanced Attack Features (Not Started)
+Phase 3C: D&D 5e Stats System COMPLETE
+Entity component system updated to match item component pattern:
+  - All entity components follow single-file data + component structure
+  - Component-based architecture with IEntityComponent marker interface
+  - Godot editor integration with [GlobalClass] and [Export] attributes
+
+D&D 5e core stats implementation:
+  - Base Entity properties: Size, Type, Alignment
+  - AbilityScoresComponent: All 6 abilities with modifier calculations
+  - SkillsComponent: All 18 skills with proficiency and auto-linked abilities
+  - SensesComponent: Darkvision, Blindsight, Tremorsense, Truesight, Passive Perception
+  - LanguagesComponent: Enum-based languages with script mappings
+  - TraitsComponent: Special abilities (e.g., Nimble Escape)
+  - RangedAttackComponent: Ranged weapons with disadvantage at long range
+  - ChallengeRatingComponent: CR, proficiency bonus, XP values
+
+Component deduplication system prevents duplicate components in entity data
+Complete vertical slice ready: Can create goblins and fighter characters in Godot editor
+
+Phase 3D: Advanced Attack Features (Not Started)
 Attack of Opportunity mechanics
 Reach weapons (10-foot melee range)
-Ranged attacks with line of sight
+Line of sight for ranged attacks
 Cover mechanics (half/three-quarters)
 
 Phase 4: Basic Class Features

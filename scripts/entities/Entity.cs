@@ -1,67 +1,76 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using Scribe.Scripts.Core.Components;
-using Scribe.Scripts.Core.Interfaces;
 using Scribe.Scripts.AI;
+using Scribe.Scripts.Core;
+using Scribe.Scripts.Core.Interfaces;
+using Scribe.Scripts.Core.Services;
+using Scribe.Scripts.Data;
+using Scribe.Scripts.Data.ComponentData;
+using Scribe.Scripts.Core.Interfaces.Entities;
 
-namespace Scribe.Scripts.Core.Entities;
+namespace Scribe.Scripts.Entities;
 
 public partial class Entity : RefCounted, IDamageable, IMeleeAttacker, IMovable
 {
-    private readonly List<Component> _components = new();
-    private readonly Dictionary<Type, Component> _componentsByType = new();
-    
-    public string Name { get; set; }
+    private readonly List<IEntityComponent> _components = new();
+    private readonly Dictionary<Type, IEntityComponent> _componentsByType = new();
+
+    public string EntityName { get; set; }
+    public ControllerType Controller { get; set; }
+    public Texture2D Icon {get; set; }
+    public EntityType Type { get; set; }
+    public EntitySize Size { get; set; }
+    public EntityAlignment Alignment { get; set; }
+
     public Vector2I GridPosition { get; set; }
-    public ControllerType Controller { get; set; } = ControllerType.AI;
-    public string OwnerPlayerId { get; set; }  // For future multiplayer
-    
+    public string OwnerPlayerId { get; set; } 
     public bool IsAI => Controller == ControllerType.AI && GetComponent<AIComponent>() != null;
-    
-    public void AddComponent(Component component)
+
+    /// <summary>
+    /// Adds a component to this entity.
+    /// </summary>
+    public void AddComponent(IEntityComponent component)
     {
-        component.SetEntity(this);
         _components.Add(component);
         _componentsByType[component.GetType()] = component;
+
+        // Also register by all interface types the component implements
+        foreach (var interfaceType in component.GetType().GetInterfaces())
+        {
+            if (typeof(IEntityComponent).IsAssignableFrom(interfaceType) && interfaceType != typeof(IEntityComponent))
+            {
+                _componentsByType[interfaceType] = component;
+            }
+        }
     }
-    
-    public T GetComponent<T>() where T : Component
+
+    /// <summary>
+    /// Gets a component of the specified type.
+    /// </summary>
+    public T GetComponent<T>() where T : IEntityComponent
     {
         if (_componentsByType.TryGetValue(typeof(T), out var component))
         {
-            return component as T;
+            return (T)component;
         }
-        return null;
+        return default;
     }
-    
-    public void InitializeComponents()
+
+    /// <summary>
+    /// Checks if this entity has a component of the specified type.
+    /// </summary>
+    public bool HasComponent<T>() where T : IEntityComponent
     {
-        foreach (var component in _components)
-        {
-            component.Initialize();
-        }
-        
-        foreach (var component in _components)
-        {
-            component.OnReady();
-        }
+        return _componentsByType.ContainsKey(typeof(T));
     }
-    
-    public void ProcessComponents(double delta)
+
+    /// <summary>
+    /// Gets all components on this entity.
+    /// </summary>
+    public IReadOnlyList<IEntityComponent> GetAllComponents()
     {
-        foreach (var component in _components)
-        {
-            component.Process(delta);
-        }
-    }
-    
-    public void CleanupComponents()
-    {
-        foreach (var component in _components)
-        {
-            component.Cleanup();
-        }
+        return _components.AsReadOnly();
     }
     
     #region IDamageable Implementation
@@ -127,13 +136,13 @@ public partial class Entity : RefCounted, IDamageable, IMeleeAttacker, IMovable
     #endregion
     
     #region AI Methods
-    
+
     public AIBehaviorType BehaviorType => GetComponent<AIComponent>()?.BehaviorType ?? AIBehaviorType.SimpleAggressive;
-    
+
     public void Act(BattleContext context)
     {
-        GetComponent<AIComponent>()?.Act(context);
+        GetComponent<AIComponent>()?.Act(this, context);
     }
-    
+
     #endregion
 }

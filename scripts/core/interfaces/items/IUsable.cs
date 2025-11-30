@@ -1,12 +1,12 @@
 using Scribe.Scripts.AI;
-using Scribe.Scripts.Core.Entities;
+using Scribe.Scripts.Entities;
 
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Optional component for items that can be used/consumed.
 /// </summary>
-public interface IUsable : IItemComponent
+public interface IUsable
 {
     /// <summary>
     /// Number of charges/uses remaining.

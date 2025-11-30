@@ -1,11 +1,11 @@
-using Scribe.Scripts.Core.Entities;
+using Scribe.Scripts.Entities;
 
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Required interface for all items. Defines how items respond to interactions.
 /// </summary>
-public interface IInteractable : IItemComponent
+public interface IInteractable
 {
     /// <summary>
     /// Called when an entity picks up this item.

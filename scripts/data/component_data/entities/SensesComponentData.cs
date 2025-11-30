@@ -1,0 +1,36 @@
+using Godot;
+using Scribe.Scripts.Core.Interfaces;
+using Scribe.Scripts.Core.Interfaces.Entities;
+
+namespace Scribe.Scripts.Data.ComponentData;
+
+[GlobalClass]
+public partial class SensesComponentData : EntityComponentData
+{
+    [Export] public int DarkvisionRange { get; set; } = 0;
+    [Export] public int BlindsightRange { get; set; } = 0;
+    [Export] public int TremorsenseRange { get; set; } = 0;
+    [Export] public int TruesightRange { get; set; } = 0;
+    [Export] public int PassivePerception { get; set; } = 10;
+
+    public override IEntityComponent CreateComponent()
+    {
+        return new SensesComponent
+        {
+            DarkvisionRange = this.DarkvisionRange,
+            BlindsightRange = this.BlindsightRange,
+            TremorsenseRange = this.TremorsenseRange,
+            TruesightRange = this.TruesightRange,
+            PassivePerception = this.PassivePerception
+        };
+    }
+}
+
+public partial class SensesComponent : RefCounted, IEntityComponent, ISenses
+{
+    public int DarkvisionRange { get; set; }
+    public int BlindsightRange { get; set; }
+    public int TremorsenseRange { get; set; }
+    public int TruesightRange { get; set; }
+    public int PassivePerception { get; set; }
+}

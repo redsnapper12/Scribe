@@ -1,8 +1,10 @@
+using System;
 using Godot;
+using Godot.Collections;
 using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Items.Components;
+using Scribe.Scripts.Core.Interfaces.Items;
 
-namespace Scribe.Scripts.Items.Data;
+namespace Scribe.Scripts.Data.ComponentData;
 
 /// <summary>
 /// Resource data for weapon item components.
@@ -12,12 +14,11 @@ public partial class WeaponComponentData : ItemComponentData
 {
     [Export] public int NumDice { get; set; } = 1;
     [Export] public DieType DieType { get; set; } = DieType.D6;
-    [Export] public int DamageBonus { get; set; } = 0;
     [Export] public DamageType DamageType { get; set; } = DamageType.Slashing;
-    [Export] public int AttackBonus { get; set; } = 0;
     [Export] public int MeleeRange { get; set; } = 5;
     [Export] public string AttackName { get; set; } = "Attack";
-    [Export] public bool IsTwoHanded { get; set; } = false;
+    [Export] public Array<WeaponProperties> Properties { get; set;}
+
 
     public override IItemComponent CreateComponent()
     {
@@ -25,12 +26,9 @@ public partial class WeaponComponentData : ItemComponentData
         {
             NumDice = this.NumDice,
             DieType = this.DieType,
-            DamageBonus = this.DamageBonus,
             DamageType = this.DamageType,
-            AttackBonus = this.AttackBonus,
             MeleeRange = this.MeleeRange,
             AttackName = this.AttackName,
-            IsTwoHanded = this.IsTwoHanded
         };
     }
 }
@@ -38,7 +36,7 @@ public partial class WeaponComponentData : ItemComponentData
 /// <summary>
 /// Implementation of IWeapon component.
 /// </summary>
-public class WeaponComponent : IWeapon
+public partial class WeaponComponent : RefCounted, IItemComponent, IWeapon
 {
     public int NumDice { get; set; }
     public DieType DieType { get; set; }
@@ -48,4 +46,17 @@ public class WeaponComponent : IWeapon
     public int MeleeRange { get; set; }
     public string AttackName { get; set; }
     public bool IsTwoHanded { get; set; }
+}
+
+public enum WeaponProperties
+{
+    Ammunition,
+    Finesse,
+    Heavy,
+    Light,
+    Loading,
+    Reach,
+    Thrown,
+    TwoHanded,
+    Versatile,
 }

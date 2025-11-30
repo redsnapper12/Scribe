@@ -1,7 +1,7 @@
 using Godot;
-using Scribe.Scripts.Items.Components;
+using Scribe.Scripts.Core.Interfaces.Items;
 
-namespace Scribe.Scripts.Items.Data;
+namespace Scribe.Scripts.Data.ComponentData;
 
 /// <summary>
 /// Resource data for valuable item components.
@@ -27,7 +27,7 @@ public partial class ValuableComponentData : ItemComponentData
 /// <summary>
 /// Implementation of IValuable component.
 /// </summary>
-public class ValuableComponent : IValuable
+public partial class ValuableComponent : RefCounted, IItemComponent, IValuable
 {
     public int GoldValue { get; set; }
     public ItemRarity Rarity { get; set; }

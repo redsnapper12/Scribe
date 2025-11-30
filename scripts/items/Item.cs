@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
-using Scribe.Scripts.Items.Components;
+using Scribe.Scripts.Core.Interfaces.Items;
+using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.Items;
 
@@ -75,22 +76,22 @@ public partial class Item : RefCounted, IIdentifiable, IStorable, IInteractable
 
     #region IInteractable Implementation
 
-    public virtual void OnPickup(Core.Entities.Entity picker)
+    public virtual void OnPickup(Entity picker)
     {
         // Default implementation - can be overridden by specific items
-        GD.Print($"{picker.Name} picked up {DisplayName}");
+        GD.Print($"{picker.EntityName} picked up {DisplayName}");
     }
 
-    public virtual void OnExamine(Core.Entities.Entity examiner)
+    public virtual void OnExamine(Entity examiner)
     {
         // Default implementation - can be overridden by specific items
-        GD.Print($"{examiner.Name} examines {DisplayName}: {Description}");
+        GD.Print($"{examiner.EntityName} examines {DisplayName}: {Description}");
     }
 
-    public virtual void OnDrop(Core.Entities.Entity dropper)
+    public virtual void OnDrop(Entity dropper)
     {
         // Default implementation - can be overridden by specific items
-        GD.Print($"{dropper.Name} dropped {DisplayName}");
+        GD.Print($"{dropper.EntityName} dropped {DisplayName}");
     }
 
     #endregion

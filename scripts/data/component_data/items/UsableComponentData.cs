@@ -1,9 +1,9 @@
 using Godot;
 using Scribe.Scripts.AI;
-using Scribe.Scripts.Core.Entities;
-using Scribe.Scripts.Items.Components;
+using Scribe.Scripts.Core.Interfaces.Items;
+using Scribe.Scripts.Entities;
 
-namespace Scribe.Scripts.Items.Data;
+namespace Scribe.Scripts.Data.ComponentData;
 
 /// <summary>
 /// Resource data for usable item components.
@@ -45,7 +45,7 @@ public enum UsableEffectType
 /// Implementation of IUsable component.
 /// Basic implementation - can be extended for specific item types.
 /// </summary>
-public class UsableComponent : IUsable
+public partial class UsableComponent : RefCounted, IItemComponent, IUsable
 {
     public int Charges { get; set; }
     public int MaxCharges { get; set; }
@@ -69,7 +69,7 @@ public class UsableComponent : IUsable
         {
             case UsableEffectType.Healing:
                 user.Heal(EffectAmount);
-                GD.Print($"{user.Name} healed for {EffectAmount} HP");
+                GD.Print($"{user.EntityName} healed for {EffectAmount} HP");
                 break;
 
             case UsableEffectType.Damage:
@@ -78,7 +78,7 @@ public class UsableComponent : IUsable
                 break;
 
             case UsableEffectType.Buff:
-                GD.Print($"Applied buff to {user.Name}");
+                GD.Print($"Applied buff to {user.EntityName}");
                 // Future: Apply modifier/buff
                 break;
 

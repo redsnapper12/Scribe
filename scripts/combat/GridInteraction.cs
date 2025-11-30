@@ -1,6 +1,7 @@
 using Godot;
+using Scribe.Scripts.Core;
 
-namespace Scribe.Scripts.Core;
+namespace Scribe.Scripts.Combat;
 
 public partial class GridInteraction : Node2D
 {

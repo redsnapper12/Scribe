@@ -1,10 +1,11 @@
 using Scribe.Scripts.AI;
+using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.Core.Interfaces;
 
 public interface IAI
 {
-    void Act(BattleContext context);
+    void Act(Entity self, BattleContext context);
     AIBehaviorType BehaviorType { get; }
 }
 

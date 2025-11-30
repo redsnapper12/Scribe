@@ -1,9 +1,9 @@
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Required interface for all items. Defines basic item identity.
 /// </summary>
-public interface IIdentifiable : IItemComponent
+public interface IIdentifiable
 {
     /// <summary>
     /// Unique identifier for this item type.

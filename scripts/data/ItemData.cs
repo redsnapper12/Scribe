@@ -1,7 +1,9 @@
 using Godot;
 using Godot.Collections;
+using Scribe.Scripts.Data.ComponentData;
+using Scribe.Scripts.Items;
 
-namespace Scribe.Scripts.Items.Data;
+namespace Scribe.Scripts.Data;
 
 /// <summary>
 /// Base resource class for all item definitions.
@@ -48,10 +50,7 @@ public partial class ItemData : Resource
             if (componentData != null)
             {
                 var component = componentData.CreateComponent();
-                if (component != null)
-                {
-                    item.AddComponent(component);
-                }
+                item.AddComponent(component);
             }
         }
 

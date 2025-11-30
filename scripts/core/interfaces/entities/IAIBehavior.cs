@@ -1,5 +1,5 @@
 using Godot.Collections;
-using Scribe.Scripts.Core.Entities;
+using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.AI;
 

@@ -1,0 +1,84 @@
+[gd_resource type="Resource" script_class="EntityData" load_steps=27 format=3 uid="uid://b1pf24via74u1"]
+
+[ext_resource type="Script" uid="uid://g3fv1beppky8" path="res://scripts/data/component_data/entities/EntityComponentData.cs" id="1_jgmxs"]
+[ext_resource type="Script" uid="uid://biukq7s010511" path="res://scripts/data/EntityData.cs" id="2_5ebvd"]
+[ext_resource type="Script" uid="uid://bv7vkcmilm1nm" path="res://scripts/data/component_data/entities/AIComponentData.cs" id="2_5lggj"]
+[ext_resource type="Script" uid="uid://rafgoo10wir3" path="res://scripts/data/component_data/entities/HealthComponentData.cs" id="3_pnkk3"]
+[ext_resource type="Script" uid="uid://dy8f8ntdnlwqn" path="res://scripts/data/component_data/entities/AbilityScoresComponentData.cs" id="3_ttb5n"]
+[ext_resource type="Script" uid="uid://b1jxl7mk3vxph" path="res://scripts/data/component_data/entities/ChallengeRatingComponentData.cs" id="4_kk0lr"]
+[ext_resource type="Script" uid="uid://dmgcm4vi3hnm2" path="res://scripts/data/component_data/entities/MeleeAttackComponentData.cs" id="4_s35k1"]
+[ext_resource type="Script" uid="uid://klmvimoxsi5i" path="res://scripts/data/component_data/entities/LanguagesComponentData.cs" id="5_7orht"]
+[ext_resource type="Script" uid="uid://brg2uof26q6rm" path="res://scripts/data/component_data/entities/MovementComponentData.cs" id="5_vw1t0"]
+[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="6_e6c81"]
+[ext_resource type="Script" uid="uid://dcm2hbnio0h3g" path="res://scripts/data/component_data/entities/SensesComponentData.cs" id="6_gejde"]
+[ext_resource type="Script" uid="uid://d4emdk57fmdea" path="res://scripts/data/component_data/entities/SkillsComponentData.cs" id="7_7mb2q"]
+[ext_resource type="Script" uid="uid://boht1mtfrx7sa" path="res://scripts/data/component_data/entities/TraitsComponentData.cs" id="8_kk0lr"]
+
+[sub_resource type="Resource" id="Resource_ttb5n"]
+script = ExtResource("2_5lggj")
+metadata/_custom_type_script = "uid://bv7vkcmilm1nm"
+
+[sub_resource type="Resource" id="Resource_xlvtr"]
+script = ExtResource("3_ttb5n")
+Strength = 8
+Dexterity = 14
+Wisdom = 8
+Charisma = 8
+metadata/_custom_type_script = "uid://dy8f8ntdnlwqn"
+
+[sub_resource type="Resource" id="Resource_bk5o4"]
+script = ExtResource("4_kk0lr")
+metadata/_custom_type_script = "uid://b1jxl7mk3vxph"
+
+[sub_resource type="Resource" id="Resource_58vqe"]
+script = ExtResource("5_7orht")
+metadata/_custom_type_script = "uid://klmvimoxsi5i"
+
+[sub_resource type="Resource" id="Resource_uo5l5"]
+script = ExtResource("6_gejde")
+DarkvisionRange = 60
+PassivePerception = 9
+metadata/_custom_type_script = "uid://dcm2hbnio0h3g"
+
+[sub_resource type="Resource" id="Resource_j1ii3"]
+script = ExtResource("7_7mb2q")
+metadata/_custom_type_script = "uid://d4emdk57fmdea"
+
+[sub_resource type="CSharpScript" id="CSharpScript_7orht"]
+
+[sub_resource type="Resource" id="Resource_gejde"]
+script = ExtResource("8_kk0lr")
+Traits = Array[SubResource("CSharpScript_7orht")]([null])
+metadata/_custom_type_script = "uid://boht1mtfrx7sa"
+
+[sub_resource type="Resource" id="Resource_c3pwp"]
+script = ExtResource("3_pnkk3")
+MaxHP = 7
+ArmorClass = 15
+metadata/_custom_type_script = "uid://rafgoo10wir3"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7mb2q"]
+atlas = ExtResource("6_e6c81")
+region = Rect2(11, 523, 42, 42)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xlvtr"]
+atlas = SubResource("AtlasTexture_7mb2q")
+
+[sub_resource type="Resource" id="Resource_iycy4"]
+script = ExtResource("4_s35k1")
+metadata/_custom_type_script = "uid://dmgcm4vi3hnm2"
+
+[sub_resource type="Resource" id="Resource_y83ej"]
+script = ExtResource("5_vw1t0")
+metadata/_custom_type_script = "uid://brg2uof26q6rm"
+
+[resource]
+script = ExtResource("2_5ebvd")
+EntityName = "Goblin"
+Alignment = 5
+Icon = SubResource("AtlasTexture_xlvtr")
+HealthComponentData = SubResource("Resource_c3pwp")
+MovementComponentData = SubResource("Resource_y83ej")
+MeleeAttackComponentData = SubResource("Resource_iycy4")
+ComponentData = Array[ExtResource("1_jgmxs")]([SubResource("Resource_ttb5n"), SubResource("Resource_xlvtr"), SubResource("Resource_bk5o4"), SubResource("Resource_58vqe"), SubResource("Resource_uo5l5"), SubResource("Resource_j1ii3"), SubResource("Resource_gejde")])
+metadata/_custom_type_script = "uid://biukq7s010511"

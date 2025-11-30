@@ -1,11 +1,11 @@
 using Scribe.Scripts.Core.Interfaces;
 
-namespace Scribe.Scripts.Items.Components;
+namespace Scribe.Scripts.Core.Interfaces.Items;
 
 /// <summary>
 /// Optional component for items that can be used as weapons.
 /// </summary>
-public interface IWeapon : IItemComponent
+public interface IWeapon
 {
     /// <summary>
     /// Number of damage dice.

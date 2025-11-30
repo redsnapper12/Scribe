@@ -10,7 +10,7 @@ public interface IMovable
     int SwimSpeed { get; }
     int ClimbSpeed { get; }
     int MovementRemaining { get; }
-    
+
     void ResetMovement();
     bool CanAffordMove(int cost);
     void SpendMovement(int cost);
