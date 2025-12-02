@@ -21,9 +21,9 @@ public partial class EntityData : Resource
     [ExportGroup("Components")]
 
     [ExportSubgroup("Required Components")]
-    [Export] public HealthComponentData HealthComponentData { get; set; }
-    [Export] public MovementComponentData MovementComponentData { get; set; }
-    [Export] public MeleeAttackComponentData MeleeAttackComponentData { get; set; }
+    [Export] public HealthComponentData HealthComponentData { get; set; } = new HealthComponentData();
+    [Export] public MovementComponentData MovementComponentData { get; set; } = new MovementComponentData();
+    [Export] public MeleeAttackComponentData MeleeAttackComponentData { get; set; } = new MeleeAttackComponentData();
 
     [ExportSubgroup("Additional Components")]
     [Export] public Array<EntityComponentData> ComponentData { get; set; } = new();
@@ -64,7 +64,10 @@ public partial class EntityData : Resource
         return entity;
     }
 
-    private void AppendRequiredComponents()
+    /// <summary>
+    /// Adds required components to the ComponentData array
+    /// </summary>
+    public virtual void AppendRequiredComponents()
     {
         ComponentData.Add(HealthComponentData);
         ComponentData.Add(MovementComponentData);
@@ -75,7 +78,7 @@ public partial class EntityData : Resource
     /// Removes duplicate component data from the ComponentData array.
     /// Keeps only the last occurrence of each component type.
     /// </summary>
-    private void FilterDuplicates()
+    public void FilterDuplicates()
     {
         var seen = new System.Collections.Generic.Dictionary<System.Type, EntityComponentData>();
         var filtered = new Array<EntityComponentData>();

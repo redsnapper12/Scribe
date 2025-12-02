@@ -8,7 +8,6 @@ namespace Scribe.Scripts.Data;
 /// <summary>
 /// Base resource class for all item definitions.
 /// Item data is defined in Godot .tres files and used to instantiate Item instances at runtime.
-/// Similar to EntityData/MonsterData pattern.
 /// </summary>
 [GlobalClass]
 public partial class ItemData : Resource
@@ -55,5 +54,42 @@ public partial class ItemData : Resource
         }
 
         return item;
+    }
+
+    /// <summary>
+    /// Adds required components to the ComponentData array
+    /// </summary>
+    public virtual void AppendRequiredComponents()
+    {
+        
+    }
+
+    /// <summary>
+    /// Removes duplicate component data from the ComponentData array.
+    /// Keeps only the last occurrence of each component type.
+    /// </summary>
+    public void FilterDuplicates()
+    {
+        var seen = new System.Collections.Generic.Dictionary<System.Type, ItemComponentData>();
+        var filtered = new Array<ItemComponentData>();
+
+        // Iterate through all components
+        foreach (var componentData in ComponentData)
+        {
+            if (componentData != null)
+            {
+                var type = componentData.GetType();
+                // Store the component, overwriting any previous one of the same type
+                seen[type] = componentData;
+            }
+        }
+
+        // Build the filtered array with unique components
+        foreach (var kvp in seen)
+        {
+            filtered.Add(kvp.Value);
+        }
+
+        ComponentData = filtered;
     }
 }

@@ -2,6 +2,7 @@ using Godot;
 using System;
 using Scribe.Scripts.Core.Interfaces;
 using Scribe.Scripts.Core.Interfaces.Entities;
+using Scribe.Scripts.Core.Interfaces.Items;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -36,8 +37,6 @@ public partial class MeleeAttackComponentData : EntityComponentData
 
 public partial class MeleeAttackComponent : RefCounted, IEntityComponent, IMeleeAttacker
 {
-    private readonly Random _random = new();
-
     public int AttackBonus { get; set; }
     public int NumDice { get; set; }
     public DieType DieType { get; set; }
@@ -48,16 +47,14 @@ public partial class MeleeAttackComponent : RefCounted, IEntityComponent, IMelee
 
     public AttackResult MeleeAttack(IDamageable target)
     {
-        int d20Roll = RollD20();
-        int attackRoll = d20Roll + AttackBonus;
-        bool isCritical = d20Roll == 20;
-        bool isCriticalMiss = d20Roll == 1;
+        DiceRollResult diceRollResult = DiceRollingService.RequestRoll(new(DieType.D20, 1, AttackBonus));
 
-        if (isCriticalMiss)
-        {
-            return new AttackResult(false, attackRoll, 0, false);
-        }
+        int attackRoll = diceRollResult.Result;
 
+        // If rolled crit failure, return missed attack immediately.
+        if(diceRollResult.DiceRollCategory == DiceRollCategory.CriticalFailure) return new AttackResult(false, attackRoll, 0, false);
+
+        bool isCritical = diceRollResult.DiceRollCategory == DiceRollCategory.CriticalSuccess;
         bool hit = isCritical || attackRoll >= target.ArmorClass;
 
         if (!hit)
@@ -71,22 +68,18 @@ public partial class MeleeAttackComponent : RefCounted, IEntityComponent, IMelee
         return new AttackResult(true, attackRoll, damage, isCritical);
     }
 
-    private int RollD20()
-    {
-        return _random.Next(1, 21);
-    }
-
     private int RollDamage(bool critical)
     {
         int totalDamage = 0;
         int rolls = critical ? 2 : 1;
-        int dieSize = (int)DieType;
-
+  
+        // Number of attacks
         for (int r = 0; r < rolls; r++)
-        {
+        {   
+            // Dice rolls per attack
             for (int i = 0; i < NumDice; i++)
             {
-                totalDamage += _random.Next(1, dieSize + 1);
+                totalDamage +=  DiceRollingService.RequestRoll(new(DieType, 1, DamageBonus)).Result;
             }
         }
 

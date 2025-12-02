@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="EntityData" load_steps=11 format=3 uid="uid://di1s1pcolp231"]
+[gd_resource type="Resource" script_class="EntityData" load_steps=14 format=3 uid="uid://di1s1pcolp231"]
 
 [ext_resource type="Script" uid="uid://g3fv1beppky8" path="res://scripts/data/component_data/entities/EntityComponentData.cs" id="1_rrqor"]
 [ext_resource type="Script" uid="uid://biukq7s010511" path="res://scripts/data/EntityData.cs" id="2_4peab"]
@@ -20,9 +20,18 @@ metadata/_custom_type_script = "uid://dmgcm4vi3hnm2"
 script = ExtResource("4_sny7q")
 metadata/_custom_type_script = "uid://brg2uof26q6rm"
 
+[sub_resource type="Resource" id="Resource_otv10"]
+script = ExtResource("2_oqoio")
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_sny7q"]
 atlas = ExtResource("5_otv10")
 region = Rect2(395, 523, 42, 42)
+
+[sub_resource type="Resource" id="Resource_sny7q"]
+script = ExtResource("3_otv10")
+
+[sub_resource type="Resource" id="Resource_nsjwd"]
+script = ExtResource("4_sny7q")
 
 [resource]
 script = ExtResource("2_4peab")

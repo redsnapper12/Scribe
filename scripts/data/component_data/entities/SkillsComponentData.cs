@@ -5,21 +5,19 @@ using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
-[GlobalClass]
-public partial class SkillsComponentData : EntityComponentData
+/// <summary>
+/// Base class for skills component data. Contains shared proficiency tracking.
+/// Use CharacterSkillsComponentData for automatic calculation or CreatureSkillsComponentData for stat block overrides.
+/// </summary>
+public abstract partial class BaseSkillsComponentData : EntityComponentData
 {
     [Export] public Array<Skill> Proficiencies { get; set; } = new();
-
-    public override IEntityComponent CreateComponent()
-    {
-        return new SkillsComponent
-        {
-            Proficiencies = this.Proficiencies
-        };
-    }
 }
 
-public partial class SkillsComponent : RefCounted, IEntityComponent, ISkills
+/// <summary>
+/// Base class for skills components with shared calculation logic.
+/// </summary>
+public abstract partial class BaseSkillsComponent : RefCounted, IEntityComponent, ISkills
 {
     public Array<Skill> Proficiencies { get; set; } = new();
 
@@ -28,7 +26,12 @@ public partial class SkillsComponent : RefCounted, IEntityComponent, ISkills
         return Proficiencies.Contains(skill);
     }
 
-    public int GetSkillModifier(Skill skill, IAbilityScores abilityScores, int proficiencyBonus)
+    public abstract int GetSkillModifier(Skill skill, IAbilityScores abilityScores, int proficiencyBonus);
+
+    /// <summary>
+    /// Standard D&D 5e skill calculation: ability modifier + proficiency bonus (if proficient).
+    /// </summary>
+    protected int CalculateStandardModifier(Skill skill, IAbilityScores abilityScores, int proficiencyBonus)
     {
         AbilityScore linkedAbility = GetLinkedAbility(skill);
         int abilityMod = abilityScores.GetModifier(linkedAbility);
@@ -37,7 +40,10 @@ public partial class SkillsComponent : RefCounted, IEntityComponent, ISkills
         return abilityMod + profBonus;
     }
 
-    private AbilityScore GetLinkedAbility(Skill skill)
+    /// <summary>
+    /// Maps each skill to its associated ability score (D&D 5e standard).
+    /// </summary>
+    protected AbilityScore GetLinkedAbility(Skill skill)
     {
         return skill switch
         {

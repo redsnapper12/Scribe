@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="TraitInfo" load_steps=2 format=3 uid="uid://7jj38t2eq0ht"]
+
+[ext_resource type="Script" uid="uid://cfabxgghv024y" path="res://scripts/data/component_data/entities/TraitInfo.cs" id="1_181nv"]
+
+[resource]
+script = ExtResource("1_181nv")
+Name = "Keen Senses"
+Type = 3
+metadata/_custom_type_script = "uid://cfabxgghv024y"

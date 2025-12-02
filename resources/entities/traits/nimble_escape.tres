@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="TraitInfo" load_steps=2 format=3 uid="uid://c8itabij2u71x"]
+
+[ext_resource type="Script" uid="uid://cfabxgghv024y" path="res://scripts/data/component_data/entities/TraitInfo.cs" id="1_o2a7h"]
+
+[resource]
+script = ExtResource("1_o2a7h")
+Name = "Nimble Escape"
+Type = 1
+metadata/_custom_type_script = "uid://cfabxgghv024y"
