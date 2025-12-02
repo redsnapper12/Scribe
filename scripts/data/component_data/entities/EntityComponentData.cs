@@ -1,5 +1,4 @@
 using Godot;
-using Scribe.Scripts.Core.Components;
 using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
