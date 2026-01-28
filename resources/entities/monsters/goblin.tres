@@ -1,79 +1,97 @@
-[gd_resource type="Resource" script_class="CreatureData" load_steps=27 format=3 uid="uid://b1pf24via74u1"]
+[gd_resource type="Resource" script_class="CreatureData" load_steps=30 format=3 uid="uid://b1pf24via74u1"]
 
 [ext_resource type="Script" uid="uid://g3fv1beppky8" path="res://scripts/data/component_data/entities/EntityComponentData.cs" id="1_jgmxs"]
 [ext_resource type="Script" uid="uid://bv7vkcmilm1nm" path="res://scripts/data/component_data/entities/AIComponentData.cs" id="2_5lggj"]
 [ext_resource type="Script" uid="uid://rafgoo10wir3" path="res://scripts/data/component_data/entities/HealthComponentData.cs" id="3_pnkk3"]
 [ext_resource type="Script" uid="uid://dy8f8ntdnlwqn" path="res://scripts/data/component_data/entities/AbilityScoresComponentData.cs" id="3_ttb5n"]
 [ext_resource type="Script" uid="uid://b1jxl7mk3vxph" path="res://scripts/data/component_data/entities/ChallengeRatingComponentData.cs" id="4_kk0lr"]
-[ext_resource type="Script" uid="uid://dmgcm4vi3hnm2" path="res://scripts/data/component_data/entities/MeleeAttackComponentData.cs" id="4_s35k1"]
+[ext_resource type="Script" uid="uid://b8fulb4ougx4j" path="res://scripts/data/component_data/entities/AttackComponentData.cs" id="4_xlvtr"]
 [ext_resource type="Script" uid="uid://klmvimoxsi5i" path="res://scripts/data/component_data/entities/LanguagesComponentData.cs" id="5_7orht"]
 [ext_resource type="Script" uid="uid://brg2uof26q6rm" path="res://scripts/data/component_data/entities/MovementComponentData.cs" id="5_vw1t0"]
+[ext_resource type="Script" uid="uid://bgfhn4syul0ew" path="res://scripts/items/ItemData.cs" id="5_xlvtr"]
+[ext_resource type="Resource" uid="uid://dm6mw8em5376u" path="res://resources/items/weapons/shortsword.tres" id="6_58vqe"]
+[ext_resource type="Script" uid="uid://bw45iv507tkmu" path="res://scripts/data/component_data/entities/EquipmentComponentData.cs" id="6_bk5o4"]
 [ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="6_e6c81"]
 [ext_resource type="Script" uid="uid://dcm2hbnio0h3g" path="res://scripts/data/component_data/entities/SensesComponentData.cs" id="6_gejde"]
 [ext_resource type="Script" uid="uid://jgprwqxt0m5a" path="res://scripts/data/component_data/entities/CreatureSkillsComponentData.cs" id="7_7orht"]
-[ext_resource type="Script" uid="uid://boht1mtfrx7sa" path="res://scripts/data/component_data/entities/TraitsComponentData.cs" id="8_kk0lr"]
-[ext_resource type="Script" uid="uid://cfabxgghv024y" path="res://scripts/data/component_data/entities/TraitInfo.cs" id="11_kk0lr"]
-[ext_resource type="Script" uid="uid://dxykpli40o636" path="res://scripts/data/CreatureData.cs" id="13_7orht"]
-[ext_resource type="Resource" uid="uid://c8itabij2u71x" path="res://resources/entities/traits/nimble_escape.tres" id="13_gejde"]
+[ext_resource type="Script" uid="uid://kqq0slcr6qx" path="res://scripts/data/component_data/entities/ProficiencyComponentData.cs" id="8_58vqe"]
+[ext_resource type="Script" uid="uid://2ff0s5fd0oc8" path="res://scripts/data/MeleeAttackData.cs" id="9_gejde"]
+[ext_resource type="Script" uid="uid://dxykpli40o636" path="res://scripts/entities/CreatureData.cs" id="13_7orht"]
 
-[sub_resource type="Resource" id="Resource_7orht"]
+[sub_resource type="Resource" id="Resource_uo5l5"]
 script = ExtResource("2_5lggj")
+metadata/_custom_type_script = "uid://bv7vkcmilm1nm"
 
-[sub_resource type="Resource" id="Resource_gejde"]
+[sub_resource type="Resource" id="Resource_j1ii3"]
 script = ExtResource("3_ttb5n")
 Strength = 8
 Dexterity = 14
 Wisdom = 8
 Charisma = 8
+metadata/_custom_type_script = "uid://dy8f8ntdnlwqn"
 
-[sub_resource type="Resource" id="Resource_7mb2q"]
+[sub_resource type="Resource" id="Resource_bk5o4"]
+script = ExtResource("4_xlvtr")
+metadata/_custom_type_script = "uid://b8fulb4ougx4j"
+
+[sub_resource type="Resource" id="Resource_c3pwp"]
 script = ExtResource("4_kk0lr")
+metadata/_custom_type_script = "uid://b1jxl7mk3vxph"
+
+[sub_resource type="Resource" id="Resource_vs3hm"]
+script = ExtResource("6_bk5o4")
+StartingEquipment = Dictionary[int, ExtResource("5_xlvtr")]({
+0: ExtResource("6_58vqe")
+})
+metadata/_custom_type_script = "uid://bw45iv507tkmu"
+
+[sub_resource type="Resource" id="Resource_iycy4"]
+script = ExtResource("8_58vqe")
+metadata/_custom_type_script = "uid://kqq0slcr6qx"
 
 [sub_resource type="Resource" id="Resource_xlvtr"]
 script = ExtResource("7_7orht")
-SkillOverrides = Dictionary[int, int]({
-3: 6
-})
+metadata/_custom_type_script = "uid://jgprwqxt0m5a"
 
-[sub_resource type="Resource" id="Resource_58vqe"]
+[sub_resource type="Resource" id="Resource_kk0lr"]
 script = ExtResource("3_pnkk3")
 MaxHP = 7
-ArmorClass = 12
+ArmorClass = 15
+metadata/_custom_type_script = "uid://rafgoo10wir3"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7orht"]
 atlas = ExtResource("6_e6c81")
 region = Rect2(384, 512, 64, 64)
 
-[sub_resource type="Resource" id="Resource_bk5o4"]
+[sub_resource type="Resource" id="Resource_y83ej"]
 script = ExtResource("5_7orht")
 KnownLanguages = Array[int]([0, 5])
+metadata/_custom_type_script = "uid://klmvimoxsi5i"
 
-[sub_resource type="Resource" id="Resource_j1ii3"]
-script = ExtResource("4_s35k1")
-AttackBonus = 4
-DamageBonus = 2
-DamageType = 2
-AttackName = "Scimitar"
-
-[sub_resource type="Resource" id="Resource_c3pwp"]
+[sub_resource type="Resource" id="Resource_gejde"]
 script = ExtResource("5_vw1t0")
+metadata/_custom_type_script = "uid://brg2uof26q6rm"
 
-[sub_resource type="Resource" id="Resource_uo5l5"]
+[sub_resource type="Resource" id="Resource_hdjod"]
 script = ExtResource("6_gejde")
 DarkvisionRange = 60
 PassivePerception = 9
-
-[sub_resource type="Resource" id="Resource_iycy4"]
-script = ExtResource("8_kk0lr")
-Traits = Array[ExtResource("11_kk0lr")]([ExtResource("13_gejde")])
+metadata/_custom_type_script = "uid://dcm2hbnio0h3g"
 
 [resource]
 script = ExtResource("13_7orht")
+AIComponentData = SubResource("Resource_uo5l5")
+AbilityScoresComponentData = SubResource("Resource_j1ii3")
+ChallengeRatingComponentData = SubResource("Resource_c3pwp")
+LanguagesComponentData = SubResource("Resource_y83ej")
+SensesComponentData = SubResource("Resource_hdjod")
+CreatureSkillsComponentData = SubResource("Resource_xlvtr")
 EntityName = "Goblin"
 Size = 1
 Alignment = 5
 Icon = SubResource("AtlasTexture_7orht")
-HealthComponentData = SubResource("Resource_58vqe")
-MovementComponentData = SubResource("Resource_c3pwp")
-MeleeAttackComponentData = SubResource("Resource_j1ii3")
+HealthComponentData = SubResource("Resource_kk0lr")
+MovementComponentData = SubResource("Resource_gejde")
+AttackComponentData = SubResource("Resource_bk5o4")
+ComponentData = Array[ExtResource("1_jgmxs")]([SubResource("Resource_vs3hm"), SubResource("Resource_iycy4")])
 metadata/_custom_type_script = "uid://dxykpli40o636"

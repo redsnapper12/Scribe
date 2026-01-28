@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="SpeciesComponentData" load_steps=3 format=3 uid="uid://bqpgfkt4pisvd"]
+
+[ext_resource type="Texture2D" uid="uid://comjgykqcsaid" path="res://assets/kenney_assets/cursor_pack/tool_wand.png" id="1_71n0n"]
+[ext_resource type="Script" uid="uid://dg0rxfmtvqvku" path="res://scripts/data/component_data/entities/player_characters/SpeciesComponentData.cs" id="1_xawvy"]
+
+[resource]
+script = ExtResource("1_xawvy")
+SpeciesName = "Elf"
+SpeciesDescription = "Created by the god Corellon, the first elves could change their forms at will. They lost this ability when Corellon cursed them for plotting with the deity Lolth, who tried and failed to usurp Corellon’s dominion. When Lolth was cast into the Abyss, most elves renounced her and earned Corellon’s forgiveness, but that which Corellon had taken from them was lost forever.
+
+No longer able to shape-shift at will, the elves retreated to the Feywild, where their sorrow was deepened by that plane’s influence. Over time, curiosity led many of them to explore other planes of existence, including worlds in the Material Plane.
+
+Elves have pointed ears and lack facial and body hair. They live for around 750 years, and they don’t sleep but instead enter a trance when they need to rest. In that state, they remain aware of their surroundings while immersing themselves in memories and meditations.
+
+An environment subtly transforms elves after they inhabit it for a millennium or more, and it grants them certain kinds of magic. Drow, high elves, and wood elves are examples of elves who have been transformed thus."
+Icon = ExtResource("1_71n0n")
+metadata/_custom_type_script = "uid://dg0rxfmtvqvku"

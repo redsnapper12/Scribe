@@ -1,10 +1,9 @@
 using Godot.Collections;
+using Scribe.Scripts.AI;
 using Scribe.Scripts.Entities;
-
-namespace Scribe.Scripts.AI;
 
 public interface IAIBehavior
 {
-    void Execute(Entity self, BattleContext context);
-    void Initialize(Dictionary parameters);
+    public void Execute(Entity self, BattleContext battleContext);
+    public void Initialize(Dictionary parameters);
 }

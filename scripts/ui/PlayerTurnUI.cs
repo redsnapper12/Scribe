@@ -2,6 +2,7 @@ using Godot;
 using Scribe.Scripts.Combat;
 using Scribe.Scripts.Core;
 using Scribe.Scripts.Entities;
+using Scribe.Scripts.Data.ComponentData;
 
 namespace Scribe.Scripts.UI;
 
@@ -43,7 +44,7 @@ public partial class PlayerTurnUI : Control
     
     private void OnTurnChanged(Entity entity)
     {
-        if (entity.IsAI)
+        if (entity.Controller == Core.Services.ControllerType.AI)
         {
             Visible = false;
             BattleGridView?.HideMovementRange();
@@ -84,7 +85,10 @@ public partial class PlayerTurnUI : Control
     {
         if (MovementLabel != null && _currentEntity != null)
         {
-            MovementLabel.Text = $"Movement: {_currentEntity.MovementRemaining}/{_currentEntity.WalkSpeed} ft";
+            if (_currentEntity.TryGetComponent<MovementComponent>(out var movement))
+            {
+                MovementLabel.Text = $"Movement: {movement.MovementRemaining}/{movement.WalkSpeed} ft";
+            }
         }
     }
     
@@ -125,22 +129,25 @@ public partial class PlayerTurnUI : Control
 
         foreach (var entity in allCombatants)
         {
-            if (entity != currentEntity && entity.IsAlive)
+            if (entity == currentEntity)
+                continue;
+
+            if (!entity.TryGetComponent<HealthComponent>(out var health) || !health.IsAlive)
+                continue;
+
+            // Only show targets that can be attacked (range + no wall blocking)
+            if (battleContext != null && !battleContext.CanMeleeAttack(currentEntity, entity))
+                continue;
+
+            var targetButton = new Button
             {
-                // Only show targets that can be attacked (range + no wall blocking)
-                if (battleContext != null && !battleContext.CanMeleeAttack(currentEntity, entity))
-                    continue;
+                Text = $"{entity.EntityName} (HP: {health.CurrentHP}/{health.MaxHP})"
+            };
 
-                var targetButton = new Button
-                {
-                    Text = $"{entity.EntityName} (HP: {entity.CurrentHP}/{entity.MaxHP})"
-                };
+            var capturedEntity = entity;
+            targetButton.Pressed += () => OnTargetSelected(capturedEntity);
 
-                var capturedEntity = entity;
-                targetButton.Pressed += () => OnTargetSelected(capturedEntity);
-
-                TargetContainer.AddChild(targetButton);
-            }
+            TargetContainer.AddChild(targetButton);
         }
 
         TargetContainer.Visible = true;

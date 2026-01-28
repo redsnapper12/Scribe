@@ -1,6 +1,4 @@
 using Godot;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -26,7 +24,7 @@ public partial class SensesComponentData : EntityComponentData
     }
 }
 
-public partial class SensesComponent : RefCounted, IEntityComponent, ISenses
+public partial class SensesComponent : RefCounted, IEntityComponent
 {
     public int DarkvisionRange { get; set; }
     public int BlindsightRange { get; set; }

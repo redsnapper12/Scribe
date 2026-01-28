@@ -7,7 +7,6 @@ namespace Scribe.Scripts.Data.ComponentData;
 /// Base class for all item component data resources.
 /// Component data is serialized in Godot .tres files and used to instantiate IItemComponent instances.
 /// </summary>
-[GlobalClass]
 public abstract partial class ItemComponentData : Resource
 {
     /// <summary>

@@ -1,8 +1,6 @@
 using Godot;
 using System;
 using Scribe.Scripts.Core;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -27,7 +25,7 @@ public partial class MovementComponentData : EntityComponentData
     }
 }
 
-public partial class MovementComponent : RefCounted, IEntityComponent, IMovable
+public partial class MovementComponent : RefCounted, IEntityComponent
 {
     public Vector2I GridPosition { get; set; }
     public int WalkSpeed { get; set; }

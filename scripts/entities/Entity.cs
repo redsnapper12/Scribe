@@ -1,17 +1,17 @@
 using Godot;
 using System;
 using System.Collections.Generic;
-using Scribe.Scripts.AI;
-using Scribe.Scripts.Core;
-using Scribe.Scripts.Core.Interfaces;
 using Scribe.Scripts.Core.Services;
 using Scribe.Scripts.Data;
 using Scribe.Scripts.Data.ComponentData;
-using Scribe.Scripts.Core.Interfaces.Entities;
+using Scribe.Scripts.Core.Attributes;
 
 namespace Scribe.Scripts.Entities;
 
-public partial class Entity : RefCounted, IDamageable, IMeleeAttacker, IMovable
+[RequiresComponent(typeof(HealthComponent))]
+[RequiresComponent(typeof(MovementComponent))]
+[RequiresComponent(typeof(AttackComponent))]
+public partial class Entity : RefCounted
 {
     private readonly List<IEntityComponent> _components = new();
     private readonly Dictionary<Type, IEntityComponent> _componentsByType = new();
@@ -25,7 +25,6 @@ public partial class Entity : RefCounted, IDamageable, IMeleeAttacker, IMovable
 
     public Vector2I GridPosition { get; set; }
     public string OwnerPlayerId { get; set; } 
-    public bool IsAI => Controller == ControllerType.AI && GetComponent<AIComponent>() != null;
 
     /// <summary>
     /// Adds a component to this entity.
@@ -46,15 +45,21 @@ public partial class Entity : RefCounted, IDamageable, IMeleeAttacker, IMovable
     }
 
     /// <summary>
-    /// Gets a component of the specified type.
+    /// Attempts to get a component of the specified type.
+    /// Returns true if the component exists, false otherwise.
     /// </summary>
-    public T GetComponent<T>() where T : IEntityComponent
+    /// <typeparam name="T">The component type to retrieve</typeparam>
+    /// <param name="component">The retrieved component, or default if not found</param>
+    /// <returns>True if component was found, false otherwise</returns>
+    public bool TryGetComponent<T>(out T component) where T : IEntityComponent
     {
-        if (_componentsByType.TryGetValue(typeof(T), out var component))
+        if (_componentsByType.TryGetValue(typeof(T), out var componentObj))
         {
-            return (T)component;
+            component = (T)componentObj;
+            return true;
         }
-        return default;
+        component = default;
+        return false;
     }
 
     /// <summary>
@@ -72,77 +77,9 @@ public partial class Entity : RefCounted, IDamageable, IMeleeAttacker, IMovable
     {
         return _components.AsReadOnly();
     }
-    
-    #region IDamageable Implementation
-    
-    public int CurrentHP => GetComponent<HealthComponent>()?.CurrentHP ?? 0;
-    public int MaxHP => GetComponent<HealthComponent>()?.MaxHP ?? 0;
-    public int ArmorClass => GetComponent<HealthComponent>()?.ArmorClass ?? 0;
-    public bool IsAlive => GetComponent<HealthComponent>()?.IsAlive ?? false;
-    
-    public void TakeDamage(int amount, DamageType damageType = DamageType.Bludgeoning)
-    {
-        GetComponent<HealthComponent>()?.TakeDamage(amount, damageType);
-    }
-    
-    public void Heal(int amount)
-    {
-        GetComponent<HealthComponent>()?.Heal(amount);
-    }
-    
-    #endregion
-    
-    #region IMeleeAttacker Implementation
-    
-    public int AttackBonus => GetComponent<MeleeAttackComponent>()?.AttackBonus ?? 0;
-    public int NumDice => GetComponent<MeleeAttackComponent>()?.NumDice ?? 1;
-    public DieType DieType => GetComponent<MeleeAttackComponent>()?.DieType ?? DieType.D4;
-    public int DamageBonus => GetComponent<MeleeAttackComponent>()?.DamageBonus ?? 0;
-    public DamageType DamageType => GetComponent<MeleeAttackComponent>()?.DamageType ?? DamageType.Bludgeoning;
-    public int MeleeRange => GetComponent<MeleeAttackComponent>()?.MeleeRange ?? 5;
-    public string AttackName => GetComponent<MeleeAttackComponent>()?.AttackName ?? "Attack";
-    
-    public AttackResult MeleeAttack(IDamageable target)
-    {
-        return GetComponent<MeleeAttackComponent>()?.MeleeAttack(target) 
-            ?? new AttackResult(false, 0, 0);
-    }
-    
-    #endregion
-    
-    #region IMovable Implementation
-    
-    public int WalkSpeed => GetComponent<MovementComponent>()?.WalkSpeed ?? 30;
-    public int FlySpeed => GetComponent<MovementComponent>()?.FlySpeed ?? 0;
-    public int SwimSpeed => GetComponent<MovementComponent>()?.SwimSpeed ?? 0;
-    public int ClimbSpeed => GetComponent<MovementComponent>()?.ClimbSpeed ?? 0;
-    public int MovementRemaining => GetComponent<MovementComponent>()?.MovementRemaining ?? 0;
-    
-    public void ResetMovement()
-    {
-        GetComponent<MovementComponent>()?.ResetMovement();
-    }
-    
-    public bool CanAffordMove(int cost)
-    {
-        return GetComponent<MovementComponent>()?.CanAffordMove(cost) ?? false;
-    }
-    
-    public void SpendMovement(int cost)
-    {
-        GetComponent<MovementComponent>()?.SpendMovement(cost);
-    }
-    
-    #endregion
-    
-    #region AI Methods
 
-    public AIBehaviorType BehaviorType => GetComponent<AIComponent>()?.BehaviorType ?? AIBehaviorType.SimpleAggressive;
-
-    public void Act(BattleContext context)
+    internal bool TryGetComponent<T>()
     {
-        GetComponent<AIComponent>()?.Act(this, context);
+        throw new NotImplementedException();
     }
-
-    #endregion
 }

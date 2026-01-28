@@ -8,16 +8,21 @@
 
 config_version=5
 
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
 [application]
 
 config/name="Scribe"
 run/main_scene="uid://cddhjyyc73ibm"
-config/features=PackedStringArray("4.5", "C#", "Forward Plus")
-config/icon="res://icon.svg"
+config/features=PackedStringArray("4.6", "C#", "Forward Plus")
+config/icon="uid://cpaj21qvg7xnf"
 
 [display]
 
 window/vsync/vsync_mode=0
+mouse_cursor/custom_image="uid://bexiaq3neja7d"
 
 [dotnet]
 
@@ -36,3 +41,7 @@ folder_colors={
 [gui]
 
 theme/custom="uid://d42gumxvbrem"
+
+[rendering]
+
+textures/canvas_textures/default_texture_filter=0

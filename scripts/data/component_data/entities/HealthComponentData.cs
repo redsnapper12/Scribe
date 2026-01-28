@@ -1,9 +1,6 @@
 using Godot;
 using Godot.Collections;
 using System;
-using System.Linq;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -30,7 +27,7 @@ public partial class HealthComponentData : EntityComponentData
     }
 }
 
-public partial class HealthComponent : RefCounted, IEntityComponent, IDamageable
+public partial class HealthComponent : RefCounted, IEntityComponent
 {
     public int CurrentHP { get; set; }
     public int MaxHP { get; set; }
@@ -83,4 +80,21 @@ public partial class HealthComponent : RefCounted, IEntityComponent, IDamageable
 
         return baseDamage;
     }
+}
+
+public enum DamageType
+{
+    Bludgeoning,
+    Piercing,
+    Slashing,
+    Fire,
+    Cold,
+    Lightning,
+    Thunder,
+    Acid,
+    Poison,
+    Necrotic,
+    Radiant,
+    Force,
+    Psychic
 }

@@ -1,7 +1,5 @@
 using Godot;
 using Godot.Collections;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -36,7 +34,7 @@ public partial class CreatureSkillsComponent : BaseSkillsComponent
 {
     public Dictionary<Skill, int> SkillOverrides { get; set; } = new();
 
-    public override int GetSkillModifier(Skill skill, IAbilityScores abilityScores, int proficiencyBonus)
+    public override int GetSkillModifier(Skill skill, AbilityScoresComponent abilityScores, int proficiencyBonus)
     {
         // Check for override first
         if (SkillOverrides.ContainsKey(skill))

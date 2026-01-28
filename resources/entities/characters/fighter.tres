@@ -1,0 +1,68 @@
+[gd_resource type="Resource" script_class="CharacterData" load_steps=20 format=3 uid="uid://fhmhsf6bw8vp"]
+
+[ext_resource type="Script" uid="uid://dy8f8ntdnlwqn" path="res://scripts/data/component_data/entities/AbilityScoresComponentData.cs" id="1_il08k"]
+[ext_resource type="Script" uid="uid://g3fv1beppky8" path="res://scripts/data/component_data/entities/EntityComponentData.cs" id="2_il08k"]
+[ext_resource type="Script" uid="uid://bgfhn4syul0ew" path="res://scripts/items/ItemData.cs" id="3_3hwr8"]
+[ext_resource type="Script" uid="uid://b8fulb4ougx4j" path="res://scripts/data/component_data/entities/AttackComponentData.cs" id="3_il08k"]
+[ext_resource type="Resource" uid="uid://ctke7wuif0opd" path="res://resources/items/weapons/longsword.tres" id="4_3hwr8"]
+[ext_resource type="Script" uid="uid://bw45iv507tkmu" path="res://scripts/data/component_data/entities/EquipmentComponentData.cs" id="5_3niht"]
+[ext_resource type="Script" uid="uid://rafgoo10wir3" path="res://scripts/data/component_data/entities/HealthComponentData.cs" id="6_3hwr8"]
+[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="7_il08k"]
+[ext_resource type="Script" uid="uid://klmvimoxsi5i" path="res://scripts/data/component_data/entities/LanguagesComponentData.cs" id="8_bd8w7"]
+[ext_resource type="Script" uid="uid://2ff0s5fd0oc8" path="res://scripts/data/MeleeAttackData.cs" id="9_3qtea"]
+[ext_resource type="Script" uid="uid://brg2uof26q6rm" path="res://scripts/data/component_data/entities/MovementComponentData.cs" id="11_3niht"]
+[ext_resource type="Script" uid="uid://b4sdvxq1hht2a" path="res://scripts/entities/CharacterData.cs" id="11_xcdxo"]
+
+[sub_resource type="Resource" id="Resource_gfd1c"]
+script = ExtResource("1_il08k")
+Strength = 16
+Dexterity = 14
+Constitution = 15
+Intelligence = 11
+Wisdom = 13
+Charisma = 9
+metadata/_custom_type_script = "uid://dy8f8ntdnlwqn"
+
+[sub_resource type="Resource" id="Resource_3hwr8"]
+script = ExtResource("3_il08k")
+metadata/_custom_type_script = "uid://b8fulb4ougx4j"
+
+[sub_resource type="Resource" id="Resource_mksi6"]
+script = ExtResource("5_3niht")
+StartingEquipment = Dictionary[int, ExtResource("3_3hwr8")]({
+0: ExtResource("4_3hwr8")
+})
+metadata/_custom_type_script = "uid://bw45iv507tkmu"
+
+[sub_resource type="Resource" id="Resource_bd8w7"]
+script = ExtResource("6_3hwr8")
+MaxHP = 12
+ArmorClass = 16
+metadata/_custom_type_script = "uid://rafgoo10wir3"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3hwr8"]
+atlas = ExtResource("7_il08k")
+region = Rect2(256, 512, 64, 64)
+
+[sub_resource type="Resource" id="Resource_xcdxo"]
+script = ExtResource("8_bd8w7")
+KnownLanguages = Array[int]([0, 7, 3])
+metadata/_custom_type_script = "uid://klmvimoxsi5i"
+
+[sub_resource type="Resource" id="Resource_wdhyu"]
+script = ExtResource("11_3niht")
+metadata/_custom_type_script = "uid://brg2uof26q6rm"
+
+[resource]
+script = ExtResource("11_xcdxo")
+AbilityScoresComponentData = SubResource("Resource_gfd1c")
+EquipmentComponentData = SubResource("Resource_mksi6")
+LanguagesComponentData = SubResource("Resource_xcdxo")
+EntityName = "Malcer Lackman"
+Alignment = 0
+Controller = 0
+Icon = SubResource("AtlasTexture_3hwr8")
+HealthComponentData = SubResource("Resource_bd8w7")
+MovementComponentData = SubResource("Resource_wdhyu")
+AttackComponentData = SubResource("Resource_3hwr8")
+metadata/_custom_type_script = "uid://b4sdvxq1hht2a"

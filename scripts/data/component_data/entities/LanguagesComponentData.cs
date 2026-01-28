@@ -1,7 +1,5 @@
 using Godot;
 using Godot.Collections;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -19,7 +17,7 @@ public partial class LanguagesComponentData : EntityComponentData
     }
 }
 
-public partial class LanguagesComponent : RefCounted, IEntityComponent, ILanguages
+public partial class LanguagesComponent : RefCounted, IEntityComponent
 {
     public Array<Language> KnownLanguages { get; set; } = new();
 
@@ -55,4 +53,38 @@ public partial class LanguagesComponent : RefCounted, IEntityComponent, ILanguag
             _ => LanguageScript.None
         };
     }
+}
+
+public enum Language
+{
+    // Standard Languages
+    Common,
+    Dwarvish,
+    Elvish,
+    Giant,
+    Gnomish,
+    Goblin,
+    Halfling,
+    Orc,
+
+    // Exotic Languages
+    Abyssal,
+    Celestial,
+    Draconic,
+    DeepSpeech,
+    Infernal,
+    Primordial,
+    Sylvan,
+    Undercommon
+}
+
+public enum LanguageScript
+{
+    None,
+    Common,
+    Dwarvish,
+    Elvish,
+    Infernal,
+    Celestial,
+    Draconic
 }

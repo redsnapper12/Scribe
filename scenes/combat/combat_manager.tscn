@@ -1,10 +1,8 @@
-[gd_scene load_steps=4 format=3 uid="uid://di1vfw2tfwjeo"]
+[gd_scene load_steps=3 format=3 uid="uid://di1vfw2tfwjeo"]
 
 [ext_resource type="Script" uid="uid://bf002gfvvptya" path="res://scripts/combat/CombatManager.cs" id="1_ofxws"]
-[ext_resource type="Resource" uid="uid://di1s1pcolp231" path="res://resources/entities/characters/fighter_character.tres" id="2_b3qt5"]
 [ext_resource type="Resource" uid="uid://b1pf24via74u1" path="res://resources/entities/monsters/goblin.tres" id="3_8p4c0"]
 
 [node name="CombatManager" type="Node"]
 script = ExtResource("1_ofxws")
-PlayerData = ExtResource("2_b3qt5")
 GoblinData = ExtResource("3_8p4c0")

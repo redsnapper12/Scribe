@@ -1,7 +1,7 @@
 using Godot;
 using Godot.Collections;
 using Scribe.Scripts.AI.Behaviors;
-using Scribe.Scripts.Core.Interfaces;
+using Scribe.Scripts.Data.ComponentData;
 
 namespace Scribe.Scripts.AI;
 
@@ -12,9 +12,6 @@ public static class AIBehaviorFactory
         IAIBehavior behavior = behaviorType switch
         {
             AIBehaviorType.SimpleAggressive => new SimpleAggressiveBehavior(),
-            AIBehaviorType.Defensive => new SimpleAggressiveBehavior(),
-            AIBehaviorType.RangedAttacker => new SimpleAggressiveBehavior(),
-            AIBehaviorType.Support => new SimpleAggressiveBehavior(),
             _ => new SimpleAggressiveBehavior()
         };
         

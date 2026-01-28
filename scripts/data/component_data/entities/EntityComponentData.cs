@@ -1,5 +1,4 @@
 using Godot;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -7,7 +6,6 @@ namespace Scribe.Scripts.Data.ComponentData;
 /// Base class for all entity component data resources.
 /// Component data is serialized in Godot .tres files and used to instantiate entity component instances.
 /// </summary>
-[GlobalClass]
 public abstract partial class EntityComponentData : Resource
 {
     /// <summary>

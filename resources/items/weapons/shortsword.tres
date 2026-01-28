@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="ItemData" load_steps=13 format=3 uid="uid://dm6mw8em5376u"]
+
+[ext_resource type="Script" uid="uid://dohqty7r15idd" path="res://scripts/data/component_data/items/ItemComponentData.cs" id="1_tiquh"]
+[ext_resource type="Script" uid="uid://dmvpywbljvh2w" path="res://scripts/data/component_data/items/EquippableComponentData.cs" id="2_tg1e7"]
+[ext_resource type="Script" uid="uid://2ff0s5fd0oc8" path="res://scripts/data/MeleeAttackData.cs" id="3_mbjux"]
+[ext_resource type="Script" uid="uid://bjj2q04h14sn1" path="res://scripts/data/component_data/items/WeaponComponentData.cs" id="4_xwqgr"]
+[ext_resource type="Script" uid="uid://b15b03j0xap76" path="res://scripts/data/component_data/items/ValuableComponentData.cs" id="5_3rykc"]
+[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="6_fsh4g"]
+[ext_resource type="Script" uid="uid://bgfhn4syul0ew" path="res://scripts/items/ItemData.cs" id="7_jut7q"]
+
+[sub_resource type="Resource" id="1"]
+script = ExtResource("2_tg1e7")
+
+[sub_resource type="Resource" id="Resource_tiquh"]
+script = ExtResource("3_mbjux")
+
+[sub_resource type="Resource" id="2"]
+script = ExtResource("4_xwqgr")
+
+[sub_resource type="Resource" id="3"]
+script = ExtResource("5_3rykc")
+GoldValue = 15
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s3w5c"]
+atlas = ExtResource("6_fsh4g")
+region = Rect2(64, 576, 64, 64)
+
+[resource]
+script = ExtResource("7_jut7q")
+ItemId = "shortsword"
+DisplayName = "Shortsword"
+Description = "A short blade suitable for most warriors"
+Icon = SubResource("AtlasTexture_s3w5c")
+Weight = 3.0
+ComponentData = Array[ExtResource("1_tiquh")]([SubResource("1"), SubResource("2"), SubResource("3")])

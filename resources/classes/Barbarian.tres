@@ -1,0 +1,23 @@
+[gd_resource type="Resource" script_class="ClassComponentData" load_steps=4 format=3 uid="uid://bwxavrht4k6yh"]
+
+[ext_resource type="Script" uid="uid://yxmswqsj37fm" path="res://scripts/data/component_data/entities/player_characters/ClassComponentData.cs" id="1_4sgkj"]
+[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="1_7ufrf"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a042u"]
+atlas = ExtResource("1_7ufrf")
+region = Rect2(64, 640, 64, 64)
+
+[resource]
+script = ExtResource("1_4sgkj")
+ClassName = "Barbarian"
+ClassDescription = "Barbarians are mighty warriors who are powered by primal forces of the multiverse that manifest as a Rage. More than a mere emotion—and not limited to anger—this Rage is an incarnation of a predator’s ferocity, a storm’s fury, and a sea’s turmoil.
+
+Some Barbarians personify their Rage as a fierce spirit or revered forebear. Others see it as a connection to the pain and anguish of the world, as an impersonal tangle of wild magic, or as an expression of their own deepest self. For every Barbarian, their Rage is a power that fuels not just battle prowess, but also uncanny reflexes and heightened senses.
+
+Barbarians often serve as protectors and leaders in their communities. They charge headlong into danger so those under their protection don’t have to. Their courage in the face of danger makes Barbarians perfectly suited for adventure."
+Icon = SubResource("AtlasTexture_a042u")
+HitPointDie = 12
+SavingThrowProficiencies = Array[int]([0, 2])
+WeaponProficiencies = Array[int]([1, 2])
+ArmorTraining = Array[int]([1, 2, 4])
+metadata/_custom_type_script = "uid://yxmswqsj37fm"

@@ -142,7 +142,7 @@ public partial class BattleGridView : Node2D
                 var path = GridManager.FindPath(
                     _movingEntity.GridPosition,
                     cell,
-                    pos => GameManager.Instance.IsCellOccupied(pos, _movingEntity)
+                    pos => GridManager.IsCellOccupied(pos, GameManager.Instance.AllEntities, _movingEntity)
                 );
                 
                 MovementOverlay.ShowPathPreview(path);

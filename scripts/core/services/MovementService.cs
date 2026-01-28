@@ -116,8 +116,7 @@ public static class MovementService
         }
         
         // Validate entity has movement component
-        var movementComponent = entity.GetComponent<MovementComponent>();
-        if (movementComponent == null)
+        if (!entity.TryGetComponent<MovementComponent>(out var movementComponent))
         {
             return MovementResult.Failed(MovementFailureReason.NoMovementComponent);
         }
@@ -136,7 +135,7 @@ public static class MovementService
         var path = _gridManager.FindPath(
             entity.GridPosition,
             request.TargetPosition,
-            pos => _gameManager.IsCellOccupied(pos, entity)
+            pos => _gridManager.IsCellOccupied(pos, _gameManager.AllEntities, entity)
         );
         
         if (path == null || path.Count == 0)
@@ -164,12 +163,16 @@ public static class MovementService
     {
         var from = entity.GridPosition;
         entity.GridPosition = target;
-        
+
         var path = new List<Vector2I> { from, target };
-        
+
         GD.Print($"[Reposition] {entity.EntityName} moved from {from} to {target}");
-        
-        return MovementResult.Succeeded(path, 0, entity.MovementRemaining);
+
+        int movementRemaining = 0;
+        if (entity.TryGetComponent<MovementComponent>(out var movement))
+            movementRemaining = movement.MovementRemaining;
+
+        return MovementResult.Succeeded(path, 0, movementRemaining);
     }
     
     private static MovementResult ExecuteCombatMove(Entity entity, MovementComponent movement, List<Vector2I> fullPath)
@@ -246,9 +249,9 @@ public static class MovementService
     public static List<Vector2I> GetReachableCells(Entity entity)
     {
         var reachable = new List<Vector2I>();
-        var movement = entity.GetComponent<MovementComponent>();
+        entity.TryGetComponent<MovementComponent>(out var movementComponent);
         
-        if (movement == null || !_initialized)
+        if (movementComponent == null || !_initialized)
             return reachable;
         
         var start = entity.GridPosition;
@@ -294,7 +297,7 @@ public static class MovementService
                     int cellCost = _gridManager.GetCellMovementCost(neighbor);
                     int newCost = costSoFar + cellCost;
                     
-                    if (newCost <= movement.MovementRemaining)
+                    if (newCost <= movementComponent.MovementRemaining)
                     {
                         visited.Add(neighbor);
                         queue.Enqueue((neighbor, newCost));

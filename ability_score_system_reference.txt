@@ -1,0 +1,443 @@
+================================================================================
+ABILITY SCORE GENERATION SYSTEM - REFERENCE GUIDE
+================================================================================
+
+OVERVIEW
+--------
+A flexible, type-safe system for managing D&D 5e 2024 ability score generation
+using three standard methods: Standard Array, Point Buy, and Rolling (4d6 drop
+lowest). Integrates with your existing DiceRollingService.
+
+FILES CREATED
+-------------
+1. scripts/ui/ability_score_generators/AbilityScoreGenerator.cs
+   - Abstract base class
+   - Defines AbilityScoreGenerationMethod enum
+   - Factory pattern for creating generators
+   - Common functionality for all methods
+
+2. scripts/ui/ability_score_generators/StandardArrayGenerator.cs
+   - Fixed array: 15, 14, 13, 12, 10, 8
+   - Drag-and-drop or dropdown assignment
+   - Auto-updates available pool
+
+3. scripts/ui/ability_score_generators/PointBuyGenerator.cs
+   - 27 points to spend
+   - Score range: 8-15
+   - Increment/decrement interface
+   - Tracks remaining points
+
+4. scripts/ui/ability_score_generators/RollingGenerator.cs
+   - Uses your DiceRollingService
+   - 4d6 drop lowest methodology
+   - Displays individual dice rolls
+   - Assign rolled values to abilities
+
+================================================================================
+ENUM DEFINITION
+================================================================================
+
+public enum AbilityScoreGenerationMethod
+{
+    StandardArray = 0,  // Maps to dropdown index 0
+    PointBuy = 1,       // Maps to dropdown index 1
+    Rolling = 2         // Maps to dropdown index 2
+}
+
+Benefits:
+- Type-safe (no string comparisons)
+- Maps directly to dropdown/list indices
+- Easy to extend with new methods
+
+================================================================================
+USAGE IN CharacterStartFromScratch.cs
+================================================================================
+
+STEP 1: Add Fields
+------------------
+private AbilityScoreGenerator _abilityScoreGenerator;
+private AbilityScoreGenerationMethod _selectedMethod;
+
+STEP 2: Initialize Method Selection Dropdown
+---------------------------------------------
+private void InitAbilityScoreMethodSelect()
+{
+    // Populate dropdown with all available methods
+    foreach (AbilityScoreGenerationMethod method in System.Enum.GetValues<AbilityScoreGenerationMethod>())
+    {
+        string displayName = AbilityScoreGenerator.GetDisplayName(method);
+        _methodDropdown.AddItem(displayName);
+        // Adds: "Standard Array", "Point Buy", "Rolling (4d6 Drop Lowest)"
+    }
+
+    // Connect signal
+    _methodDropdown.ItemSelected += OnMethodSelected;
+}
+
+STEP 3: Handle Method Selection
+--------------------------------
+private void OnMethodSelected(long index)
+{
+    // Cast index directly to enum (they match!)
+    _selectedMethod = (AbilityScoreGenerationMethod)index;
+
+    // Create appropriate generator using factory
+    _abilityScoreGenerator = AbilityScoreGenerator.Create(_selectedMethod);
+    _abilityScoreGenerator.AssignmentsChanged += UpdateAbilityScoreUI;
+
+    // Show/hide appropriate UI panels based on method
+    switch (_selectedMethod)
+    {
+        case AbilityScoreGenerationMethod.StandardArray:
+            ShowStandardArrayUI();
+            break;
+        case AbilityScoreGenerationMethod.PointBuy:
+            ShowPointBuyUI();
+            break;
+        case AbilityScoreGenerationMethod.Rolling:
+            ShowRollingUI();
+            break;
+    }
+}
+
+================================================================================
+STANDARD ARRAY IMPLEMENTATION
+================================================================================
+
+UI Elements Needed:
+- 6 OptionButton dropdowns (one per ability: STR, DEX, CON, INT, WIS, CHA)
+- Labels showing current assignments
+
+Example Implementation:
+-----------------------
+[Export] private OptionButton _strengthDropdown;
+[Export] private OptionButton _dexterityDropdown;
+// ... etc for all 6 abilities
+
+private void ShowStandardArrayUI()
+{
+    var generator = (StandardArrayGenerator)_abilityScoreGenerator;
+    UpdateStandardArrayDropdowns();
+}
+
+private void UpdateStandardArrayDropdowns()
+{
+    var generator = (StandardArrayGenerator)_abilityScoreGenerator;
+    var available = generator.GetAvailableScores(); // [15, 14, 13, 12, 10, 8]
+
+    // Clear and repopulate all dropdowns
+    _strengthDropdown.Clear();
+    foreach (int score in available)
+    {
+        _strengthDropdown.AddItem(score.ToString());
+    }
+
+    // Add currently assigned score if any
+    var currentScore = generator.GetScore(AbilityScore.Strength);
+    if (currentScore.HasValue)
+    {
+        _strengthDropdown.AddItem(currentScore.Value.ToString());
+        _strengthDropdown.Select(_strengthDropdown.ItemCount - 1);
+    }
+}
+
+private void OnStrengthDropdownSelected(long index)
+{
+    var generator = (StandardArrayGenerator)_abilityScoreGenerator;
+    var available = generator.GetAvailableScores();
+    int selectedScore = available[(int)index];
+
+    if (generator.AssignScore(AbilityScore.Strength, selectedScore))
+    {
+        // Success - UI will update via AssignmentsChanged signal
+    }
+}
+
+================================================================================
+POINT BUY IMPLEMENTATION
+================================================================================
+
+UI Elements Needed:
+- 6 labels showing current scores (start at 8)
+- 12 buttons (increment/decrement for each ability)
+- Label showing points remaining (start at 27)
+
+Example Implementation:
+-----------------------
+[Export] private Label _pointsRemainingLabel;
+[Export] private Label _strengthScoreLabel;
+[Export] private Button _strengthIncrementButton;
+[Export] private Button _strengthDecrementButton;
+// ... etc for all 6 abilities
+
+private void ShowPointBuyUI()
+{
+    var generator = (PointBuyGenerator)_abilityScoreGenerator;
+    generator.PointsRemainingChanged += UpdatePointsRemainingUI;
+
+    UpdatePointBuyUI();
+
+    // Connect button signals
+    _strengthIncrementButton.Pressed += () => OnIncrementAbility(AbilityScore.Strength);
+    _strengthDecrementButton.Pressed += () => OnDecrementAbility(AbilityScore.Strength);
+}
+
+private void OnIncrementAbility(AbilityScore ability)
+{
+    var generator = (PointBuyGenerator)_abilityScoreGenerator;
+    if (generator.IncrementScore(ability))
+    {
+        UpdatePointBuyUI();
+    }
+    else
+    {
+        // Not enough points or already at max
+        GD.Print("Cannot increment - insufficient points or at maximum");
+    }
+}
+
+private void OnDecrementAbility(AbilityScore ability)
+{
+    var generator = (PointBuyGenerator)_abilityScoreGenerator;
+    if (generator.DecrementScore(ability))
+    {
+        UpdatePointBuyUI();
+    }
+    else
+    {
+        // Already at minimum
+        GD.Print("Cannot decrement - already at minimum");
+    }
+}
+
+private void UpdatePointBuyUI()
+{
+    var generator = (PointBuyGenerator)_abilityScoreGenerator;
+    var assignments = generator.GetAssignments();
+
+    _strengthScoreLabel.Text = assignments[AbilityScore.Strength].ToString();
+    _dexterityScoreLabel.Text = assignments[AbilityScore.Dexterity].ToString();
+    // ... etc for all abilities
+}
+
+private void UpdatePointsRemainingUI(int pointsRemaining)
+{
+    _pointsRemainingLabel.Text = $"Points Remaining: {pointsRemaining}";
+}
+
+================================================================================
+ROLLING IMPLEMENTATION
+================================================================================
+
+UI Elements Needed:
+- "Roll Scores" button
+- Display area for showing dice rolls and totals
+- 6 OptionButton dropdowns for assigning rolled scores to abilities
+
+Example Implementation:
+-----------------------
+[Export] private Button _rollButton;
+[Export] private VBoxContainer _rollResultsContainer;
+[Export] private OptionButton _strengthRollDropdown;
+// ... etc for other abilities
+
+private void ShowRollingUI()
+{
+    _rollButton.Pressed += OnRollButtonPressed;
+}
+
+private void OnRollButtonPressed()
+{
+    var generator = (RollingGenerator)_abilityScoreGenerator;
+    var results = generator.RollCompleteSet();
+
+    // Extract just the scores
+    var scores = results.Select(r => r.score).ToList();
+    generator.SetRolledScores(scores);
+
+    // Display the rolls
+    _rollResultsContainer.GetChildren().ToList().ForEach(c => c.QueueFree());
+
+    foreach (var result in results)
+    {
+        var label = new Label();
+        var diceString = string.Join(", ", result.dice);
+        label.Text = $"Rolled: [{diceString}] = {result.score}";
+        _rollResultsContainer.AddChild(label);
+    }
+
+    // Update dropdowns
+    UpdateRollingDropdowns();
+}
+
+private void UpdateRollingDropdowns()
+{
+    var generator = (RollingGenerator)_abilityScoreGenerator;
+    var available = generator.GetAvailableScores();
+
+    _strengthRollDropdown.Clear();
+    foreach (int score in available)
+    {
+        _strengthRollDropdown.AddItem(score.ToString());
+    }
+
+    // Add currently assigned score if any
+    var currentScore = generator.GetScore(AbilityScore.Strength);
+    if (currentScore.HasValue)
+    {
+        _strengthRollDropdown.AddItem(currentScore.Value.ToString());
+        _strengthRollDropdown.Select(_strengthRollDropdown.ItemCount - 1);
+    }
+}
+
+private void OnStrengthRollDropdownSelected(long index)
+{
+    var generator = (RollingGenerator)_abilityScoreGenerator;
+    var available = generator.GetAvailableScores();
+    int selectedScore = available[(int)index];
+
+    generator.AssignScore(AbilityScore.Strength, selectedScore);
+}
+
+================================================================================
+FINALIZING ABILITY SCORES
+================================================================================
+
+When user clicks "Confirm" or moves to next stage:
+--------------------------------------------------
+private void FinalizeAbilityScores()
+{
+    if (!_abilityScoreGenerator.IsComplete())
+    {
+        GD.PrintErr("Not all ability scores have been assigned!");
+        return;
+    }
+
+    // Get final assignments
+    var finalScores = _abilityScoreGenerator.GetAssignments();
+
+    // Store in your existing dictionary
+    abilityScores = finalScores;
+
+    // Or create AbilityScoresComponentData
+    var abilityScoresData = new AbilityScoresComponentData
+    {
+        Strength = finalScores[AbilityScore.Strength],
+        Dexterity = finalScores[AbilityScore.Dexterity],
+        Constitution = finalScores[AbilityScore.Constitution],
+        Intelligence = finalScores[AbilityScore.Intelligence],
+        Wisdom = finalScores[AbilityScore.Wisdom],
+        Charisma = finalScores[AbilityScore.Charisma]
+    };
+
+    ProgessStage();
+}
+
+================================================================================
+KEY API REFERENCE
+================================================================================
+
+AbilityScoreGenerator (Base Class)
+-----------------------------------
+- GetAssignments() : Dictionary<AbilityScore, int>
+  Returns all current ability score assignments
+
+- GetScore(AbilityScore ability) : int?
+  Returns score for specific ability, or null if not assigned
+
+- IsComplete() : bool
+  Returns true if all 6 abilities have scores assigned
+
+- Reset() : void
+  Clears all assignments and resets to initial state
+
+- static Create(AbilityScoreGenerationMethod method) : AbilityScoreGenerator
+  Factory method to create appropriate generator
+
+- static GetDisplayName(AbilityScoreGenerationMethod method) : string
+  Returns UI-friendly name for method
+
+Signals:
+- AssignmentsChanged()
+  Emitted whenever ability score assignments change
+
+StandardArrayGenerator
+----------------------
+- GetAvailableScores() : List<int>
+  Returns unassigned scores from the standard array
+
+- AssignScore(AbilityScore ability, int score) : bool
+  Assigns a score to an ability (returns false if score unavailable)
+
+- UnassignScore(AbilityScore ability) : bool
+  Removes assignment, returning score to available pool
+
+PointBuyGenerator
+-----------------
+- GetPointsRemaining() : int
+  Returns how many points are left to spend
+
+- SetScore(AbilityScore ability, int score) : bool
+  Sets exact score (8-15) for an ability
+
+- IncrementScore(AbilityScore ability) : bool
+  Increases ability score by 1 (if enough points)
+
+- DecrementScore(AbilityScore ability) : bool
+  Decreases ability score by 1 (if above minimum)
+
+- static GetCostForScore(int score) : int
+  Returns point cost for a specific score value
+
+- GetScoreRange() : (int min, int max)
+  Returns (8, 15) - the valid score range
+
+Signals:
+- PointsRemainingChanged(int pointsRemaining)
+  Emitted when points remaining changes
+
+RollingGenerator
+----------------
+- Roll4d6DropLowest() : (int total, int[] dice)
+  Rolls 4d6, drops lowest, returns total and all 4 dice
+
+- RollCompleteSet() : List<(int score, int[] dice)>
+  Rolls 6 complete ability scores with dice details
+
+- SetRolledScores(List<int> scores) : void
+  Sets the pool of rolled scores to assign
+
+- GetRolledScores() : List<int>
+  Returns all rolled scores (assigned + unassigned)
+
+- GetAvailableScores() : List<int>
+  Returns only unassigned rolled scores
+
+- AssignScore(AbilityScore ability, int score) : bool
+  Assigns a rolled score to an ability
+
+- UnassignScore(AbilityScore ability) : bool
+  Removes assignment, returning score to available pool
+
+================================================================================
+NOTES
+================================================================================
+
+1. All generators use the AbilityScore enum from:
+   scripts/data/component_data/entities/AbilityScoresComponentData.cs
+
+2. Rolling generator integrates with your DiceRollingService for consistency
+
+3. Point Buy uses D&D 5e 2024 rules:
+   - 27 points total
+   - Range: 8-15
+   - Costs: 8=0, 9=1, 10=2, 11=3, 12=4, 13=5, 14=7, 15=9
+
+4. Standard Array values: 15, 14, 13, 12, 10, 8
+
+5. All methods emit AssignmentsChanged signal for reactive UI updates
+
+6. Factory pattern allows easy extension - just add new enum value and
+   implementation class
+
+================================================================================

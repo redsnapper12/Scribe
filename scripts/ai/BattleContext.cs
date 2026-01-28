@@ -5,6 +5,7 @@ using System.Linq;
 using Scribe.Scripts.Core;
 using Scribe.Scripts.Core.Interfaces;
 using Scribe.Scripts.Entities;
+using Scribe.Scripts.Data.ComponentData;
 
 namespace Scribe.Scripts.AI;
 
@@ -18,12 +19,15 @@ public partial class BattleContext : RefCounted
     {
         Entity nearest = null;
         float minDistance = float.MaxValue;
-        
+
         foreach (var entity in AllEntities)
         {
-            if (entity == self || !entity.IsAlive)
+            if (entity == self)
                 continue;
-            
+
+            if (!entity.TryGetComponent<HealthComponent>(out var health) || !health.IsAlive)
+                continue;
+
             float distance = GetDistance(self, entity);
             if (distance < minDistance)
             {
@@ -31,22 +35,33 @@ public partial class BattleContext : RefCounted
                 nearest = entity;
             }
         }
-        
+
         return nearest;
     }
     
     public Entity FindWeakestEnemy(Entity self)
     {
         return AllEntities
-            .Where(e => e != self && e.IsAlive && e is IDamageable)
-            .OrderBy(e => e.CurrentHP)
+            .Where(e => e != self && e.TryGetComponent<HealthComponent>(out var h) && h.IsAlive)
+            .OrderBy(e =>
+            {
+                e.TryGetComponent<HealthComponent>(out var health);
+                return health?.CurrentHP ?? int.MaxValue;
+            })
             .FirstOrDefault();
     }
     
     public List<Entity> GetEnemiesInRange(Entity self, float range)
     {
         return AllEntities
-            .Where(e => e != self && e.IsAlive && GetDistance(self, e) <= range)
+            .Where(e =>
+            {
+                if (e == self)
+                    return false;
+                if (!e.TryGetComponent<HealthComponent>(out var health) || !health.IsAlive)
+                    return false;
+                return GetDistance(self, e) <= range;
+            })
             .ToList();
     }
     
@@ -65,7 +80,10 @@ public partial class BattleContext : RefCounted
     /// <returns>True if the attacker can legally melee attack the target</returns>
     public bool CanMeleeAttack(Entity attacker, Entity target)
     {
-        if (attacker == null || target == null || !target.IsAlive)
+        if (attacker == null || target == null)
+            return false;
+
+        if (!target.TryGetComponent<HealthComponent>(out var targetHealth) || !targetHealth.IsAlive)
             return false;
 
         // Range check (must be adjacent for melee)
@@ -95,9 +113,12 @@ public partial class BattleContext : RefCounted
         {
             foreach (var entity in AllEntities)
             {
-                if (entity == from || !entity.IsAlive)
+                if (entity == from)
                     continue;
-                
+
+                if (!entity.TryGetComponent<HealthComponent>(out var health) || !health.IsAlive)
+                    continue;
+
                 if (entity.GridPosition == gridPos)
                     return true;
             }
@@ -147,7 +168,11 @@ public partial class BattleContext : RefCounted
     private bool IsInMeleeRange(Entity attacker, Entity target)
     {
         int distance = GridManager.GetDistanceInFeet(attacker.GridPosition, target.GridPosition);
-        return distance <= attacker.MeleeRange;
+
+        if (!attacker.TryGetComponent<EquipmentComponent>(out var equipmentComponent))
+            return distance <= 5; // Default melee range
+
+        return distance <= equipmentComponent.GetMainHandWeaponMeleeData().MeleeRange;
     }
     
     private bool IsPositionBlocked(Vector2I gridPos, Entity movingEntity)
@@ -157,13 +182,16 @@ public partial class BattleContext : RefCounted
 
         foreach (var entity in AllEntities)
         {
-            if (entity == movingEntity || !entity.IsAlive)
+            if (entity == movingEntity)
                 continue;
-            
+
+            if (!entity.TryGetComponent<HealthComponent>(out var health) || !health.IsAlive)
+                continue;
+
             if (entity.GridPosition == gridPos)
                 return true;
         }
-        
+
         return false;
     }
     

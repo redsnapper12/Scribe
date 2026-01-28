@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Scribe.Scripts.Items;
+using Scribe.Scripts.Entities;
+using Scribe.Scripts.Data.ComponentData;
 
 namespace Scribe.Scripts.Core;
 
@@ -301,6 +303,22 @@ public partial class GridManager : Node2D
         }
 
         return cells;
+    }
+
+    public bool IsCellOccupied(Vector2I gridPosition, List<Entity> entities, Entity excludeEntity = null)
+    {
+        foreach (var entity in entities)
+        {
+            if (entity == excludeEntity)
+                continue;
+
+            if (!entity.TryGetComponent<HealthComponent>(out var health) || !health.IsAlive)
+                continue;
+
+            if (entity.GridPosition == gridPosition)
+                return true;
+        }
+        return false;
     }
 
     #endregion
@@ -607,7 +625,7 @@ public partial class GridManager : Node2D
     {
         if (_groundItems.TryGetValue(position, out var items))
         {
-            return new List<ItemNode>(items);
+            return [.. items];
         }
         return new List<ItemNode>();
     }

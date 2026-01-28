@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="ClassComponentData" load_steps=4 format=3 uid="uid://cgm3smseshb8v"]
+
+[ext_resource type="Script" uid="uid://yxmswqsj37fm" path="res://scripts/data/component_data/entities/player_characters/ClassComponentData.cs" id="1_7yr4x"]
+[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="1_lc1p0"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sy2yb"]
+atlas = ExtResource("1_lc1p0")
+region = Rect2(384, 576, 64, 64)
+
+[resource]
+script = ExtResource("1_7yr4x")
+ClassName = "Bard"
+ClassDescription = "Invoking magic through music, dance, and verse, Bards are expert at inspiring others, soothing hurts, disheartening foes, and creating illusions. Bards believe the multiverse was spoken into existence and that remnants of its Words of Creation still resound and glimmer on every plane of existence. Bardic magic attempts to harness those words, which transcend any language.
+
+Anything can inspire a new song or tale, so Bards are fascinated by almost everything. They become masters of many things, including performing music, working magic, and making jests.
+
+A Bard’s life is spent traveling, gathering lore, telling stories, and living on the gratitude of audiences, much like any other entertainer. But Bards’ depth of knowledge and mastery of magic sets them apart."
+Icon = SubResource("AtlasTexture_sy2yb")
+PrimaryAbility = 5
+HitPointDie = 8
+SavingThrowProficiencies = Array[int]([1, 5])
+WeaponProficiencies = Array[int]([1])
+ArmorTraining = Array[int]([1])
+metadata/_custom_type_script = "uid://yxmswqsj37fm"

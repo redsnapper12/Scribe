@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SpeciesComponentData" load_steps=3 format=3 uid="uid://bg23kjwe8iprl"]
+
+[ext_resource type="Texture2D" uid="uid://bn5jdp80ghsxw" path="res://assets/kenney_assets/cursor_pack/tool_hammer.png" id="1_fcxq6"]
+[ext_resource type="Script" uid="uid://dg0rxfmtvqvku" path="res://scripts/data/component_data/entities/player_characters/SpeciesComponentData.cs" id="1_hlumv"]
+
+[resource]
+script = ExtResource("1_hlumv")
+SpeciesName = "Dwarf"
+SpeciesDescription = "Dwarves were raised from the earth in the elder days by a deity of the forge. Called by various names on different worlds—Moradin, Reorx, and others—that god gave dwarves an affinity for stone and metal and for living underground. The god also made them resilient like the mountains, with a life span of about 350 years.
+
+Squat and often bearded, the original dwarves carved cities and strongholds into mountainsides and under the earth. Their oldest legends tell of conflicts with the monsters of mountaintops and the Underdark, whether those monsters were towering giants or subterranean horrors. Inspired by those tales, dwarves of any culture often sing of valorous deeds—especially of the little overcoming the mighty.
+
+On some worlds in the multiverse, the first settlements of dwarves were built in hills or mountains, and the families who trace their ancestry to those settlements call themselves hill dwarves or mountain dwarves, respectively. The Greyhawk and Dragonlance settings have such communities."
+Icon = ExtResource("1_fcxq6")
+metadata/_custom_type_script = "uid://dg0rxfmtvqvku"

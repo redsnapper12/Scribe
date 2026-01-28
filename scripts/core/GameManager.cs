@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Scribe.Scripts.Combat;
 using Scribe.Scripts.Core.Services;
 using Scribe.Scripts.Entities;
+using Scribe.Scripts.Data.ComponentData;
 
 namespace Scribe.Scripts.Core;
 
@@ -45,8 +46,9 @@ public partial class GameManager : Node
     {
         Instance = this;
         
-        // Initialize MovementService with required references
+        // Init services
         MovementService.Initialize(this, GridManager);
+        DiceRollingService.Initialize();
     }
     
     public override void _ExitTree()
@@ -101,19 +103,5 @@ public partial class GameManager : Node
             return true;
 
         return ActiveCombat.GetCurrentTurnEntity() == entity;
-    }
-    
-    public bool IsCellOccupied(Vector2I gridPosition, Entity excludeEntity = null)
-    {
-        foreach (var entity in AllEntities)
-        {
-            if (entity == excludeEntity)
-                continue;
-            if (!entity.IsAlive)
-                continue;
-            if (entity.GridPosition == gridPosition)
-                return true;
-        }
-        return false;
     }
 }

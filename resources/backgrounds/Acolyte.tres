@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BackgroundComponentData" load_steps=2 format=3 uid="uid://bpskghweg5t4c"]
+
+[ext_resource type="Script" uid="uid://hn2lrcbd67a3" path="res://scripts/data/component_data/entities/BackgroundComponentData.cs" id="1_ocv7t"]
+
+[resource]
+script = ExtResource("1_ocv7t")
+BackgroundName = "Acolyte"
+BackgroundDescription = "You devoted yourself to service in a temple, either nestled in a town or secluded in a sacred grove. There you performed rites in honor of a god or pantheon. You served under a priest and studied religion. Thanks to your priest's instruction and your own devotion, you also learned how to channel a modicum of divine power in service to your place of worship and the people who prayed there."
+AbilityScores = Array[int]([3, 4, 5])
+Proficiencies = Array[int]([10, 8])
+metadata/_custom_type_script = "uid://hn2lrcbd67a3"

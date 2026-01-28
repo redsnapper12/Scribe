@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Scribe.Scripts.AI;
 using Scribe.Scripts.Core;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Data;
 using Scribe.Scripts.Entities;
+using Scribe.Scripts.Data.ComponentData;
 
 namespace Scribe.Scripts.Combat;
 
@@ -22,8 +21,8 @@ public partial class CombatManager : Node
     
     [Export] public BattleGridView BattleGridView { get; set; }
     [Export] public GameManager GameManager { get; set; }
-    [Export] public EntityData PlayerData { get; set; }
-    [Export] public EntityData GoblinData { get; set; }
+    [Export] public CharacterData PlayerData { get; set; }
+    [Export] public CreatureData GoblinData { get; set; }
     
     // Convenience properties to access through BattleGridView
     private GridManager GridManager => BattleGridView?.GridManager;
@@ -131,7 +130,9 @@ public partial class CombatManager : Node
     
     private void StartCombat(List<Entity> combatants)
     {
-        _combatants = combatants.Where(e => e.IsAlive).ToList();
+        _combatants = combatants
+            .Where(e => e.TryGetComponent<HealthComponent>(out var health) && health.IsAlive)
+            .ToList();
         _battleContext.AllEntities = _combatants;
         
         if (_combatants.Count == 0)
@@ -212,7 +213,7 @@ public partial class CombatManager : Node
             
             EmitSignal(SignalName.TurnChanged, currentEntity);
             
-            if (currentEntity.IsAI)
+            if (currentEntity.Controller == Core.Services.ControllerType.AI)
             {
                 ProcessAITurn(currentEntity);
                 AdvanceTurn();
@@ -228,14 +229,21 @@ public partial class CombatManager : Node
     private void ProcessAITurn(Entity entity)
     {
         GD.Print($"=== {entity.EntityName}'s Turn ===");
-        entity.ResetMovement();
-        entity.Act(_battleContext);
+
+        if (entity.TryGetComponent<MovementComponent>(out var movement))
+            movement.ResetMovement();
+
+        if (entity.TryGetComponent<AIComponent>(out var ai))
+            ai.Act(entity, _battleContext);
     }
     
     private void ProcessPlayerTurn(Entity entity)
     {
         GD.Print($"=== {entity.EntityName}'s Turn ===");
-        entity.ResetMovement();
+
+        if (entity.TryGetComponent<MovementComponent>(out var movement))
+            movement.ResetMovement();
+
         EmitSignal(SignalName.PlayerTurnStarted);
     }
     
@@ -251,7 +259,9 @@ public partial class CombatManager : Node
     
     private void RemoveDeadCombatants()
     {
-        var deadEntities = _combatants.Where(e => !e.IsAlive).ToList();
+        var deadEntities = _combatants
+            .Where(e => !e.TryGetComponent<HealthComponent>(out var health) || !health.IsAlive)
+            .ToList();
         
         foreach (var dead in deadEntities)
         {
@@ -267,7 +277,9 @@ public partial class CombatManager : Node
     
     private bool CheckCombatEnd()
     {
-        var livingCombatants = _combatants.Where(e => e.IsAlive).ToList();
+        var livingCombatants = _combatants
+            .Where(e => e.TryGetComponent<HealthComponent>(out var health) && health.IsAlive)
+            .ToList();
         
         if (livingCombatants.Count <= 1)
         {
@@ -314,18 +326,37 @@ public partial class CombatManager : Node
         var player = GetCurrentTurnEntity();
         if (player == null) return;
 
+        if (!player.TryGetComponent<AttackComponent>(out var meleeAttack))
+        {
+            GD.PrintErr($"{player.EntityName} cannot perform melee attacks");
+            return;
+        }
+
+        if (!player.TryGetComponent<EquipmentComponent>(out var equipment))
+        {
+            GD.PrintErr($"{player.EntityName} has no equipment component");
+            return;
+        }
+
+        if (!target.TryGetComponent<HealthComponent>(out var targetHealth))
+        {
+            GD.PrintErr($"{target.EntityName} cannot take damage");
+            return;
+        }
+
         if (!_battleContext.CanMeleeAttack(player, target))
         {
             GD.PrintErr($"Invalid attack: {player.EntityName} cannot attack {target.EntityName} (out of range or blocked by walls)");
             return;
         }
 
-        var result = player.MeleeAttack(target);
+        var meleeAttackData = equipment.GetMainHandWeaponMeleeData();
+        var result = meleeAttack.MeleeAttack(player, targetHealth, meleeAttackData);
 
         GD.Print($"{player.EntityName} attacks {target.EntityName}!");
         if (result.Hit)
         {
-            GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.CriticalHit ? " (CRITICAL!)" : "")}");
+            GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.IsCritical ? " (CRITICAL!)" : "")}");
         }
         else
         {

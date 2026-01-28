@@ -1,6 +1,4 @@
 using Godot;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -28,7 +26,7 @@ public partial class AbilityScoresComponentData : EntityComponentData
     }
 }
 
-public partial class AbilityScoresComponent : RefCounted, IEntityComponent, IAbilityScores
+public partial class AbilityScoresComponent : RefCounted, IEntityComponent
 {
     public int Strength { get; set; }
     public int Dexterity { get; set; }
@@ -59,4 +57,14 @@ public partial class AbilityScoresComponent : RefCounted, IEntityComponent, IAbi
 
         return (score - 10) / 2;
     }
+}
+
+public enum AbilityScore
+{
+    Strength,
+    Dexterity,
+    Constitution,
+    Intelligence,
+    Wisdom,
+    Charisma
 }

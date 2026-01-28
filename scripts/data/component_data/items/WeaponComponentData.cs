@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Godot;
 using Godot.Collections;
 using Scribe.Scripts.Core.Interfaces;
@@ -12,23 +13,16 @@ namespace Scribe.Scripts.Data.ComponentData;
 [GlobalClass]
 public partial class WeaponComponentData : ItemComponentData
 {
-    [Export] public int NumDice { get; set; } = 1;
-    [Export] public DieType DieType { get; set; } = DieType.D6;
-    [Export] public DamageType DamageType { get; set; } = DamageType.Slashing;
-    [Export] public int MeleeRange { get; set; } = 5;
-    [Export] public string AttackName { get; set; } = "Attack";
-    [Export] public Array<WeaponProperties> Properties { get; set;}
-
+    /// <summary>
+    /// List of attacks this weapon can make. Most weapons have 1 attack.
+    /// </summary>
+    [Export] public MeleeAttackData Attack { get; set; } = new();
 
     public override IItemComponent CreateComponent()
     {
         return new WeaponComponent
         {
-            NumDice = this.NumDice,
-            DieType = this.DieType,
-            DamageType = this.DamageType,
-            MeleeRange = this.MeleeRange,
-            AttackName = this.AttackName,
+            Attack = this.Attack
         };
     }
 }
@@ -38,14 +32,25 @@ public partial class WeaponComponentData : ItemComponentData
 /// </summary>
 public partial class WeaponComponent : RefCounted, IItemComponent, IWeapon
 {
-    public int NumDice { get; set; }
-    public DieType DieType { get; set; }
-    public int DamageBonus { get; set; }
-    public DamageType DamageType { get; set; }
-    public int AttackBonus { get; set; }
-    public int MeleeRange { get; set; }
-    public string AttackName { get; set; }
-    public bool IsTwoHanded { get; set; }
+    /// <summary>
+    /// Attack this weapon can make.
+    /// </summary>
+    public MeleeAttackData Attack { get; set; } = new();
+
+    /// <summary>
+    /// Check if this weapon has a specific property (Finesse, Reach, etc.)
+    /// </summary>
+    public bool HasProperty(WeaponProperties property)
+    {
+        if (Attack.Properties?.Contains(property) ?? false)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
 }
 
 public enum WeaponProperties
@@ -59,4 +64,14 @@ public enum WeaponProperties
     Thrown,
     TwoHanded,
     Versatile,
+}
+
+/// <summary>
+/// Weapon proficiency categories based on D&D 5e.
+/// </summary>
+public enum WeaponCategory
+{
+    None,      // No category (used for natural weapons)
+    Simple,    // Simple weapons (club, dagger, etc.)
+    Martial,   // Martial weapons (longsword, greatsword, etc.)
 }

@@ -1,7 +1,5 @@
 using Godot;
 using Godot.Collections;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
 
@@ -17,7 +15,7 @@ public abstract partial class BaseSkillsComponentData : EntityComponentData
 /// <summary>
 /// Base class for skills components with shared calculation logic.
 /// </summary>
-public abstract partial class BaseSkillsComponent : RefCounted, IEntityComponent, ISkills
+public abstract partial class BaseSkillsComponent : RefCounted, IEntityComponent
 {
     public Array<Skill> Proficiencies { get; set; } = new();
 
@@ -26,12 +24,12 @@ public abstract partial class BaseSkillsComponent : RefCounted, IEntityComponent
         return Proficiencies.Contains(skill);
     }
 
-    public abstract int GetSkillModifier(Skill skill, IAbilityScores abilityScores, int proficiencyBonus);
+    public abstract int GetSkillModifier(Skill skill, AbilityScoresComponent abilityScores, int proficiencyBonus);
 
     /// <summary>
     /// Standard D&D 5e skill calculation: ability modifier + proficiency bonus (if proficient).
     /// </summary>
-    protected int CalculateStandardModifier(Skill skill, IAbilityScores abilityScores, int proficiencyBonus)
+    protected int CalculateStandardModifier(Skill skill, AbilityScoresComponent abilityScores, int proficiencyBonus)
     {
         AbilityScore linkedAbility = GetLinkedAbility(skill);
         int abilityMod = abilityScores.GetModifier(linkedAbility);
@@ -73,4 +71,31 @@ public abstract partial class BaseSkillsComponent : RefCounted, IEntityComponent
             _ => AbilityScore.Strength
         };
     }
+}
+
+public enum Skill
+{
+    // STR
+    Athletics,
+    // DEX
+    Acrobatics,
+    SleightOfHand,
+    Stealth,
+    // INT
+    Arcana,
+    History,
+    Investigation,
+    Nature,
+    Religion,
+    // WIS
+    AnimalHandling,
+    Insight,
+    Medicine,
+    Perception,
+    Survival,
+    // CHA
+    Deception,
+    Intimidation,
+    Performance,
+    Persuasion
 }

@@ -68,8 +68,11 @@ public partial class UsableComponent : RefCounted, IItemComponent, IUsable
         switch (EffectType)
         {
             case UsableEffectType.Healing:
-                user.Heal(EffectAmount);
-                GD.Print($"{user.EntityName} healed for {EffectAmount} HP");
+                if (user.TryGetComponent<HealthComponent>(out var health))
+                {
+                    health.Heal(EffectAmount);
+                    GD.Print($"{user.EntityName} healed for {EffectAmount} HP");
+                }
                 break;
 
             case UsableEffectType.Damage:
@@ -98,7 +101,10 @@ public partial class UsableComponent : RefCounted, IItemComponent, IUsable
 
     public virtual bool CanUse(Entity user)
     {
-        if (user == null || !user.IsAlive)
+        if (user == null)
+            return false;
+
+        if (!user.TryGetComponent<HealthComponent>(out var health) || !health.IsAlive)
             return false;
 
         // Check if has charges (or infinite charges)

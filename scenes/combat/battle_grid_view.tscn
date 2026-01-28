@@ -5,10 +5,8 @@
 [ext_resource type="Script" uid="uid://cpspdraldmpbs" path="res://scripts/combat/GridInteraction.cs" id="4_d7o82"]
 [ext_resource type="Script" uid="uid://b8lt2qhqunswo" path="res://scripts/ui/MovementOverlay.cs" id="5_5d2bs"]
 
-[node name="BattleGridView" type="Node2D" node_paths=PackedStringArray("GroundLayer", "OverlayLayer", "GridManager", "EntityContainer", "MovementOverlay", "GridInteraction", "Camera")]
+[node name="BattleGridView" type="Node2D" node_paths=PackedStringArray("GridManager", "EntityContainer", "MovementOverlay", "GridInteraction", "Camera")]
 script = ExtResource("1_0y047")
-GroundLayer = NodePath("")
-OverlayLayer = NodePath("")
 GridManager = NodePath("GridManager")
 EntityContainer = NodePath("EntityContainer")
 MovementOverlay = NodePath("OverlayContainer/MovementOverlay")
@@ -29,6 +27,8 @@ script = ExtResource("4_d7o82")
 [node name="MovementOverlay" type="Node2D" parent="OverlayContainer"]
 z_index = 1
 script = ExtResource("5_5d2bs")
+ReachableColor = Color(0.42352942, 0.7882353, 0.3882353, 0.3019608)
+PathColor = Color(0.42352942, 0.7882353, 0.3882353, 0.6)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0

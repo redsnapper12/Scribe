@@ -1,11 +1,15 @@
 using Godot;
 using Godot.Collections;
 using Scribe.Scripts.AI;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 using Scribe.Scripts.Entities;
 
 namespace Scribe.Scripts.Data.ComponentData;
+
+public enum AIBehaviorType
+{
+    SimpleAggressive,
+    Custom
+}
 
 [GlobalClass]
 public partial class AIComponentData : EntityComponentData
@@ -41,7 +45,7 @@ public partial class AIComponentData : EntityComponentData
     }
 }
 
-public partial class AIComponent : RefCounted, IEntityComponent, IAI
+public partial class AIComponent : RefCounted, IEntityComponent
 {
     public AIBehaviorType BehaviorType { get; set; }
     public IAIBehavior Behavior { get; set; }

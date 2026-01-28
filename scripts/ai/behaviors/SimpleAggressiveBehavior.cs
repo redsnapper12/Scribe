@@ -4,6 +4,8 @@ using Scribe.Scripts.Core;
 using Scribe.Scripts.Core.Interfaces;
 using Scribe.Scripts.Core.Services;
 using Scribe.Scripts.Entities;
+using Scribe.Scripts.Data;
+using Scribe.Scripts.Data.ComponentData;
 
 namespace Scribe.Scripts.AI.Behaviors;
 
@@ -68,7 +70,7 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
                     continue;
                 if (!context.GridManager.IsWalkable(candidate))
                     continue;
-                if (GameManager.Instance.IsCellOccupied(candidate, self))
+                if (context.GridManager.IsCellOccupied(candidate, GameManager.Instance.AllEntities, self))
                     continue;
 
                 // Check if we can actually attack the target from this position
@@ -79,7 +81,7 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
                 var path = context.GridManager.FindPath(
                     selfPos, 
                     candidate, 
-                    pos => GameManager.Instance.IsCellOccupied(pos, self)
+                    pos => context.GridManager.IsCellOccupied(pos, GameManager.Instance.AllEntities, self)
                 );
                 
                 if (path != null && path.Count > 0)
@@ -108,19 +110,38 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
 
     private void PerformAttack(Entity self, Entity target)
     {
-        if (self is IMeleeAttacker attacker && target is IDamageable damageable)
+        if (!self.TryGetComponent<AttackComponent>(out var meleeAttack))
+            return;
+
+        if (!target.TryGetComponent<HealthComponent>(out var targetHealth))
+            return;
+
+        // TODO: Replace with an attack selection method.
+        MeleeAttackData attackData;
+        if (target.TryGetComponent<EquipmentComponent>(out var equipment))
         {
-            var result = attacker.MeleeAttack(damageable);
+            attackData = equipment.GetMainHandWeaponMeleeData();
+        }
+        else if(meleeAttack.NaturalAttacks.Count > 0)
+        {
             
-            GD.Print($"{self.EntityName} attacks {target.EntityName}!");
-            if (result.Hit)
-            {
-                GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.CriticalHit ? " (CRITICAL!)" : "")}");
-            }
-            else
-            {
-                GD.Print($"  Miss! Rolled {result.AttackRoll}");
-            }
+            attackData = meleeAttack.NaturalAttacks[0];
+        }
+        else
+        {
+            return;
+        }
+
+        AttackResult result = meleeAttack.MeleeAttack(self, targetHealth, attackData);
+
+        GD.Print($"{self.EntityName} attacks {target.EntityName}!");
+        if (result.Hit)
+        {
+            GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.IsCritical ? " (CRITICAL!)" : "")}");
+        }
+        else
+        {
+            GD.Print($"  Miss! Rolled {result.AttackRoll}");
         }
     }
 }

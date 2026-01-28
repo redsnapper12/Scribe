@@ -1,0 +1,342 @@
+[gd_scene load_steps=10 format=3 uid="uid://bt36m5o3mimnc"]
+
+[ext_resource type="Script" uid="uid://dosc7waqht3au" path="res://scripts/ui/CharacterStartFromScratch.cs" id="1_lltbv"]
+[ext_resource type="LabelSettings" uid="uid://dcdm78ayupuj3" path="res://themes/labels/subtitle.tres" id="1_ve387"]
+[ext_resource type="Resource" uid="uid://bwxavrht4k6yh" path="res://resources/classes/Barbarian.tres" id="2_ytwyv"]
+[ext_resource type="Resource" uid="uid://cgm3smseshb8v" path="res://resources/classes/Bard.tres" id="3_woj7f"]
+[ext_resource type="Resource" uid="uid://cnx8cegy3tgmu" path="res://resources/classes/Cleric.tres" id="4_qs3m0"]
+[ext_resource type="Resource" uid="uid://bg23kjwe8iprl" path="res://resources/species/Dwarf.tres" id="5_lsn66"]
+[ext_resource type="Resource" uid="uid://bqpgfkt4pisvd" path="res://resources/species/Elf.tres" id="6_ydcaa"]
+[ext_resource type="Resource" uid="uid://cgk8wrv08bv5s" path="res://resources/species/Human.tres" id="7_d1tr3"]
+[ext_resource type="Resource" uid="uid://bpskghweg5t4c" path="res://resources/backgrounds/Acolyte.tres" id="8_ydcaa"]
+
+[node name="StartFromScratch" type="Control" node_paths=PackedStringArray("_characterCreationStageContainer", "_globalStageProgressButton", "_classItemList", "_classNameLabel", "_classDescriptionLabel", "_selectClassButton", "_speciesItemList", "_speciesNameLabel", "_speciesDescriptionLabel", "_selectSpeciesButton", "_backgroundItemList", "_backgroundNameLabel", "_backgroundDescriptionLabel", "_selectBackgroundButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_lltbv")
+enableDebug = true
+_characterCreationStageContainer = NodePath("VBoxContainer/Stages")
+_globalStageProgressButton = NodePath("VBoxContainer/TopRow/HBoxContainer/MarginContainer3/Button")
+_classItemList = NodePath("VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer/VBoxContainer/ClassItemList")
+_classNameLabel = NodePath("VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer/ClassNameLabel")
+_classDescriptionLabel = NodePath("VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer/ClassDescriptionLabel")
+_selectClassButton = NodePath("VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer/SelectClassButton")
+_speciesItemList = NodePath("VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer/VBoxContainer/SpeciesItemList")
+_speciesNameLabel = NodePath("VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer/SpeciesNameLabel")
+_speciesDescriptionLabel = NodePath("VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer/SpeciesDescriptionLabel")
+_selectSpeciesButton = NodePath("VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer/SelectSpeciesButton")
+_backgroundItemList = NodePath("VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer/VBoxContainer/BackgroundItemList")
+_backgroundNameLabel = NodePath("VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer/BackgroundNameLabel")
+_backgroundDescriptionLabel = NodePath("VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer/BackgroundDescriptionLabel")
+_selectBackgroundButton = NodePath("VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer/SelectSpeciesButton")
+_classes = Array[Object]([ExtResource("2_ytwyv"), ExtResource("3_woj7f"), ExtResource("4_qs3m0")])
+_species = Array[Object]([ExtResource("5_lsn66"), ExtResource("6_ydcaa"), ExtResource("7_d1tr3")])
+_backgrounds = Array[Object]([ExtResource("8_ydcaa")])
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopRow" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TopRow"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/TopRow/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Label" type="Label" parent="VBoxContainer/TopRow/HBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "Create New Character"
+label_settings = ExtResource("1_ve387")
+
+[node name="MarginContainer3" type="MarginContainer" parent="VBoxContainer/TopRow/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Button" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/MarginContainer3"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+text = "[ Progress ]"
+
+[node name="MarginContainer2" type="MarginContainer" parent="VBoxContainer/TopRow/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="Button" type="Button" parent="VBoxContainer/TopRow/HBoxContainer/MarginContainer2"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+text = "[ X ]"
+
+[node name="Stages" type="TabContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+tabs_visible = false
+
+[node name="DetermineClass" type="Control" parent="VBoxContainer/Stages"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Stages/DetermineClass"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Select a Class"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ClassItemList" type="ItemList" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+auto_width = true
+auto_height = true
+max_columns = 3
+same_column_width = true
+icon_mode = 0
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Class Details"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="ClassNameLabel" type="Label" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "PLACEHOLDER"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+
+[node name="ClassDescriptionLabel" type="Label" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+text = "PLACEHOLDER"
+autowrap_mode = 2
+
+[node name="SelectClassButton" type="Button" parent="VBoxContainer/Stages/DetermineClass/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Select Class"
+
+[node name="DetermineSpecies" type="Control" parent="VBoxContainer/Stages"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Stages/DetermineSpecies"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Select a Species"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpeciesItemList" type="ItemList" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+auto_width = true
+auto_height = true
+max_columns = 3
+same_column_width = true
+icon_mode = 0
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Species Details"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="SpeciesNameLabel" type="Label" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "PLACEHOLDER"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+
+[node name="SpeciesDescriptionLabel" type="Label" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+text = "PLACEHOLDER"
+autowrap_mode = 2
+clip_text = true
+
+[node name="SelectSpeciesButton" type="Button" parent="VBoxContainer/Stages/DetermineSpecies/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Select Species"
+
+[node name="DetermineBackground" type="Control" parent="VBoxContainer/Stages"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Stages/DetermineBackground"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Select a Background"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BackgroundItemList" type="ItemList" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+auto_width = true
+auto_height = true
+max_columns = 3
+same_column_width = true
+icon_mode = 0
+
+[node name="PanelContainer2" type="PanelContainer" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Background Details"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="BackgroundNameLabel" type="Label" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "PLACEHOLDER"
+label_settings = ExtResource("1_ve387")
+horizontal_alignment = 1
+
+[node name="BackgroundDescriptionLabel" type="Label" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer/PanelContainer/VBoxContainer"]
+custom_minimum_size = Vector2(300, 300)
+layout_mode = 2
+text = "PLACEHOLDER"
+autowrap_mode = 2
+clip_text = true
+
+[node name="SelectSpeciesButton" type="Button" parent="VBoxContainer/Stages/DetermineBackground/HBoxContainer/PanelContainer2/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Select Species"
+
+[node name="DetermineAbilityScores" type="Control" parent="VBoxContainer/Stages"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="DetermineDetails" type="Control" parent="VBoxContainer/Stages"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 4

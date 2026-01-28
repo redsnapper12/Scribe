@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="TraitInfo" load_steps=2 format=3 uid="uid://cabkocalqhwxy"]
-
-[ext_resource type="Script" uid="uid://cfabxgghv024y" path="res://scripts/data/component_data/entities/TraitInfo.cs" id="1_516co"]
-
-[resource]
-script = ExtResource("1_516co")
-Name = "Pack Tactics"
-Type = 2
-metadata/_custom_type_script = "uid://cfabxgghv024y"

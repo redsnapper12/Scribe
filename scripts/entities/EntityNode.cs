@@ -1,8 +1,6 @@
 using Godot;
 using Scribe.Scripts.Core;
 using Scribe.Scripts.Data.ComponentData;
-using Scribe.Scripts.Core.Interfaces;
-using Scribe.Scripts.Core.Interfaces.Entities;
 
 namespace Scribe.Scripts.Entities;
 
@@ -20,8 +18,7 @@ public partial class EntityNode : Node2D
         {
             if (_entity != null)
             {
-                var oldHealthComponent = _entity.GetComponent<HealthComponent>();
-                if (oldHealthComponent != null)
+                if (_entity.TryGetComponent<HealthComponent>(out var oldHealthComponent))
                 {
                     oldHealthComponent.Damaged -= OnEntityDamaged;
                     oldHealthComponent.Death -= OnEntityDeath;
@@ -33,8 +30,8 @@ public partial class EntityNode : Node2D
             
             if (_entity != null)
             {
-                var healthComponent = _entity.GetComponent<HealthComponent>();
-                if (healthComponent != null)
+
+                if (_entity.TryGetComponent<HealthComponent>(out var healthComponent))
                 {
                     healthComponent.Damaged += OnEntityDamaged;
                     healthComponent.Death += OnEntityDeath;
@@ -82,8 +79,11 @@ public partial class EntityNode : Node2D
     {
         if (_healthBar != null && _entity != null)
         {
-            _healthBar.MaxValue = _entity.MaxHP;
-            _healthBar.Value = _entity.CurrentHP;
+            if (_entity.TryGetComponent<HealthComponent>(out var health))
+            {
+                _healthBar.MaxValue = health.MaxHP;
+                _healthBar.Value = health.CurrentHP;
+            }
         }
     }
     
