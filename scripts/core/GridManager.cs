@@ -5,7 +5,7 @@ using System.Linq;
 using Scribe.Scripts.Items;
 using Scribe.Scripts.Entities;
 using Scribe.Scripts.Data.ComponentData;
-
+using Scribe.Scripts.Core.Interfaces.Maps;
 namespace Scribe.Scripts.Core;
 
 public enum TerrainType
@@ -41,9 +41,13 @@ public partial class GridManager : Node2D
     [Export] public Color GridColor { get; set; } = new Color(0.3f, 0.3f, 0.3f, 0.5f);
     [Export] public float LineWidth { get; set; } = 1.0f;
     [Export] public bool DrawGrid { get; set; } = true;
+    [Export] public bool DrawWalkability { get; set; } = false;
 
     public TileMapLayer GroundLayer { get; set; }    // Base terrain (floors, grass, etc.)
     public TileMapLayer OverlayLayer { get; set; }   // Objects on ground (walls, furniture, etc.)
+
+    // When set, all walkability/wall queries use this data instead of TileMapLayers
+    private IMapData _mapDataOverride;
 
     // Ground item management
     private readonly Dictionary<Vector2I, List<ItemNode>> _groundItems = new();
@@ -61,6 +65,21 @@ public partial class GridManager : Node2D
 
     public override void _Draw()
     {
+        if (DrawWalkability)
+        {
+            for (int x = 0; x < GridWidth; x++)
+            {
+                for (int y = 0; y < GridHeight; y++)
+                {
+                    var cell = new Vector2I(x, y);
+                    var color = IsWalkable(cell)
+                        ? new Color(0f, 1f, 0f, 0.25f)
+                        : new Color(1f, 0f, 0f, 0.25f);
+                    DrawRect(new Rect2(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE), color);
+                }
+            }
+        }
+
         if (!DrawGrid)
             return;
 
@@ -92,6 +111,31 @@ public partial class GridManager : Node2D
         }
     }
 
+    /// <summary>
+    /// Loads map data from any <see cref="IMapData"/> source, overriding TileMapLayer queries.
+    /// Pass null to clear the override and revert to TileMapLayer-based checks.
+    /// </summary>
+    // Tracks the active grid-to-world offset so the static GridToWorld helper stays accurate
+    // when a map is loaded via IMapData (which shifts GridManager.Position to GridOffset).
+    private static Vector2 _staticWorldOffset = Vector2.Zero;
+
+    public void LoadFromMapData(IMapData mapData)
+    {
+        _mapDataOverride = mapData;
+        if (mapData != null)
+        {
+            GridWidth  = mapData.Width;
+            GridHeight = mapData.Height;
+            Position   = mapData.GridOffset;
+            _staticWorldOffset = mapData.GridOffset;
+        }
+        else
+        {
+            _staticWorldOffset = Vector2.Zero;
+        }
+        QueueRedraw();
+    }
+
     #region Static Grid Utilities
 
     /// <summary>
@@ -99,9 +143,10 @@ public partial class GridManager : Node2D
     /// </summary>
     public static Vector2I WorldToGrid(Vector2 worldPosition)
     {
+        var adjusted = worldPosition - _staticWorldOffset;
         return new Vector2I(
-            Mathf.FloorToInt(worldPosition.X / CELL_SIZE),
-            Mathf.FloorToInt(worldPosition.Y / CELL_SIZE)
+            Mathf.FloorToInt(adjusted.X / CELL_SIZE),
+            Mathf.FloorToInt(adjusted.Y / CELL_SIZE)
         );
     }
 
@@ -110,7 +155,7 @@ public partial class GridManager : Node2D
     /// </summary>
     public static Vector2 GridToWorld(Vector2I gridPosition)
     {
-        return new Vector2(
+        return _staticWorldOffset + new Vector2(
             gridPosition.X * CELL_SIZE + CELL_SIZE / 2,
             gridPosition.Y * CELL_SIZE + CELL_SIZE / 2
         );
@@ -185,7 +230,15 @@ public partial class GridManager : Node2D
     /// <returns>True if the cell has a wall blocking that direction</returns>
     private bool CellBlocksDirection(Vector2I cell, Direction direction)
     {
-        if (OverlayLayer == null || !IsValidGridPosition(cell)) return false;
+        if (!IsValidGridPosition(cell)) return false;
+
+        if (_mapDataOverride != null)
+        {
+            int bitmask = _mapDataOverride.GetWallBitmask(cell);
+            return (bitmask & (1 << (int)direction)) != 0;
+        }
+
+        if (OverlayLayer == null) return false;
 
         var tileData = OverlayLayer.GetCellTileData(cell);
         if (tileData == null) return false;
@@ -278,8 +331,10 @@ public partial class GridManager : Node2D
     /// </summary>
     public bool IsValidGridPosition(Vector2I gridPosition)
     {
-        return gridPosition.X >= 0 && gridPosition.X < GridWidth &&
-               gridPosition.Y >= 0 && gridPosition.Y < GridHeight;
+        int w = _mapDataOverride?.Width  ?? GridWidth;
+        int h = _mapDataOverride?.Height ?? GridHeight;
+        return gridPosition.X >= 0 && gridPosition.X < w &&
+               gridPosition.Y >= 0 && gridPosition.Y < h;
     }
 
     /// <summary>
@@ -335,6 +390,9 @@ public partial class GridManager : Node2D
     {
         if (!IsValidGridPosition(gridPosition))
             return false;
+
+        if (_mapDataOverride != null)
+            return _mapDataOverride.IsWalkable(gridPosition);
 
         // Check ground layer first
         if (GroundLayer != null)

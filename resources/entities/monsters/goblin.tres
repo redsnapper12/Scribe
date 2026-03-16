@@ -1,22 +1,19 @@
-[gd_resource type="Resource" script_class="CreatureData" load_steps=30 format=3 uid="uid://b1pf24via74u1"]
+[gd_resource type="Resource" format=3 uid="uid://b1pf24via74u1"]
 
 [ext_resource type="Script" uid="uid://g3fv1beppky8" path="res://scripts/data/component_data/entities/EntityComponentData.cs" id="1_jgmxs"]
 [ext_resource type="Script" uid="uid://bv7vkcmilm1nm" path="res://scripts/data/component_data/entities/AIComponentData.cs" id="2_5lggj"]
+[ext_resource type="Script" uid="uid://2ff0s5fd0oc8" path="res://scripts/data/MeleeAttackData.cs" id="3_kk0lr"]
 [ext_resource type="Script" uid="uid://rafgoo10wir3" path="res://scripts/data/component_data/entities/HealthComponentData.cs" id="3_pnkk3"]
 [ext_resource type="Script" uid="uid://dy8f8ntdnlwqn" path="res://scripts/data/component_data/entities/AbilityScoresComponentData.cs" id="3_ttb5n"]
 [ext_resource type="Script" uid="uid://b1jxl7mk3vxph" path="res://scripts/data/component_data/entities/ChallengeRatingComponentData.cs" id="4_kk0lr"]
 [ext_resource type="Script" uid="uid://b8fulb4ougx4j" path="res://scripts/data/component_data/entities/AttackComponentData.cs" id="4_xlvtr"]
 [ext_resource type="Script" uid="uid://klmvimoxsi5i" path="res://scripts/data/component_data/entities/LanguagesComponentData.cs" id="5_7orht"]
 [ext_resource type="Script" uid="uid://brg2uof26q6rm" path="res://scripts/data/component_data/entities/MovementComponentData.cs" id="5_vw1t0"]
-[ext_resource type="Script" uid="uid://bgfhn4syul0ew" path="res://scripts/items/ItemData.cs" id="5_xlvtr"]
-[ext_resource type="Resource" uid="uid://dm6mw8em5376u" path="res://resources/items/weapons/shortsword.tres" id="6_58vqe"]
-[ext_resource type="Script" uid="uid://bw45iv507tkmu" path="res://scripts/data/component_data/entities/EquipmentComponentData.cs" id="6_bk5o4"]
 [ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="6_e6c81"]
 [ext_resource type="Script" uid="uid://dcm2hbnio0h3g" path="res://scripts/data/component_data/entities/SensesComponentData.cs" id="6_gejde"]
 [ext_resource type="Script" uid="uid://jgprwqxt0m5a" path="res://scripts/data/component_data/entities/CreatureSkillsComponentData.cs" id="7_7orht"]
-[ext_resource type="Script" uid="uid://kqq0slcr6qx" path="res://scripts/data/component_data/entities/ProficiencyComponentData.cs" id="8_58vqe"]
-[ext_resource type="Script" uid="uid://2ff0s5fd0oc8" path="res://scripts/data/MeleeAttackData.cs" id="9_gejde"]
 [ext_resource type="Script" uid="uid://dxykpli40o636" path="res://scripts/entities/CreatureData.cs" id="13_7orht"]
+[ext_resource type="Script" uid="uid://dbc4itn57ggec" path="res://scripts/data/component_data/entities/ActionEconomyComponentData.cs" id="14_action"]
 
 [sub_resource type="Resource" id="Resource_uo5l5"]
 script = ExtResource("2_5lggj")
@@ -30,6 +27,9 @@ Wisdom = 8
 Charisma = 8
 metadata/_custom_type_script = "uid://dy8f8ntdnlwqn"
 
+[sub_resource type="Resource" id="Resource_action"]
+script = ExtResource("14_action")
+
 [sub_resource type="Resource" id="Resource_bk5o4"]
 script = ExtResource("4_xlvtr")
 metadata/_custom_type_script = "uid://b8fulb4ougx4j"
@@ -37,17 +37,6 @@ metadata/_custom_type_script = "uid://b8fulb4ougx4j"
 [sub_resource type="Resource" id="Resource_c3pwp"]
 script = ExtResource("4_kk0lr")
 metadata/_custom_type_script = "uid://b1jxl7mk3vxph"
-
-[sub_resource type="Resource" id="Resource_vs3hm"]
-script = ExtResource("6_bk5o4")
-StartingEquipment = Dictionary[int, ExtResource("5_xlvtr")]({
-0: ExtResource("6_58vqe")
-})
-metadata/_custom_type_script = "uid://bw45iv507tkmu"
-
-[sub_resource type="Resource" id="Resource_iycy4"]
-script = ExtResource("8_58vqe")
-metadata/_custom_type_script = "uid://kqq0slcr6qx"
 
 [sub_resource type="Resource" id="Resource_xlvtr"]
 script = ExtResource("7_7orht")
@@ -93,5 +82,5 @@ Icon = SubResource("AtlasTexture_7orht")
 HealthComponentData = SubResource("Resource_kk0lr")
 MovementComponentData = SubResource("Resource_gejde")
 AttackComponentData = SubResource("Resource_bk5o4")
-ComponentData = Array[ExtResource("1_jgmxs")]([SubResource("Resource_vs3hm"), SubResource("Resource_iycy4")])
+ActionEconomyComponentData = SubResource("Resource_action")
 metadata/_custom_type_script = "uid://dxykpli40o636"

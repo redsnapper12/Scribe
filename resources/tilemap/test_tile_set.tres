@@ -1,4 +1,4 @@
-[gd_resource type="TileSet" load_steps=3 format=3 uid="uid://c2ifsanjfvqlh"]
+[gd_resource type="TileSet" format=3 uid="uid://c2ifsanjfvqlh"]
 
 [ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="1_r6yp5"]
 

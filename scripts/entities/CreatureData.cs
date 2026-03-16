@@ -52,6 +52,7 @@ public partial class CreatureData : EntityData
         ComponentData.Add(HealthComponentData);
         ComponentData.Add(MovementComponentData);
         ComponentData.Add(AttackComponentData);
+        ComponentData.Add(ActionEconomyComponentData);
 
         // Required creature components
         ComponentData.Add(AIComponentData);

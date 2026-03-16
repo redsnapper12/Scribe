@@ -44,19 +44,3 @@ public partial class AIComponentData : EntityComponentData
         return component;
     }
 }
-
-public partial class AIComponent : RefCounted, IEntityComponent
-{
-    public AIBehaviorType BehaviorType { get; set; }
-    public IAIBehavior Behavior { get; set; }
-
-    public void SetBehavior(IAIBehavior behavior)
-    {
-        Behavior = behavior;
-    }
-
-    public void Act(Entity self, BattleContext context)
-    {
-        Behavior?.Execute(self, context);
-    }
-}

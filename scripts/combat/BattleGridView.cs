@@ -3,6 +3,8 @@ using Scribe.Scripts.Core;
 using Scribe.Scripts.Core.Services;
 using Scribe.Scripts.Entities;
 using Scribe.Scripts.UI;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Scribe.Scripts.Combat;
 
@@ -36,17 +38,26 @@ public partial class BattleGridView : Node2D
     
     [Signal]
     public delegate void MovementCompletedEventHandler(int movementRemaining);
-    
+
+    [Signal]
+    public delegate void TargetSelectedEventHandler(Entity target);
+
+    [Signal]
+    public delegate void TargetingCancelledEventHandler();
+
     #endregion
     
     #region State
     
     public Entity SelectedEntity { get; private set; }
     public bool InteractionEnabled => GridInteraction?.Enabled ?? false;
-    
+    public bool IsInTargetingMode => _targetingModeActive;
+
     private Entity _movingEntity;
     private bool _movementModeActive = false;
-    
+    private bool _targetingModeActive = false;
+    private List<Entity> _validTargets = new();
+
     #endregion
     
     public override void _Ready()
@@ -56,6 +67,7 @@ public partial class BattleGridView : Node2D
             // Assign layers to GridManager
             GridManager.GroundLayer = GroundLayer;
             GridManager.OverlayLayer = OverlayLayer;
+
         }
 
         if (GridInteraction != null)
@@ -122,10 +134,27 @@ public partial class BattleGridView : Node2D
     {
         if (entity == null)
             return;
-        
+
         CenterOnCell(entity.GridPosition);
     }
-    
+
+    public void EnterTargetingMode(List<Entity> validTargets)
+    {
+        _targetingModeActive = true;
+        _validTargets = validTargets ?? new List<Entity>();
+        _movementModeActive = false;
+
+        var targetCells = _validTargets.Select(e => e.GridPosition).ToList();
+        MovementOverlay?.ShowTargetableCells(targetCells);
+    }
+
+    public void ExitTargetingMode()
+    {
+        _targetingModeActive = false;
+        _validTargets.Clear();
+        MovementOverlay?.ClearTargetHighlights();
+    }
+
     #endregion
     
     #region Event Handlers
@@ -133,7 +162,21 @@ public partial class BattleGridView : Node2D
     private void OnCellHovered(Vector2I cell)
     {
         EmitSignal(SignalName.CellHovered, cell);
-        
+
+        // Handle target hover feedback
+        if (_targetingModeActive && MovementOverlay != null)
+        {
+            if (_validTargets.Any(e => e.GridPosition == cell))
+            {
+                MovementOverlay.SetHoveredTarget(cell);
+            }
+            else
+            {
+                MovementOverlay.SetHoveredTarget(null);
+            }
+            return;
+        }
+
         if (_movementModeActive && _movingEntity != null && MovementOverlay != null)
         {
             if (MovementOverlay.IsCellReachable(cell))
@@ -144,7 +187,7 @@ public partial class BattleGridView : Node2D
                     cell,
                     pos => GridManager.IsCellOccupied(pos, GameManager.Instance.AllEntities, _movingEntity)
                 );
-                
+
                 MovementOverlay.ShowPathPreview(path);
             }
             else
@@ -157,7 +200,19 @@ public partial class BattleGridView : Node2D
     private void OnCellClicked(Vector2I cell)
     {
         EmitSignal(SignalName.CellClicked, cell);
-        
+
+        // Handle targeting mode first
+        if (_targetingModeActive)
+        {
+            var targetEntity = _validTargets.FirstOrDefault(e => e.GridPosition == cell);
+            if (targetEntity != null)
+            {
+                EmitSignal(SignalName.TargetSelected, targetEntity);
+                EmitSignal(SignalName.EntityClicked, targetEntity.EntityName);
+            }
+            return;
+        }
+
         if (_movementModeActive && _movingEntity != null && MovementOverlay != null)
         {
             if (MovementOverlay.IsCellReachable(cell))

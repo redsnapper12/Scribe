@@ -166,7 +166,7 @@ public static class MovementService
 
         var path = new List<Vector2I> { from, target };
 
-        GD.Print($"[Reposition] {entity.EntityName} moved from {from} to {target}");
+        MessagePanelUI.Instance?.EnqueueMessage($"[Reposition] {entity.EntityName} moved from {from} to {target}", Colors.LightGray);
 
         int movementRemaining = 0;
         if (entity.TryGetComponent<MovementComponent>(out var movement))
@@ -203,7 +203,7 @@ public static class MovementService
         if (totalCost > 0)
         {
             movement.NotifyMoved(from, finalPosition, totalCost);
-            GD.Print($"[Combat Move] {entity.EntityName}: {from} -> {finalPosition} (cost: {totalCost}ft, remaining: {movement.MovementRemaining}ft)");
+            MessagePanelUI.Instance?.EnqueueMessage($"[Combat Move] {entity.EntityName}: {from} -> {finalPosition} (cost: {totalCost}ft, remaining: {movement.MovementRemaining}ft)", Colors.White);
         }
         
         // Consider it success even if partial movement
@@ -219,7 +219,7 @@ public static class MovementService
         entity.GridPosition = to;
         
         movement.NotifyMoved(from, to, 0);
-        GD.Print($"[Exploration Move] {entity.EntityName}: {from} -> {to}");
+        MessagePanelUI.Instance?.EnqueueMessage($"[Exploration Move] {entity.EntityName}: {from} -> {to}", Colors.White);
         
         return MovementResult.Succeeded(path, 0, movement.MovementRemaining);
     }

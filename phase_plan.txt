@@ -26,8 +26,12 @@ Half-tile wall movement system implemented:
   - Single-sided walls block bidirectionally
   - Diagonal movement respects wall edges
   - Integrated with pathfinding and reachable cell calculation
+Camera controls for combat view:
+  - Arrow key panning with configurable speed
+  - Mouse wheel zoom (0.5x to 1.5x range)
+  - Smooth exponential lerping for zoom transitions
 
-Phase 3: Attack Resolution IN PROGRESS
+Phase 3: Attack Resolution COMPLETE
 
 Phase 3A: Basic Attack Mechanics COMPLETE
 Attack rolls with modifiers
@@ -64,18 +68,65 @@ D&D 5e core stats implementation:
 Component deduplication system prevents duplicate components in entity data
 Complete vertical slice ready: Can create goblins and fighter characters in Godot editor
 
-Phase 3D: Advanced Attack Features (Not Started)
+Phase 3D: Combat UI & Targeting COMPLETE
+Action-first targeting system:
+  - Click Attack button → enters targeting mode
+  - Valid targets highlighted on grid (enemies in melee range OR reachable via movement)
+  - Click on target → auto-moves if needed, then attacks
+  - Hover feedback on valid targets
+  - Escape key to cancel targeting mode
+Signals: TargetSelected, TargetingCancelled
+MovementOverlay extended with TargetableColor and TargetHoverColor
+UI Theme System implemented:
+  - Dark theme with blue accent colors
+  - Geist font family for body text
+  - Texturina serif font for headings
+  - Consistent styling across all UI components
+
+Phase 3E: Advanced Attack Features (Not Started)
 Attack of Opportunity mechanics
 Reach weapons (10-foot melee range)
 Line of sight for ranged attacks
 Cover mechanics (half/three-quarters)
 
-Phase 4: Basic Class Features
+Phase 3F: Action Economy COMPLETE
+D&D 5e Action Economy system:
+  - ActionEconomyComponent tracking Actions, Bonus Actions, Reactions
+  - Actions/Bonus Actions reset at turn start
+  - Reactions reset at round start
+  - Extra Attack support (AttacksPerAction tracking)
+  - Attack action validation in CombatManager.PlayerAttack()
+  - Round tracking with RoundStarted signal
+  - UI display of action economy status
+  - AI behavior respects action economy
+  - Movement no longer drained after attacking
 
+Phase 3G: Combat Actions Framework COMPLETE
+IUsableAction interface for standardized combat actions:
+  - IUsableAction interface with Name, Description, Cost, RequiresTarget, CanExecute, Execute
+  - AttackAction class (formalizes attack system, reads ActionCost from MeleeAttackData)
+  - DashAction class (doubles movement for the turn)
+  - ActionCost property added to MeleeAttackData
+  - UI Dash button in PlayerTurnUI
+Future actions (pending dependencies):
+  - Disengage (requires Attack of Opportunity)
+  - Dodge (requires Advantage/Disadvantage system)
+  - Help (requires Advantage system)
+  - Hide, Search (requires skill check system)
+  - Ready (complex reaction state management)
+
+Phase 4: Basic Class Features (Not Started)
+
+Core Services Implemented:
+  - DiceRollingService: Dice notation parsing and rolling (e.g., "4d6", "2d8+5")
+  - Supports drop lowest, keep highest, modifiers
+  - ActionEconomyComponent: Action, Bonus Action, Reaction tracking
+  - IUsableAction: Combat action framework with Attack and Dash
+
+Pending:
 Fighter: Action Surge, Second Wind
 Simple spellcasting framework (Magic Missile as prototype)
 Resource tracking (spell slots, class features)
-Action economy (Action, Bonus Action, Reaction)
 
 Phase 5: Conditions & Effects
 
@@ -92,13 +143,55 @@ Multiclassing support
 Feats and ability score improvements
 Complete ruleset implementation
 
-Phase 7: Character Creation
+Phase 7: Character Creation IN PROGRESS (~90% Complete)
 
-Race/class selection UI
-Ability score assignment
-Background and equipment selection
-Spell/feature selection for casters
-Character sheet UI
+Phase 7A: Start From Scratch Wizard COMPLETE
+CharacterCreationWizard entry point with 3 paths (only Start From Scratch implemented)
+5-stage wizard flow:
+  - Stage 1: Class Selection (Barbarian, Bard, Cleric) with preview panel - COMPLETE
+  - Stage 2: Species Selection (Dwarf, Elf, Human) with preview panel - COMPLETE
+  - Stage 3: Background Selection (Acolyte) with preview panel - COMPLETE
+  - Stage 4: Ability Score Generation (3 methods fully implemented) - COMPLETE
+  - Stage 5: Character Details (name, alignment, portrait, languages, skills) - COMPLETE
+
+Ability Score Generation Methods:
+  - Standard Array: Fixed 15,14,13,12,10,8 with dropdown assignment - COMPLETE
+  - Point Buy: 27 points, costs 0-9 per score, range 8-15 - COMPLETE
+  - Rolling (4d6 drop lowest): DiceRollingService integration, dropdown assignment - COMPLETE
+
+Character finalization:
+  - Creates CharacterData extending EntityData - COMPLETE
+  - Saves to res://resources/testing/characters/{name}.tres - COMPLETE
+  - All components populated (class, species, background, abilities, health, etc.) - COMPLETE
+
+Character preview panel with real-time derived stats:
+  - Hit Points (Hit Die + CON modifier)
+  - Armor Class (10 + DEX modifier)
+  - Speed and Size from species
+
+Phase 7B: Template & Import Paths (Not Started)
+Use a Template path - template browser and selection
+Import Character path - file parsing and compatibility
+
+Phase 7C: Additional Content (Partial - Content Expansion Needed)
+
+Content Status:
+  - Classes: 3 implemented (Barbarian, Bard, Cleric) - need 9+ more
+  - Species: 3 implemented (Human, Dwarf, Elf) - need 5+ more
+  - Backgrounds: 1 implemented (Acolyte) - need 10+ more
+
+Pending Features (Priority Order):
+  1. Species-specific traits (ability bonuses, resistances) - HIGH
+  2. Equipment starting loadouts by class - HIGH
+  3. Spell selection for casters (Bard, Cleric) - MEDIUM
+  4. Additional background resources - MEDIUM
+  5. Additional class resources - MEDIUM
+  6. Additional species resources - LOW
+
+Phase 7D: Character Sheet UI (Not Started)
+Character sheet display
+Character editing after creation
+Export/import to external formats
 
 Phase 8: Character Progression
 

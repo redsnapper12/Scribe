@@ -1,6 +1,7 @@
 using Godot;
 using System.Collections.Generic;
 using Scribe.Scripts.Combat;
+using Scribe.Scripts.Core.Interfaces.Maps;
 using Scribe.Scripts.Core.Services;
 using Scribe.Scripts.Entities;
 using Scribe.Scripts.Data.ComponentData;
@@ -29,6 +30,30 @@ public partial class GameManager : Node
 
     public List<Entity> AllEntities { get; } = new();
 
+    public IMapData ActiveMapData { get; set; }
+    public List<CharacterData> SessionCharacters { get; } = new();
+
+    // Static staging: lets scenes without a GameManager queue characters for the next instance
+    private static readonly List<CharacterData> _pendingCharacters = new();
+
+    public static void StageSessionCharacters(List<CharacterData> characters)
+    {
+        _pendingCharacters.Clear();
+        _pendingCharacters.AddRange(characters);
+    }
+
+    public void SetSessionCharacters(List<CharacterData> characters)
+    {
+        SessionCharacters.Clear();
+        SessionCharacters.AddRange(characters);
+    }
+
+    public void ClearSession()
+    {
+        SessionCharacters.Clear();
+        ActiveMapData = null;
+    }
+
     private GridManager GridManager => BattleGridView?.GridManager;
     
     public void RegisterEntity(Entity entity)
@@ -45,8 +70,13 @@ public partial class GameManager : Node
     public override void _Ready()
     {
         Instance = this;
-        
-        // Init services
+
+        if (_pendingCharacters.Count > 0)
+        {
+            SetSessionCharacters(_pendingCharacters);
+            _pendingCharacters.Clear();
+        }
+
         MovementService.Initialize(this, GridManager);
         DiceRollingService.Initialize();
     }
@@ -85,11 +115,9 @@ public partial class GameManager : Node
     /// </summary>
     public bool HasAuthority(Entity entity, ControllerType requestedBy)
     {
-        // DM can control anything
         if (requestedBy == ControllerType.DM)
             return true;
         
-        // Otherwise, controller must match
         return entity.Controller == requestedBy;
     }
 

@@ -11,6 +11,7 @@ namespace Scribe.Scripts.Entities;
 [RequiresComponent(typeof(HealthComponent))]
 [RequiresComponent(typeof(MovementComponent))]
 [RequiresComponent(typeof(AttackComponent))]
+[RequiresComponent(typeof(ActionEconomyComponent))]
 public partial class Entity : RefCounted
 {
     private readonly List<IEntityComponent> _components = new();

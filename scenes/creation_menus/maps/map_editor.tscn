@@ -1,0 +1,178 @@
+[gd_scene format=3 uid="uid://bhw3628rqrksl"]
+
+[ext_resource type="LabelSettings" uid="uid://chjerj0wo3oom" path="res://themes/labels/header_01.tres" id="1_8q7gp"]
+[ext_resource type="Texture2D" uid="uid://y414np4oa1cn" path="res://assets/kenney_assets/cursor_pack/drawing_brush.png" id="2_8q7gp"]
+[ext_resource type="Texture2D" uid="uid://bqcgnqku2q4el" path="res://assets/kenney_assets/cursor_pack/line_cross.png" id="2_vwwvv"]
+[ext_resource type="Texture2D" uid="uid://d1o1g147pl44o" path="res://assets/kenney_assets/cursor_pack/drawing_bucket.png" id="3_5gwge"]
+[ext_resource type="Texture2D" uid="uid://ccs78hsrj0k1c" path="res://assets/kenney_assets/cursor_pack/rotate_ccw.png" id="3_ihqms"]
+[ext_resource type="Texture2D" uid="uid://r6q0ixvghbdj" path="res://assets/kenney_assets/cursor_pack/door_exit.png" id="3_pauk1"]
+[ext_resource type="Texture2D" uid="uid://dk4qamcn1rpil" path="res://assets/kenney_assets/cursor_pack/door_enter.png" id="4_hglgk"]
+[ext_resource type="Texture2D" uid="uid://bc4w88ce1x33u" path="res://assets/kenney_assets/cursor_pack/drawing_eraser.png" id="4_kts0d"]
+[ext_resource type="Texture2D" uid="uid://cunpexrfr0kh5" path="res://assets/kenney_assets/cursor_pack/pointer_a.png" id="5_ihqms"]
+[ext_resource type="Texture2D" uid="uid://cxluit5n4826j" path="res://assets/kenney_assets/cursor_pack/look_a.png" id="6_mgrbg"]
+[ext_resource type="Texture2D" uid="uid://b3gglc5o3ji2b" path="res://assets/kenney_assets/cursor_pack/zoom_in.png" id="7_pauk1"]
+[ext_resource type="Texture2D" uid="uid://b1s64eugmhs3t" path="res://assets/kenney_assets/cursor_pack/zoom_out.png" id="8_mgrbg"]
+[ext_resource type="Texture2D" uid="uid://dtugsvodrqkq8" path="res://assets/kenney_assets/cursor_pack/zoom_reset.png" id="9_hglgk"]
+[ext_resource type="Texture2D" uid="uid://jyfa0v8ur45x" path="res://assets/kenney_assets/cursor_pack/hand_small_open.png" id="11_mgrbg"]
+[ext_resource type="Texture2D" uid="uid://g7ptav84as0a" path="res://assets/kenney_assets/cursor_pack/message_dots_square.png" id="12_hglgk"]
+[ext_resource type="Script" uid="uid://boe51isa3yl4n" path="res://scripts/core/CameraController.cs" id="14_ihqms"]
+[ext_resource type="Script" uid="uid://u3i6fkfevxl1" path="res://scripts/ui/MapEditorUI.cs" id="15_mapeditor"]
+
+[node name="MapEditor" type="Node2D" unique_id=1364664952 node_paths=PackedStringArray("ImportButton", "LoadMapButton", "SaveButton", "AlignButton", "PaintButton", "EraseButton", "ZoomInButton", "ZoomOutButton", "ZoomResetButton", "ZoomSpinBox", "Camera")]
+script = ExtResource("15_mapeditor")
+ImportButton = NodePath("UI/TopBarContainer/PanelContainer/TopBarButtons/ImportButton")
+LoadMapButton = NodePath("UI/TopBarContainer/PanelContainer/TopBarButtons/LoadMapButton")
+SaveButton = NodePath("UI/TopBarContainer/PanelContainer/TopBarButtons/SaveButton")
+AlignButton = NodePath("UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons/AlignButton")
+PaintButton = NodePath("UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons/PaintButton")
+EraseButton = NodePath("UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons/EraseButton")
+ZoomInButton = NodePath("UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons/ZoomInButton")
+ZoomOutButton = NodePath("UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons/ZoomOutButton")
+ZoomResetButton = NodePath("UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons/ZoomResetButton")
+ZoomSpinBox = NodePath("UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons/ZoomSpinBox")
+Camera = NodePath("CameraController/Camera2D")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=852597710]
+
+[node name="TopBarContainer" type="MarginContainer" parent="UI" unique_id=799576390]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 44.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/TopBarContainer" unique_id=897142239]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+
+[node name="TopBarButtons" type="HBoxContainer" parent="UI/TopBarContainer/PanelContainer" unique_id=1096771639]
+layout_mode = 2
+
+[node name="NewMapButton" type="Button" parent="UI/TopBarContainer/PanelContainer/TopBarButtons" unique_id=625716626]
+layout_mode = 2
+text = "New Map"
+icon = ExtResource("2_vwwvv")
+
+[node name="LoadMapButton" type="Button" parent="UI/TopBarContainer/PanelContainer/TopBarButtons" unique_id=1031960324]
+layout_mode = 2
+text = "Load Map"
+icon = ExtResource("3_ihqms")
+
+[node name="ImportButton" type="MenuButton" parent="UI/TopBarContainer/PanelContainer/TopBarButtons" unique_id=1434181097]
+layout_mode = 2
+text = "Import Map"
+icon = ExtResource("4_hglgk")
+flat = false
+item_count = 2
+popup/item_0/text = "Import Scribe Map (.tscn)"
+popup/item_0/id = 0
+popup/item_1/text = "Import Dungeon Scrawl Map (.ds)"
+popup/item_1/id = 1
+
+[node name="SaveButton" type="Button" parent="UI/TopBarContainer/PanelContainer/TopBarButtons" unique_id=1734181097]
+layout_mode = 2
+disabled = true
+text = "Save Map"
+icon = ExtResource("3_pauk1")
+
+[node name="ToolsContainer" type="MarginContainer" parent="UI" unique_id=1068052274]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -77.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/ToolsContainer" unique_id=1354374048]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+
+[node name="ToolsVBoxContainer" type="VBoxContainer" parent="UI/ToolsContainer/PanelContainer" unique_id=1018546474]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 10
+
+[node name="ToolsLabel" type="Label" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer" unique_id=1609962765]
+layout_mode = 2
+text = "Tools"
+label_settings = ExtResource("1_8q7gp")
+
+[node name="HSeparator" type="HSeparator" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer" unique_id=339347669]
+layout_mode = 2
+
+[node name="ToolButtons" type="HBoxContainer" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer" unique_id=2008622312]
+layout_mode = 2
+
+[node name="AlignButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=738508181]
+layout_mode = 2
+tooltip_text = "Align Grid: click a grid intersection on the map to snap the overlay"
+text = "(A)"
+icon = ExtResource("6_mgrbg")
+
+[node name="SelectButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=2006011542]
+layout_mode = 2
+text = "(Q)"
+icon = ExtResource("5_ihqms")
+
+[node name="PaintButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=1796386970]
+layout_mode = 2
+text = "(W)"
+icon = ExtResource("2_8q7gp")
+
+[node name="FillButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=1189220060]
+layout_mode = 2
+text = "(F)"
+icon = ExtResource("3_5gwge")
+
+[node name="EraseButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=1465953023]
+layout_mode = 2
+text = "(E)"
+icon = ExtResource("4_kts0d")
+
+[node name="PanButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=282119863]
+layout_mode = 2
+text = "(P)"
+icon = ExtResource("11_mgrbg")
+
+[node name="NotesButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=1165123364]
+layout_mode = 2
+size_flags_horizontal = 2
+text = "(N)"
+icon = ExtResource("12_hglgk")
+
+[node name="ZoomInButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=1667220312]
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("7_pauk1")
+
+[node name="ZoomOutButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=955968415]
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("8_mgrbg")
+
+[node name="ZoomResetButton" type="Button" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=1870022072]
+layout_mode = 2
+size_flags_horizontal = 8
+icon = ExtResource("9_hglgk")
+
+[node name="ZoomSpinBox" type="SpinBox" parent="UI/ToolsContainer/PanelContainer/ToolsVBoxContainer/ToolButtons" unique_id=658658707]
+layout_mode = 2
+min_value = 50.0
+max_value = 150.0
+value = 100.0
+update_on_text_changed = true
+suffix = "%"
+
+[node name="CameraController" type="Node2D" parent="." unique_id=1415133741 node_paths=PackedStringArray("Camera")]
+script = ExtResource("14_ihqms")
+Camera = NodePath("Camera2D")
+CameraPanSpeed = 500.0
+CameraZoomSpeed = 10.0
+MaxZoom = null
+MinZoom = null
+
+[node name="Camera2D" type="Camera2D" parent="CameraController" unique_id=2111621808]

@@ -25,6 +25,7 @@ public partial class EntityData : Resource
     [Export] public HealthComponentData HealthComponentData { get; set; }
     [Export] public MovementComponentData MovementComponentData { get; set; }
     [Export] public AttackComponentData AttackComponentData { get; set; }
+    [Export] public ActionEconomyComponentData ActionEconomyComponentData { get; set; }
 
     [ExportSubgroup("Additional Components")]
     [Export] public Array<EntityComponentData> ComponentData { get; set; } = new();
@@ -100,6 +101,7 @@ public partial class EntityData : Resource
         ComponentData.Add(HealthComponentData);
         ComponentData.Add(MovementComponentData);
         ComponentData.Add(AttackComponentData);
+        ComponentData.Add(ActionEconomyComponentData);
     }
 
     /// <summary>

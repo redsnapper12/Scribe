@@ -1,4 +1,4 @@
-[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://dcdm78ayupuj3"]
+[gd_resource type="LabelSettings" format=3 uid="uid://dcdm78ayupuj3"]
 
 [ext_resource type="FontVariation" uid="uid://cywf1n3055jv2" path="res://themes/fonts/inconsolatas/inconsolatas_bold.tres" id="1_vyo10"]
 

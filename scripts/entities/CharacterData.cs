@@ -6,10 +6,16 @@ using Scribe.Scripts.Entities;
 [GlobalClass]
 public partial class CharacterData : EntityData
 {
+    [ExportSubgroup("Character Origin")]
+    [Export] public ClassComponentData ClassComponentData { get; set; }
+    [Export] public SpeciesComponentData SpeciesComponentData { get; set; }
+    [Export] public BackgroundComponentData BackgroundComponentData { get; set; }
+
     [ExportSubgroup("Required Components")]
     [Export] public AbilityScoresComponentData AbilityScoresComponentData { get; set; }
     [Export] public EquipmentComponentData EquipmentComponentData { get; set; }
     [Export] public LanguagesComponentData LanguagesComponentData { get; set; }
+    [Export] public CharacterSkillsComponentData CharacterSkillsComponentData { get; set; }
 
     public override Entity CreateEntity(Vector2I gridPosition)
     {
@@ -49,10 +55,17 @@ public partial class CharacterData : EntityData
         ComponentData.Add(HealthComponentData);
         ComponentData.Add(MovementComponentData);
         ComponentData.Add(AttackComponentData);
+        ComponentData.Add(ActionEconomyComponentData);
+
+        // Character origin components
+        ComponentData.Add(ClassComponentData);
+        ComponentData.Add(SpeciesComponentData);
+        ComponentData.Add(BackgroundComponentData);
 
         // Required character components
         ComponentData.Add(AbilityScoresComponentData);
         ComponentData.Add(EquipmentComponentData);
         ComponentData.Add(LanguagesComponentData);
+        ComponentData.Add(CharacterSkillsComponentData);
     }
 }

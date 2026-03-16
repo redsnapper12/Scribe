@@ -17,10 +17,3 @@ public partial class ChallengeRatingComponentData : EntityComponentData
         };
     }
 }
-
-public partial class ChallengeRatingComponent : RefCounted, IEntityComponent
-{
-    public float ChallengeRating { get; set; }
-
-    public int ExperiencePoints { get; set; }
-}

@@ -1,0 +1,116 @@
+[gd_scene format=3 uid="uid://of42m3112w7g"]
+
+[ext_resource type="Script" uid="uid://ohmg5beroakj" path="res://scripts/ui/SessionLobbyUI.cs" id="1_lobby"]
+
+[node name="SessionLobby" type="Control" unique_id=2029828548 node_paths=PackedStringArray("SlotLabel1", "SlotLabel2", "SlotLabel3", "SlotLabel4", "PickButton1", "PickButton2", "PickButton3", "PickButton4", "StartSessionButton")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 1.0
+offset_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lobby")
+SlotLabel1 = NodePath("Center/VBoxContainer/SlotsGrid/Slot1/SlotLabel1")
+SlotLabel2 = NodePath("Center/VBoxContainer/SlotsGrid/Slot2/SlotLabel2")
+SlotLabel3 = NodePath("Center/VBoxContainer/SlotsGrid/Slot3/SlotLabel3")
+SlotLabel4 = NodePath("Center/VBoxContainer/SlotsGrid/Slot4/SlotLabel4")
+PickButton1 = NodePath("Center/VBoxContainer/SlotsGrid/Slot1/PickButton1")
+PickButton2 = NodePath("Center/VBoxContainer/SlotsGrid/Slot2/PickButton2")
+PickButton3 = NodePath("Center/VBoxContainer/SlotsGrid/Slot3/PickButton3")
+PickButton4 = NodePath("Center/VBoxContainer/SlotsGrid/Slot4/PickButton4")
+StartSessionButton = NodePath("Center/VBoxContainer/StartSessionButton")
+
+[node name="Background" type="ColorRect" parent="." unique_id=1504135547]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.176471, 0.176471, 0.176471, 1)
+
+[node name="Center" type="CenterContainer" parent="." unique_id=1389488398]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Center" unique_id=1547636118]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Title" type="Label" parent="Center/VBoxContainer" unique_id=718318676]
+layout_mode = 2
+text = "Session Lobby"
+horizontal_alignment = 1
+
+[node name="SlotsGrid" type="GridContainer" parent="Center/VBoxContainer" unique_id=588567134]
+layout_mode = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 16
+columns = 2
+
+[node name="Slot1" type="VBoxContainer" parent="Center/VBoxContainer/SlotsGrid" unique_id=409800371]
+custom_minimum_size = Vector2(200, 120)
+layout_mode = 2
+
+[node name="SlotLabel1" type="Label" parent="Center/VBoxContainer/SlotsGrid/Slot1" unique_id=396818725]
+layout_mode = 2
+text = "Empty"
+horizontal_alignment = 1
+
+[node name="PickButton1" type="Button" parent="Center/VBoxContainer/SlotsGrid/Slot1" unique_id=1539716324]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Pick"
+
+[node name="Slot2" type="VBoxContainer" parent="Center/VBoxContainer/SlotsGrid" unique_id=678297971]
+custom_minimum_size = Vector2(200, 120)
+layout_mode = 2
+
+[node name="SlotLabel2" type="Label" parent="Center/VBoxContainer/SlotsGrid/Slot2" unique_id=330889693]
+layout_mode = 2
+text = "Empty"
+horizontal_alignment = 1
+
+[node name="PickButton2" type="Button" parent="Center/VBoxContainer/SlotsGrid/Slot2" unique_id=909042833]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Pick"
+
+[node name="Slot3" type="VBoxContainer" parent="Center/VBoxContainer/SlotsGrid" unique_id=1834060578]
+custom_minimum_size = Vector2(200, 120)
+layout_mode = 2
+
+[node name="SlotLabel3" type="Label" parent="Center/VBoxContainer/SlotsGrid/Slot3" unique_id=15574399]
+layout_mode = 2
+text = "Empty"
+horizontal_alignment = 1
+
+[node name="PickButton3" type="Button" parent="Center/VBoxContainer/SlotsGrid/Slot3" unique_id=1844785111]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Pick"
+
+[node name="Slot4" type="VBoxContainer" parent="Center/VBoxContainer/SlotsGrid" unique_id=1220256960]
+custom_minimum_size = Vector2(200, 120)
+layout_mode = 2
+
+[node name="SlotLabel4" type="Label" parent="Center/VBoxContainer/SlotsGrid/Slot4" unique_id=783215633]
+layout_mode = 2
+text = "Empty"
+horizontal_alignment = 1
+
+[node name="PickButton4" type="Button" parent="Center/VBoxContainer/SlotsGrid/Slot4" unique_id=249106864]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Pick"
+
+[node name="StartSessionButton" type="Button" parent="Center/VBoxContainer" unique_id=538410045]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Start Session"

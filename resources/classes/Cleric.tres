@@ -1,14 +1,14 @@
-[gd_resource type="Resource" script_class="ClassComponentData" load_steps=4 format=3 uid="uid://cnx8cegy3tgmu"]
+[gd_resource type="Resource" script_class="ClassComponentData" format=3 uid="uid://cnx8cegy3tgmu"]
 
-[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="1_cghdb"]
-[ext_resource type="Script" uid="uid://yxmswqsj37fm" path="res://scripts/data/component_data/entities/player_characters/ClassComponentData.cs" id="1_csnsn"]
+[ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="1_fa6up"]
+[ext_resource type="Script" uid="uid://yxmswqsj37fm" path="res://scripts/data/component_data/entities/player_characters/ClassComponentData.cs" id="2_y8o0s"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_7fb1k"]
-atlas = ExtResource("1_cghdb")
+atlas = ExtResource("1_fa6up")
 region = Rect2(256, 640, 64, 64)
 
 [resource]
-script = ExtResource("1_csnsn")
+script = ExtResource("2_y8o0s")
 ClassName = "Cleric"
 ClassDescription = "Clerics draw power from the realms of the gods and harness it to work miracles. Blessed by a deity, a pantheon, or another immortal entity, a Cleric can reach out to the divine magic of the Outer Planes—where gods dwell—and channel it to bolster people and battle foes.
 

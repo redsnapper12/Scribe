@@ -13,9 +13,9 @@ public partial class CombatManager : Node
     private List<Entity> _combatants = new();
     private Dictionary<Entity, int> _initiativeRolls = new();
     private int _currentTurnIndex = 0;
+    private int _currentRound = 1;
     private bool _combatActive = false;
     private BattleContext _battleContext;
-    private bool _setupComplete = false;
 
     public BattleContext BattleContext => _battleContext;
     
@@ -24,7 +24,6 @@ public partial class CombatManager : Node
     [Export] public CharacterData PlayerData { get; set; }
     [Export] public CreatureData GoblinData { get; set; }
     
-    // Convenience properties to access through BattleGridView
     private GridManager GridManager => BattleGridView?.GridManager;
     private TileMapLayer BattleGrid => BattleGridView?.GroundLayer;
     
@@ -39,6 +38,9 @@ public partial class CombatManager : Node
     
     [Signal]
     public delegate void PlayerTurnStartedEventHandler();
+
+    [Signal]
+    public delegate void RoundStartedEventHandler(int roundNumber);
     
     public override void _Ready()
     {
@@ -55,16 +57,17 @@ public partial class CombatManager : Node
         };
     }
     
-    public override void _Process(double delta)
+    public void InitiateSetupAndStart()
     {
-        if (!_setupComplete)
+        if (!ValidateSetup())
         {
-            _setupComplete = true;
-            SetProcessMode(ProcessModeEnum.Disabled);
-            SetupCombat();
+            GD.PrintErr("CombatManager: Cannot start — failed validation");
+            return;
         }
+
+        SetupCombat();
     }
-    
+
     private bool ValidateSetup()
     {
         bool valid = true;
@@ -85,27 +88,71 @@ public partial class CombatManager : Node
         return valid;
     }
     
+    private Vector2I GetRandomWalkableCell(HashSet<Vector2I> occupied)
+    {
+        if (GridManager == null)
+            return Vector2I.Zero;
+
+        var candidates = new List<Vector2I>();
+        for (int x = 0; x < GridManager.GridWidth; x++)
+            for (int y = 0; y < GridManager.GridHeight; y++)
+            {
+                var cell = new Vector2I(x, y);
+                if (GridManager.IsWalkable(cell) && !occupied.Contains(cell))
+                    candidates.Add(cell);
+            }
+
+        if (candidates.Count == 0)
+        {
+            GD.PrintErr("CombatManager: No walkable cells available for spawn!");
+            return Vector2I.Zero;
+        }
+
+        return candidates[GD.RandRange(0, candidates.Count - 1)];
+    }
+
     private void SetupCombat()
     {
-        var player = PlayerData.CreateEntity(new Vector2I(3, 3));
-        var goblin = GoblinData.CreateEntity(new Vector2I(9, 3));
-        
-        // Register entities with GameManager
-        GameManager?.RegisterEntity(player);
-        GameManager?.RegisterEntity(goblin);
-        
-        // Create EntityNodes and add to BattleGridView
-        var playerNode = CreateEntityNode(player);
-        var goblinNode = CreateEntityNode(goblin);
-        
-        if (BattleGridView?.EntityContainer != null)
+        var occupied = new HashSet<Vector2I>();
+        var allEntities = new List<Entity>();
+
+        // Spawn player characters — use SessionCharacters if available, else fall back to PlayerData export
+        var sessionChars = GameManager?.SessionCharacters;
+        if (sessionChars != null && sessionChars.Count > 0)
         {
-            BattleGridView.EntityContainer.AddChild(playerNode);
-            BattleGridView.EntityContainer.AddChild(goblinNode);
+            foreach (var charData in sessionChars)
+            {
+                var cell = GetRandomWalkableCell(occupied);
+                occupied.Add(cell);
+                var entity = charData.CreateEntity(cell);
+                GameManager?.RegisterEntity(entity);
+                BattleGridView?.EntityContainer?.AddChild(CreateEntityNode(entity));
+                allEntities.Add(entity);
+            }
         }
-        
-        _combatants = new List<Entity> { player, goblin };
-        
+        else if (PlayerData != null)
+        {
+            var playerCell = GetRandomWalkableCell(occupied);
+            occupied.Add(playerCell);
+            var player = PlayerData.CreateEntity(playerCell);
+            GameManager?.RegisterEntity(player);
+            BattleGridView?.EntityContainer?.AddChild(CreateEntityNode(player));
+            allEntities.Add(player);
+        }
+
+        // Spawn goblin (placeholder enemy)
+        if (GoblinData != null)
+        {
+            var goblinCell = GetRandomWalkableCell(occupied);
+            occupied.Add(goblinCell);
+            var goblin = GoblinData.CreateEntity(goblinCell);
+            GameManager?.RegisterEntity(goblin);
+            BattleGridView?.EntityContainer?.AddChild(CreateEntityNode(goblin));
+            allEntities.Add(goblin);
+        }
+
+        _combatants = allEntities;
+
         CallDeferred(nameof(StartCombatDeferred));
     }
     
@@ -141,18 +188,28 @@ public partial class CombatManager : Node
             return;
         }
         
-        // Notify GameManager we're in combat
         GameManager?.EnterCombat(this);
         
         RollInitiative();
         
         _currentTurnIndex = 0;
+        _currentRound = 1;
         _combatActive = true;
-        
+
+        // Reset reactions for all combatants at combat start (round 1)
+        foreach (var combatant in _combatants)
+        {
+            if (combatant.TryGetComponent<ActionEconomyComponent>(out var actionEconomy))
+            {
+                actionEconomy.ResetRound();
+            }
+        }
+
         EmitSignal(SignalName.CombatStarted);
-        GD.Print("=== COMBAT START ===");
+        MessagePanelUI.Instance?.EnqueueMessage("=== COMBAT START ===", Colors.White);
+        MessagePanelUI.Instance?.EnqueueMessage($"=== ROUND {_currentRound} ===", Colors.Yellow);
         PrintInitiativeOrder();
-        
+
         ProcessAllAITurnsUntilPlayer();
     }
     
@@ -161,11 +218,10 @@ public partial class CombatManager : Node
         _combatActive = false;
         _initiativeRolls.Clear();
         
-        // Notify GameManager combat ended
         GameManager?.ExitCombat();
         
         EmitSignal(SignalName.CombatEnded);
-        GD.Print("=== COMBAT END ===");
+        MessagePanelUI.Instance?.EnqueueMessage("=== COMBAT END ===", Colors.White);
     }
     
     public Entity GetCurrentTurnEntity()
@@ -178,9 +234,7 @@ public partial class CombatManager : Node
     {
         var player = GetCurrentTurnEntity();
         if (player != null)
-        {
-            GD.Print($"{player.EntityName} ends their turn");
-        }
+            MessagePanelUI.Instance?.EnqueueMessage($"{player.EntityName} ends their turn.", Colors.White);
         
         AdvanceTurn();
         ProcessAllAITurnsUntilPlayer();
@@ -210,9 +264,15 @@ public partial class CombatManager : Node
             
             var currentEntity = GetCurrentTurnEntity();
             if (currentEntity == null) return;
-            
+
+            if (currentEntity.TryGetComponent<MovementComponent>(out var movement))
+                movement.ResetMovement();
+
+            if (currentEntity.TryGetComponent<ActionEconomyComponent>(out var actionEconomy))
+                actionEconomy.ResetTurn();
+
             EmitSignal(SignalName.TurnChanged, currentEntity);
-            
+
             if (currentEntity.Controller == Core.Services.ControllerType.AI)
             {
                 ProcessAITurn(currentEntity);
@@ -228,10 +288,7 @@ public partial class CombatManager : Node
     
     private void ProcessAITurn(Entity entity)
     {
-        GD.Print($"=== {entity.EntityName}'s Turn ===");
-
-        if (entity.TryGetComponent<MovementComponent>(out var movement))
-            movement.ResetMovement();
+        MessagePanelUI.Instance?.EnqueueMessage($"=== {entity.EntityName}'s Turn ===", Colors.Yellow);
 
         if (entity.TryGetComponent<AIComponent>(out var ai))
             ai.Act(entity, _battleContext);
@@ -239,10 +296,7 @@ public partial class CombatManager : Node
     
     private void ProcessPlayerTurn(Entity entity)
     {
-        GD.Print($"=== {entity.EntityName}'s Turn ===");
-
-        if (entity.TryGetComponent<MovementComponent>(out var movement))
-            movement.ResetMovement();
+        MessagePanelUI.Instance?.EnqueueMessage($"=== {entity.EntityName}'s Turn ===", Colors.Cyan);
 
         EmitSignal(SignalName.PlayerTurnStarted);
     }
@@ -250,10 +304,21 @@ public partial class CombatManager : Node
     private void AdvanceTurn()
     {
         _currentTurnIndex = (_currentTurnIndex + 1) % _combatants.Count;
-        
+
         if (_currentTurnIndex == 0)
         {
-            GD.Print("=== NEW ROUND ===");
+            _currentRound++;
+            MessagePanelUI.Instance?.EnqueueMessage($"=== ROUND {_currentRound} ===", Colors.Yellow);
+            EmitSignal(SignalName.RoundStarted, _currentRound);
+
+            // Reset reactions for all combatants at round start
+            foreach (var combatant in _combatants)
+            {
+                if (combatant.TryGetComponent<ActionEconomyComponent>(out var actionEconomy))
+                {
+                    actionEconomy.ResetRound();
+                }
+            }
         }
     }
     
@@ -265,7 +330,7 @@ public partial class CombatManager : Node
         
         foreach (var dead in deadEntities)
         {
-            GD.Print($"{dead.EntityName} has been defeated!");
+            MessagePanelUI.Instance?.EnqueueMessage($"{dead.EntityName} has been defeated!", Colors.Red);
             _combatants.Remove(dead);
             
             if (_currentTurnIndex >= _combatants.Count)
@@ -284,9 +349,7 @@ public partial class CombatManager : Node
         if (livingCombatants.Count <= 1)
         {
             if (livingCombatants.Count == 1)
-            {
-                GD.Print($"{livingCombatants[0].EntityName} is victorious!");
-            }
+                MessagePanelUI.Instance?.EnqueueMessage($"{livingCombatants[0].EntityName} is victorious!", Colors.Gold);
             return true;
         }
         
@@ -302,7 +365,7 @@ public partial class CombatManager : Node
         {
             int roll = random.Next(1, 21);
             _initiativeRolls[combatant] = roll;
-            GD.Print($"{combatant.EntityName} rolled {roll} for initiative");
+            MessagePanelUI.Instance?.EnqueueMessage($"{combatant.EntityName} rolled {roll} for initiative.", Colors.White);
         }
         
         // Sort by initiative (highest first), with random tiebreaker for now
@@ -314,17 +377,39 @@ public partial class CombatManager : Node
     
     private void PrintInitiativeOrder()
     {
-        GD.Print("Initiative Order:");
+        MessagePanelUI.Instance?.EnqueueMessage("Initiative Order:", Colors.White);
         for (int i = 0; i < _combatants.Count; i++)
-        {
-            GD.Print($"  {i + 1}. {_combatants[i].EntityName}");
-        }
+            MessagePanelUI.Instance?.EnqueueMessage($"  {i + 1}. {_combatants[i].EntityName}", Colors.White);
     }
 
     public void PlayerAttack(Entity target)
     {
         var player = GetCurrentTurnEntity();
         if (player == null) return;
+
+        // Action economy validation
+        if (!player.TryGetComponent<ActionEconomyComponent>(out var actionEconomy))
+        {
+            GD.PrintErr($"{player.EntityName} has no action economy component");
+            return;
+        }
+
+        // Check if we can attack (either already in attack action or have action available)
+        if (!actionEconomy.CanAttack())
+        {
+            GD.PrintErr($"{player.EntityName} has no action available for attacking");
+            return;
+        }
+
+        // Begin attack action if not already in one
+        if (!actionEconomy.IsInAttackAction)
+        {
+            if (!actionEconomy.BeginAttackAction())
+            {
+                GD.PrintErr($"{player.EntityName} cannot begin attack action");
+                return;
+            }
+        }
 
         if (!player.TryGetComponent<AttackComponent>(out var meleeAttack))
         {
@@ -353,15 +438,20 @@ public partial class CombatManager : Node
         var meleeAttackData = equipment.GetMainHandWeaponMeleeData();
         var result = meleeAttack.MeleeAttack(player, targetHealth, meleeAttackData);
 
-        GD.Print($"{player.EntityName} attacks {target.EntityName}!");
+        MessagePanelUI.Instance?.EnqueueMessage($"{player.EntityName} attacks {target.EntityName}!", Colors.White);
         if (result.Hit)
         {
-            GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.IsCritical ? " (CRITICAL!)" : "")}");
+            var hitColor = result.IsCritical ? Colors.Gold : Colors.OrangeRed;
+            var suffix = result.IsCritical ? " (CRITICAL!)" : "";
+            MessagePanelUI.Instance?.EnqueueMessage($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{suffix}", hitColor);
         }
         else
         {
-            GD.Print($"  Miss! Rolled {result.AttackRoll}");
+            MessagePanelUI.Instance?.EnqueueMessage($"  Miss! Rolled {result.AttackRoll}", Colors.Gray);
         }
+
+        // Use one attack from the attack action
+        actionEconomy.UseAttack();
     }
     
     public List<Entity> GetAllCombatants()

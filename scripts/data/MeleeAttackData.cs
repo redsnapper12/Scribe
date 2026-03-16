@@ -62,6 +62,12 @@ public partial class MeleeAttackData : Resource
     /// </summary>
     [Export] public bool IsNaturalWeapon { get; set; } = false;
 
+    /// <summary>
+    /// The action economy cost to use this attack.
+    /// Most attacks cost an Action, but some (like bonus action attacks) may differ.
+    /// </summary>
+    [Export] public ActionCost ActionCost { get; set; } = ActionCost.Action;
+
     public MeleeAttackData()
     {
     }

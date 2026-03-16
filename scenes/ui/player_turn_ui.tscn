@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cd3w4xu7joejp"]
+[gd_scene format=3 uid="uid://cd3w4xu7joejp"]
 
 [ext_resource type="Script" uid="uid://dbfysmfot8hum" path="res://scripts/ui/PlayerTurnUI.cs" id="1_35moi"]
 
-[node name="PlayerTurnUI" type="Control" node_paths=PackedStringArray("TurnLabel", "MovementLabel", "AttackButton", "EndTurnButton", "TargetContainer")]
+[node name="PlayerTurnUI" type="Control" unique_id=215384631 node_paths=PackedStringArray("TurnLabel", "MovementLabel", "ActionLabel", "BonusActionLabel", "ReactionLabel", "AttackButton", "DashButton", "EndTurnButton", "TargetContainer")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,48 +11,73 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+mouse_filter = 2
 script = ExtResource("1_35moi")
 TurnLabel = NodePath("Panel/MarginContainer/VBoxContainer/TurnLabel")
 MovementLabel = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/MovementLabel")
+ActionLabel = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/ActionLabel")
+BonusActionLabel = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/BonusActionLabel")
+ReactionLabel = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/ReactionLabel")
 AttackButton = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/AttackButton")
+DashButton = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/DashButton")
 EndTurnButton = NodePath("Panel/MarginContainer/VBoxContainer/ActionButtons/EndTurnButton")
 TargetContainer = NodePath("Panel/MarginContainer/VBoxContainer/TargetContainer")
 
-[node name="Panel" type="PanelContainer" parent="."]
+[node name="Panel" type="PanelContainer" parent="." unique_id=1850411813]
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -48.0
+offset_top = -76.0
 grow_horizontal = 2
 grow_vertical = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="Panel"]
+[node name="ColorRect" type="ColorRect" parent="Panel" unique_id=1415515135]
+layout_mode = 2
+color = Color(0.1749846, 0.17498463, 0.17498457, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Panel" unique_id=808755490]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/MarginContainer" unique_id=1659369014]
 layout_mode = 2
 
-[node name="TurnLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="TurnLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer" unique_id=461503378]
 layout_mode = 2
 text = "Player's Turn"
 
-[node name="ActionButtons" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="ActionButtons" type="HBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=723651977]
 layout_mode = 2
 
-[node name="AttackButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ActionButtons"]
+[node name="AttackButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ActionButtons" unique_id=192188163]
 layout_mode = 2
 text = "Attack"
 
-[node name="EndTurnButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ActionButtons"]
+[node name="DashButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ActionButtons" unique_id=1687937821]
+layout_mode = 2
+text = "Dash"
+
+[node name="EndTurnButton" type="Button" parent="Panel/MarginContainer/VBoxContainer/ActionButtons" unique_id=418218244]
 layout_mode = 2
 text = "End Turn"
 
-[node name="MovementLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ActionButtons"]
+[node name="MovementLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ActionButtons" unique_id=1424041248]
 layout_mode = 2
 size_flags_horizontal = 2
 
-[node name="TargetContainer" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer"]
+[node name="ActionLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ActionButtons" unique_id=776012007]
+layout_mode = 2
+text = "Action: 1/1"
+
+[node name="BonusActionLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ActionButtons" unique_id=893365668]
+layout_mode = 2
+text = "Bonus Action: 1/1"
+
+[node name="ReactionLabel" type="Label" parent="Panel/MarginContainer/VBoxContainer/ActionButtons" unique_id=788885953]
+layout_mode = 2
+text = "Reaction: 1/1"
+
+[node name="TargetContainer" type="VBoxContainer" parent="Panel/MarginContainer/VBoxContainer" unique_id=1822128348]
 visible = false
 layout_mode = 2

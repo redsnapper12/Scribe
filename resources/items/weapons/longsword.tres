@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=13 format=3 uid="uid://ctke7wuif0opd"]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://ctke7wuif0opd"]
 
 [ext_resource type="Script" uid="uid://dohqty7r15idd" path="res://scripts/data/component_data/items/ItemComponentData.cs" id="1_yfuiq"]
 [ext_resource type="Script" uid="uid://dmvpywbljvh2w" path="res://scripts/data/component_data/items/EquippableComponentData.cs" id="2_71elk"]
-[ext_resource type="Script" uid="uid://2ff0s5fd0oc8" path="res://scripts/data/MeleeAttackData.cs" id="3_kwict"]
+[ext_resource type="Script" uid="uid://2ff0s5fd0oc8" path="res://scripts/data/MeleeAttackData.cs" id="3_s3w5c"]
 [ext_resource type="Script" uid="uid://bjj2q04h14sn1" path="res://scripts/data/component_data/items/WeaponComponentData.cs" id="4_l6lej"]
 [ext_resource type="Script" uid="uid://b15b03j0xap76" path="res://scripts/data/component_data/items/ValuableComponentData.cs" id="5_7gdqc"]
 [ext_resource type="Texture2D" uid="uid://b3oejmtgvc66h" path="res://assets/kenney_assets/scribble_dungeons_tilesheet.png" id="6_bn5x2"]
@@ -11,8 +11,8 @@
 [sub_resource type="Resource" id="1"]
 script = ExtResource("2_71elk")
 
-[sub_resource type="Resource" id="Resource_tiquh"]
-script = ExtResource("3_kwict")
+[sub_resource type="Resource" id="Resource_s3w5c"]
+script = ExtResource("3_s3w5c")
 
 [sub_resource type="Resource" id="2"]
 script = ExtResource("4_l6lej")

@@ -1,0 +1,77 @@
+[gd_scene format=3 uid="uid://b5ihtxpl5rj53"]
+
+[ext_resource type="Script" uid="uid://h21wqu2lt80v" path="res://scripts/ui/SessionViewUI.cs" id="1_svui"]
+[ext_resource type="PackedScene" uid="uid://jic7qihdnb35" path="res://scenes/combat/game_manager.tscn" id="2_gm"]
+[ext_resource type="PackedScene" uid="uid://daatjylad8ont" path="res://scenes/combat/battle_grid_view.tscn" id="3_bgv"]
+[ext_resource type="PackedScene" uid="uid://di1vfw2tfwjeo" path="res://scenes/combat/combat_manager.tscn" id="4_cm"]
+[ext_resource type="PackedScene" uid="uid://g3qwbbhpngpt" path="res://scenes/ui/message_panel_ui.tscn" id="6_h3q8j"]
+[ext_resource type="PackedScene" uid="uid://cd3w4xu7joejp" path="res://scenes/ui/player_turn_ui.tscn" id="6_ptui"]
+
+[node name="SessionView" type="Node2D" unique_id=1550701804 node_paths=PackedStringArray("BattleGridView", "CombatManager", "PlayerTurnUI", "LoadMapButton", "StartCombatButton", "EndSessionButton", "DebugWalkabilityButton")]
+script = ExtResource("1_svui")
+BattleGridView = NodePath("BattleGridView")
+CombatManager = NodePath("CombatManager")
+PlayerTurnUI = NodePath("UI/PlayerTurnUI")
+LoadMapButton = NodePath("UI/DMToolbar/LoadMapButton")
+StartCombatButton = NodePath("UI/DMToolbar/StartCombatButton")
+EndSessionButton = NodePath("UI/DMToolbar/EndSessionButton")
+DebugWalkabilityButton = NodePath("UI/DMToolbar/DebugWalkabilityButton")
+
+[node name="GameManager" parent="." unique_id=1326171915 node_paths=PackedStringArray("BattleGridView") instance=ExtResource("2_gm")]
+BattleGridView = NodePath("../BattleGridView")
+
+[node name="BattleGridView" parent="." unique_id=437316217 node_paths=PackedStringArray("GroundLayer", "OverlayLayer") instance=ExtResource("3_bgv")]
+GroundLayer = NodePath("../GroundLayer")
+OverlayLayer = NodePath("../OverlayLayer")
+
+[node name="GroundLayer" type="TileMapLayer" parent="." unique_id=983431826]
+
+[node name="OverlayLayer" type="TileMapLayer" parent="." unique_id=214209457]
+z_index = 1
+
+[node name="CombatManager" parent="." unique_id=1292936643 node_paths=PackedStringArray("BattleGridView", "GameManager") instance=ExtResource("4_cm")]
+BattleGridView = NodePath("../BattleGridView")
+GameManager = NodePath("../GameManager")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=1194933312]
+
+[node name="DMToolbar" type="HBoxContainer" parent="UI" unique_id=934712808]
+offset_right = 1152.0
+offset_bottom = 27.0
+theme_override_constants/separation = 8
+
+[node name="LoadMapButton" type="Button" parent="UI/DMToolbar" unique_id=2073261378]
+layout_mode = 2
+text = "Load Map"
+
+[node name="StartCombatButton" type="Button" parent="UI/DMToolbar" unique_id=872803909]
+layout_mode = 2
+text = "Start Combat"
+
+[node name="EndSessionButton" type="Button" parent="UI/DMToolbar" unique_id=1638451953]
+layout_mode = 2
+text = "End Session"
+
+[node name="DebugWalkabilityButton" type="Button" parent="UI/DMToolbar" unique_id=1638451954]
+layout_mode = 2
+text = "Debug: Walkability"
+
+[node name="MarginContainer" type="MarginContainer" parent="UI" unique_id=89262225]
+anchors_preset = -1
+anchor_left = 0.79600006
+anchor_right = 1.0
+anchor_bottom = 0.34
+offset_left = 0.00793457
+offset_bottom = -0.32000732
+grow_horizontal = 0
+size_flags_horizontal = 10
+size_flags_vertical = 2
+
+[node name="MessagePanelUI" parent="UI/MarginContainer" unique_id=1806396885 instance=ExtResource("6_h3q8j")]
+layout_mode = 2
+
+[node name="PlayerTurnUI" parent="UI" unique_id=72594474 node_paths=PackedStringArray("CombatManager", "BattleGridView") instance=ExtResource("6_ptui")]
+size_flags_horizontal = 1
+size_flags_vertical = 4
+CombatManager = NodePath("../../CombatManager")
+BattleGridView = NodePath("../../BattleGridView")

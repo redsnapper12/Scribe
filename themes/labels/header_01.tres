@@ -1,0 +1,7 @@
+[gd_resource type="LabelSettings" format=3 uid="uid://chjerj0wo3oom"]
+
+[ext_resource type="FontFile" uid="uid://b8lq6l6m68v27" path="res://themes/fonts/geist/static/Geist-Bold.ttf" id="1_34uec"]
+
+[resource]
+font = ExtResource("1_34uec")
+font_size = 24

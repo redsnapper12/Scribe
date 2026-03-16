@@ -18,6 +18,10 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
 
     public void Execute(Entity self, BattleContext context)
     {
+        // Get action economy component
+        if (!self.TryGetComponent<ActionEconomyComponent>(out var actionEconomy))
+            return;
+
         var target = context.FindNearestEnemy(self);
 
         if (target == null)
@@ -25,7 +29,8 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
 
         if (context.CanMeleeAttack(self, target))
         {
-            PerformAttack(self, target);
+            // Attack while we have attacks remaining
+            PerformAllAttacks(self, target, actionEconomy, context);
         }
         else
         {
@@ -38,14 +43,45 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
 
                 if (result.Success && result.MovementSpent > 0)
                 {
-                    GD.Print($"{self.EntityName} moves toward {target.EntityName}");
+                    MessagePanelUI.Instance?.EnqueueMessage($"{self.EntityName} moves toward {target.EntityName}.", Colors.White);
 
                     if (context.CanMeleeAttack(self, target))
                     {
-                        PerformAttack(self, target);
+                        PerformAllAttacks(self, target, actionEconomy, context);
                     }
                 }
             }
+        }
+    }
+
+    private void PerformAllAttacks(Entity self, Entity target, ActionEconomyComponent actionEconomy, BattleContext context)
+    {
+        // Begin attack action if we have one available
+        if (!actionEconomy.CanAttack())
+            return;
+
+        if (!actionEconomy.IsInAttackAction)
+        {
+            if (!actionEconomy.BeginAttackAction())
+                return;
+        }
+
+        // Attack while we have attacks remaining and target is alive
+        while (actionEconomy.AttacksRemainingThisAction > 0)
+        {
+            if (!target.TryGetComponent<HealthComponent>(out var targetHealth) || !targetHealth.IsAlive)
+            {
+                // Target is dead, find new target
+                target = context.FindNearestEnemy(self);
+                if (target == null || !context.CanMeleeAttack(self, target))
+                {
+                    actionEconomy.EndAttackAction();
+                    return;
+                }
+            }
+
+            PerformAttack(self, target);
+            actionEconomy.UseAttack();
         }
     }
     
@@ -134,14 +170,16 @@ public partial class SimpleAggressiveBehavior : RefCounted, IAIBehavior
 
         AttackResult result = meleeAttack.MeleeAttack(self, targetHealth, attackData);
 
-        GD.Print($"{self.EntityName} attacks {target.EntityName}!");
+        MessagePanelUI.Instance?.EnqueueMessage($"{self.EntityName} attacks {target.EntityName}!", Colors.White);
         if (result.Hit)
         {
-            GD.Print($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{(result.IsCritical ? " (CRITICAL!)" : "")}");
+            var hitColor = result.IsCritical ? Colors.Gold : Colors.OrangeRed;
+            var suffix = result.IsCritical ? " (CRITICAL!)" : "";
+            MessagePanelUI.Instance?.EnqueueMessage($"  Hit! Rolled {result.AttackRoll}, dealt {result.Damage} damage{suffix}", hitColor);
         }
         else
         {
-            GD.Print($"  Miss! Rolled {result.AttackRoll}");
+            MessagePanelUI.Instance?.EnqueueMessage($"  Miss! Rolled {result.AttackRoll}", Colors.Gray);
         }
     }
 }

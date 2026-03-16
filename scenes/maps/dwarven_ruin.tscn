@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://s7ekdwib1swj"]
+
+[ext_resource type="Texture2D" uid="uid://dyuawalwwti08" path="res://assets/maps/dwarven_ruin.png" id="1_0ap0y"]
+[ext_resource type="PackedScene" uid="uid://jic7qihdnb35" path="res://scenes/combat/game_manager.tscn" id="2_urbhf"]
+[ext_resource type="PackedScene" uid="uid://daatjylad8ont" path="res://scenes/combat/battle_grid_view.tscn" id="3_ikgll"]
+[ext_resource type="PackedScene" uid="uid://di1vfw2tfwjeo" path="res://scenes/combat/combat_manager.tscn" id="4_n25x7"]
+[ext_resource type="Resource" uid="uid://fhmhsf6bw8vp" path="res://resources/entities/characters/fighter.tres" id="5_bca3s"]
+[ext_resource type="PackedScene" uid="uid://cd3w4xu7joejp" path="res://scenes/ui/player_turn_ui.tscn" id="6_xx6l4"]
+
+[node name="DwarvenRuin" type="Node2D" unique_id=1827316498]
+
+[node name="DwarvenRuin" type="Sprite2D" parent="." unique_id=1416174298]
+position = Vector2(1088, 960)
+texture = ExtResource("1_0ap0y")
+
+[node name="GameManager" parent="." unique_id=1219458041 node_paths=PackedStringArray("BattleGridView") instance=ExtResource("2_urbhf")]
+BattleGridView = NodePath("../BattleGridView")
+
+[node name="BattleGridView" parent="." unique_id=1198015054 node_paths=PackedStringArray("MapSprite") instance=ExtResource("3_ikgll")]
+DungeonScrawlFile = "res://assets/maps/dwarven_ruin.ds"
+MapSprite = NodePath("../DwarvenRuin")
+
+[node name="CombatManager" parent="." unique_id=448122033 node_paths=PackedStringArray("BattleGridView", "GameManager") instance=ExtResource("4_n25x7")]
+BattleGridView = NodePath("../BattleGridView")
+GameManager = NodePath("../GameManager")
+PlayerData = ExtResource("5_bca3s")
+
+[node name="UI" type="CanvasLayer" parent="." unique_id=370438535]
+
+[node name="PlayerTurnUI" parent="UI" unique_id=215384631 node_paths=PackedStringArray("CombatManager", "BattleGridView") instance=ExtResource("6_xx6l4")]
+CombatManager = NodePath("../../CombatManager")
+BattleGridView = NodePath("../../BattleGridView")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://diwawyuq8xx4v"]
+[gd_scene format=3 uid="uid://diwawyuq8xx4v"]
 
 [ext_resource type="Script" uid="uid://dnxlt8hlwfxxa" path="res://scripts/entities/EntityNode.cs" id="1_el4x3"]
 [ext_resource type="Texture2D" uid="uid://qc6wji07rflj" path="res://assets/tokens/green_token.tres" id="2_el4x3"]
@@ -10,14 +10,15 @@ font_color = Color(0.21568628, 0.8509804, 0.54901963, 1)
 outline_size = 2
 outline_color = Color(0.034598753, 0.19363219, 0.13672972, 1)
 
-[node name="EntityNode" type="Node2D"]
+[node name="EntityNode" type="Node2D" unique_id=1343148040]
 z_index = 2
 script = ExtResource("1_el4x3")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1519816092]
 texture = ExtResource("2_el4x3")
+region_rect = Rect2(0, 0, 426, 441)
 
-[node name="HealthBar" type="ProgressBar" parent="."]
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=591923084]
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
@@ -28,7 +29,7 @@ offset_bottom = -11.0
 grow_horizontal = 2
 size_flags_horizontal = 6
 
-[node name="NameLabel" type="Label" parent="."]
+[node name="NameLabel" type="Label" parent="." unique_id=285222891]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0

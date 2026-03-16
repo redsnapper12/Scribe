@@ -1,9 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://cddhjyyc73ibm"]
+[gd_scene format=3 uid="uid://cddhjyyc73ibm"]
 
 [ext_resource type="LabelSettings" uid="uid://dmjnjk0lynewr" path="res://themes/labels/title.tres" id="1_l6cm7"]
 [ext_resource type="LabelSettings" uid="uid://dcdm78ayupuj3" path="res://themes/labels/subtitle.tres" id="2_ekxnf"]
+[ext_resource type="Script" uid="uid://d30xjqsklmd0o" path="res://scripts/ui/MainMenuUI.cs" id="3_mainmenu"]
 
-[node name="MainMenu" type="Control"]
+[node name="MainMenu" type="Control" unique_id=521013442 node_paths=PackedStringArray("MultiplayerButton", "CharactersButton", "SettingsButton", "ExitButton")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,8 +13,13 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+script = ExtResource("3_mainmenu")
+MultiplayerButton = NodePath("MenuDetails/MarginContainer/GridContainer/MultiplayerButton")
+CharactersButton = NodePath("MenuDetails/MarginContainer/GridContainer/CharactersButton")
+SettingsButton = NodePath("MenuDetails/MarginContainer/GridContainer/SettingsButton")
+ExitButton = NodePath("MenuDetails/MarginContainer/GridContainer/ExitButton")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=124573894]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,7 +28,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.1764706, 0.1764706, 0.1764706, 1)
 
-[node name="MenuDetails" type="VBoxContainer" parent="."]
+[node name="MenuDetails" type="VBoxContainer" parent="." unique_id=1179334815]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -36,32 +42,32 @@ offset_bottom = 177.5
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MenuDetails"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MenuDetails" unique_id=1565397950]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="MenuDetails/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MenuDetails/VBoxContainer" unique_id=1638308007]
 layout_mode = 2
 theme_override_constants/margin_bottom = -18
 
-[node name="Title" type="Label" parent="MenuDetails/VBoxContainer/MarginContainer"]
+[node name="Title" type="Label" parent="MenuDetails/VBoxContainer/MarginContainer" unique_id=1031788599]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "{SCRIBE}"
 label_settings = ExtResource("1_l6cm7")
 horizontal_alignment = 1
 
-[node name="Subtitle" type="Label" parent="MenuDetails/VBoxContainer"]
+[node name="Subtitle" type="Label" parent="MenuDetails/VBoxContainer" unique_id=1620935876]
 layout_mode = 2
 size_flags_horizontal = 4
 text = "Dungeons & Dragons Remote Table Top"
 label_settings = ExtResource("2_ekxnf")
 horizontal_alignment = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="MenuDetails"]
+[node name="MarginContainer" type="MarginContainer" parent="MenuDetails" unique_id=1851620899]
 layout_mode = 2
 theme_override_constants/margin_top = 15
 
-[node name="GridContainer" type="GridContainer" parent="MenuDetails/MarginContainer"]
+[node name="GridContainer" type="GridContainer" parent="MenuDetails/MarginContainer" unique_id=360479453]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 10
@@ -69,7 +75,7 @@ theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 columns = 2
 
-[node name="Button" type="Button" parent="MenuDetails/MarginContainer/GridContainer"]
+[node name="MultiplayerButton" type="Button" parent="MenuDetails/MarginContainer/GridContainer" unique_id=1037838658]
 custom_minimum_size = Vector2(200, 150)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -78,16 +84,16 @@ mouse_default_cursor_shape = 2
 theme_type_variation = &"MainMenuButton"
 text = "Multiplayer"
 
-[node name="Button2" type="Button" parent="MenuDetails/MarginContainer/GridContainer"]
+[node name="CharactersButton" type="Button" parent="MenuDetails/MarginContainer/GridContainer" unique_id=782902382]
 custom_minimum_size = Vector2(200, 150)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_type_variation = &"MainMenuButton"
-text = "View Characters"
+text = "Characters"
 
-[node name="Button3" type="Button" parent="MenuDetails/MarginContainer/GridContainer"]
+[node name="SettingsButton" type="Button" parent="MenuDetails/MarginContainer/GridContainer" unique_id=1872302839]
 custom_minimum_size = Vector2(200, 150)
 layout_mode = 2
 size_flags_horizontal = 4
@@ -96,11 +102,11 @@ mouse_default_cursor_shape = 2
 theme_type_variation = &"MainMenuButton"
 text = "Settings"
 
-[node name="Button4" type="Button" parent="MenuDetails/MarginContainer/GridContainer"]
+[node name="ExitButton" type="Button" parent="MenuDetails/MarginContainer/GridContainer" unique_id=1708785857]
 custom_minimum_size = Vector2(200, 150)
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 mouse_default_cursor_shape = 2
 theme_type_variation = &"MainMenuButton"
-text = "Exit Game"
+text = "Exit"
